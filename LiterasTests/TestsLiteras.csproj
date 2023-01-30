@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LiterasData\LiterasData.csproj" />
+  </ItemGroup>
+
 </Project>

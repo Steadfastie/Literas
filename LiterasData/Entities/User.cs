@@ -13,7 +13,7 @@ public class User
     public string Password { get; set; }
     public string? Fullname { get; set; }
 
-    public User(string login, string password, string? fullname)
+    public User(string login, string password, string? fullname = null)
     {
         Id = Guid.NewGuid();
         Login = login;
