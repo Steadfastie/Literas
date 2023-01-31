@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestsLiteras", "LiterasTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiterasData", "LiterasData\LiterasData.csproj", "{6C6DDC82-989B-4F59-BF78-3D9C55C5CC1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiterasDataTransfer", "LiterasDataTransfer\LiterasDataTransfer.csproj", "{15548D6F-05EA-4583-BD56-B8D3047EDD8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiterasDataTransfer", "LiterasDataTransfer\LiterasDataTransfer.csproj", "{15548D6F-05EA-4583-BD56-B8D3047EDD8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiterasCQS", "LiterasCQS\LiterasCQS.csproj", "{8688C25C-83DA-4B8A-874C-CD5DCD6CEDAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{15548D6F-05EA-4583-BD56-B8D3047EDD8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15548D6F-05EA-4583-BD56-B8D3047EDD8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15548D6F-05EA-4583-BD56-B8D3047EDD8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8688C25C-83DA-4B8A-874C-CD5DCD6CEDAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8688C25C-83DA-4B8A-874C-CD5DCD6CEDAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8688C25C-83DA-4B8A-874C-CD5DCD6CEDAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8688C25C-83DA-4B8A-874C-CD5DCD6CEDAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
