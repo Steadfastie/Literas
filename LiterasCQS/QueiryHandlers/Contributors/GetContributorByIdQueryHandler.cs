@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using LiterasCQS.Queries.Contributors;
-using LiterasCQS.Queries.Documents;
-using LiterasCQS.Queries.Users;
 using LiterasData;
 using LiterasDataTransfer.DTO;
 using MediatR;
@@ -13,6 +11,7 @@ public class GetContributorByTitleQueryHandler : IRequestHandler<GetContributorB
 {
     private readonly IMapper _mapper;
     private readonly NotesDBContext _dbContext;
+
     public GetContributorByTitleQueryHandler(NotesDBContext context, IMapper mapper)
     {
         _dbContext = context;

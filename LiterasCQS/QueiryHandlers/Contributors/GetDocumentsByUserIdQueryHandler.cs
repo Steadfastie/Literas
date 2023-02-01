@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LiterasCQS.Queries.Documents;
+using LiterasCQS.Queries.Contributors;
 using LiterasData;
 using LiterasDataTransfer.DTO;
 using MediatR;
@@ -11,6 +11,7 @@ public class GetDocumentsByUserIdQueryHandler : IRequestHandler<GetDocumentsByUs
 {
     private readonly IMapper _mapper;
     private readonly NotesDBContext _dbContext;
+
     public GetDocumentsByUserIdQueryHandler(NotesDBContext context, IMapper mapper)
     {
         _dbContext = context;

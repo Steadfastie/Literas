@@ -1,13 +1,16 @@
 ﻿using LiterasDataTransfer.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LiterasDataTransfer.ServiceAbstractions;
 
 public interface IDocumentsService
 {
+    Task<int> CreateDocumentAsync(DocumentDTO documentDTO);
+
+    Task<int> DeleteDocumentAsync(DocumentDTO documentDTO);
+
+    Task<DocumentDTO> GetDocumentByIdAsync(Guid documentId);
+
+    Task<DocumentDTO> GetDocumentByTitleAsync(string title);
+
     Task<int> PatchDocumentAsync(DocumentDTO documentDTO, List<PatchModel> patchlist);
 }

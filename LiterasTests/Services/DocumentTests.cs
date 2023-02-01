@@ -3,16 +3,8 @@ using LiterasBusiness.Services;
 using LiterasCQS.Commands.Documents;
 using LiterasDataTransfer;
 using LiterasDataTransfer.DTO;
-using LiterasDataTransfer.ServiceAbstractions;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TestsLiteras.Services;
 
@@ -20,6 +12,7 @@ public class DocumentTests
 {
     private readonly IMapper _mapper;
     private readonly Mock<IMediator> _mediatrMock;
+
     public DocumentTests(IMapper mapper)
     {
         _mapper = mapper;

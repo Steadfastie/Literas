@@ -12,6 +12,7 @@ public class DocumentsService : IDocumentsService
 {
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+
     public DocumentsService(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
@@ -65,7 +66,9 @@ public class DocumentsService : IDocumentsService
 
     public async Task<int> PatchDocumentAsync(DocumentDTO documentDTO, List<PatchModel> patchlist)
     {
-        var patchModelsWithId = patchlist.Where(l => l.PropertyName.Equals("Id", StringComparison.InvariantCultureIgnoreCase));
+        var patchModelsWithId = patchlist
+            .Where(l => l.PropertyName
+                .Equals("Id", StringComparison.InvariantCultureIgnoreCase));
 
         if (patchModelsWithId.Any())
         {
@@ -78,6 +81,21 @@ public class DocumentsService : IDocumentsService
             {
                 Document = documentDTO,
                 PatchList = patchlist
+            });
+        }
+        else
+        {
+            throw new ArgumentNullException(nameof(documentDTO));
+        }
+    }
+
+    public async Task<int> DeleteDocumentAsync(DocumentDTO documentDTO)
+    {
+        if (documentDTO != null)
+        {
+            return await _mediator.Send(new DeleteDocumentCommand()
+            {
+                Document = documentDTO
             });
         }
         else

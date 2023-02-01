@@ -1,5 +1,4 @@
-﻿
-namespace LiterasDataTransfer.DTO;
+﻿namespace LiterasDataTransfer.DTO;
 
 public class UserDTO
 {

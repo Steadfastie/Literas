@@ -11,6 +11,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDTO
 {
     private readonly IMapper _mapper;
     private readonly NotesDBContext _dbContext;
+
     public GetUserByIdQueryHandler(NotesDBContext context, IMapper mapper)
     {
         _dbContext = context;

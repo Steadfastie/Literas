@@ -12,6 +12,8 @@ builder.Services.AddDbContext<NotesDBContext>(options =>
 builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
 
 builder.Services.AddScoped<IDocumentsService, DocumentsService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IContributorsService, ContributorsService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
