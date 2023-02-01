@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LiterasBusiness\LiterasBusiness.csproj" />
     <ProjectReference Include="..\LiterasData\LiterasData.csproj" />
   </ItemGroup>
 

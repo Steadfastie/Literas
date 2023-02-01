@@ -1,4 +1,6 @@
+using LiterasBusiness.Services;
 using LiterasData;
+using LiterasDataTransfer.ServiceAbstractions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -8,6 +10,8 @@ builder.Services.AddDbContext<NotesDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("NotesPostgre")));
 
 builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
+
+builder.Services.AddScoped<IDocumentsService, DocumentsService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
