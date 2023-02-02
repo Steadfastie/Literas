@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using LiterasBusiness.Services;
 using LiterasCQS.Commands.Documents;
-using LiterasDataTransfer;
 using LiterasDataTransfer.DTO;
+using LiterasModels.System;
 using MediatR;
 using Moq;
 

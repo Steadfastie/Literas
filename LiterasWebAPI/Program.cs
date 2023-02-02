@@ -2,9 +2,19 @@ using LiterasBusiness.Services;
 using LiterasData;
 using LiterasDataTransfer.ServiceAbstractions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) =>
+        lc.WriteTo.File(
+            builder.Configuration["Serilog"],
+            LogEventLevel.Warning,
+            rollingInterval: RollingInterval.Hour,
+            retainedFileCountLimit: 10)
+            .WriteTo.Console(LogEventLevel.Information));
 
 builder.Services.AddDbContext<NotesDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("NotesPostgre")));

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Documents;
 using LiterasCQS.Queries.Documents;
-using LiterasDataTransfer;
 using LiterasDataTransfer.DTO;
 using LiterasDataTransfer.ServiceAbstractions;
+using LiterasModels.System;
 using MediatR;
 
 namespace LiterasBusiness.Services;

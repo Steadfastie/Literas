@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Users;
 using LiterasCQS.Queries.Users;
-using LiterasDataTransfer;
 using LiterasDataTransfer.DTO;
 using LiterasDataTransfer.ServiceAbstractions;
+using LiterasModels.System;
 using MediatR;
 
 namespace LiterasBusiness.Services;
@@ -19,13 +19,13 @@ public class UsersService : IUsersService
         _mediator = mediator;
     }
 
-    public async Task<UserDTO> GetUserByIdAsync(Guid UserId)
+    public async Task<UserDTO> GetUserByIdAsync(Guid userId)
     {
-        if (UserId != Guid.Empty)
+        if (userId != Guid.Empty)
         {
             return await _mediator.Send(new GetUserByIdQuery()
             {
-                Id = UserId
+                Id = userId
             });
         }
         else
@@ -34,13 +34,13 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<int> CreateUserAsync(UserDTO UserDTO)
+    public async Task<int> CreateUserAsync(UserDTO userDTO)
     {
-        if (UserDTO != null)
+        if (userDTO != null)
         {
             return await _mediator.Send(new CreateUserCommand()
             {
-                User = UserDTO
+                User = userDTO
             });
         }
         else
@@ -49,7 +49,7 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<int> PatchUserAsync(UserDTO UserDTO, List<PatchModel> patchlist)
+    public async Task<int> PatchUserAsync(UserDTO userDTO, List<PatchModel> patchlist)
     {
         var patchModelsWithId = patchlist
             .Where(l => l.PropertyName
@@ -60,11 +60,11 @@ public class UsersService : IUsersService
             throw new ArgumentException("Id cannot be changed");
         }
 
-        if (UserDTO != null)
+        if (userDTO != null)
         {
             return await _mediator.Send(new PatchUserCommand()
             {
-                User = UserDTO,
+                User = userDTO,
                 PatchList = patchlist
             });
         }

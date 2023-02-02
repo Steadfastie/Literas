@@ -1,5 +1,5 @@
-﻿using LiterasDataTransfer;
-using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.DTO;
+using LiterasModels.System;
 using MediatR;
 
 namespace LiterasCQS.Commands.Users;

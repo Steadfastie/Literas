@@ -1,4 +1,5 @@
 ﻿using LiterasDataTransfer.DTO;
+using LiterasModels.System;
 
 namespace LiterasDataTransfer.ServiceAbstractions;
 

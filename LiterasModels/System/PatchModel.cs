@@ -1,4 +1,4 @@
-﻿namespace LiterasDataTransfer;
+﻿namespace LiterasModels.System;
 
 public class PatchModel
 {

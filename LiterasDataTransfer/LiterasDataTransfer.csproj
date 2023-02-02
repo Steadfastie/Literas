@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LiterasData\LiterasData.csproj" />
+    <ProjectReference Include="..\LiterasModels\LiterasModels.csproj" />
   </ItemGroup>
 
 </Project>
