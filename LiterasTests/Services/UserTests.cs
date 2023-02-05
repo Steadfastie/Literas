@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LiterasBusiness.Services;
 using LiterasCQS.Commands.Users;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using LiterasModels.System;
 using MediatR;
 using Moq;
@@ -21,7 +21,7 @@ public class UserTests
 
     [Theory]
     [MemberData(nameof(GetUserAndPatchModel), parameters: true)]
-    public async Task PatchUser_WithValidPatchModel(UserDTO User, List<PatchModel> patchlist)
+    public async Task PatchUser_WithValidPatchModel(UserDto User, List<PatchModel> patchlist)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
@@ -35,7 +35,7 @@ public class UserTests
 
     [Theory]
     [MemberData(nameof(GetUserAndPatchModel), parameters: false)]
-    public void PatchUser_WithIdInPatchModel_ThrowsArgumentException(UserDTO User, List<PatchModel> patchlist)
+    public void PatchUser_WithIdInPatchModel_ThrowsArgumentException(UserDto User, List<PatchModel> patchlist)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
@@ -52,7 +52,7 @@ public class UserTests
         {
             new object[]
             {
-                new UserDTO()
+                new UserDto()
                 {
                     Id = Guid.NewGuid(),
                     Login = "Login",
@@ -69,7 +69,7 @@ public class UserTests
             },
             new object[]
             {
-                new UserDTO()
+                new UserDto()
                 {
                     Id = Guid.NewGuid(),
                     Login = "Login",

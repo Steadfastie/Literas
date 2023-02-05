@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
+using LiterasModels.Requests;
 using LiterasModels.Responses;
 using LiterasModels.System;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +24,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)] 
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetUserById(Guid userId)
     {
         try
@@ -33,9 +37,53 @@ public class UsersController : ControllerBase
             }
 
             var userDto = await _usersService.GetUserByIdAsync(userId);
-            var responseModel = _mapper.Map<UserResponseModel>(userDto);
 
-            return Ok(responseModel);
+            if (userDto != null)
+            {
+                var responseModel = _mapper.Map<UserResponseModel>(userDto);
+
+                return Ok(responseModel);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                $"{Environment.NewLine} {Environment.NewLine} " +
+                $"{ex.StackTrace} " +
+                $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not register new user",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateUser(UserRequestModel userModel)
+    {
+        try
+        {
+            var userDto = _mapper.Map<UserDto>(userModel);
+            var creationResult = await _usersService.CreateUserAsync(userDto);
+
+            if (creationResult.Result == OperationResult.Success)
+            {
+                var responseModel = _mapper.Map<UserResponseModel>(creationResult.Dto);
+                return Ok(responseModel);
+            }
+            else
+            {
+                return BadRequest("Could not register new user");
+            }
         }
         catch (Exception ex)
         {

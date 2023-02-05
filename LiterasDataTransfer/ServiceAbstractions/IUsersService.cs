@@ -1,15 +1,14 @@
-﻿using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.Dto;
 using LiterasModels.System;
 
 namespace LiterasDataTransfer.ServiceAbstractions;
 
 public interface IUsersService
 {
-    Task<int> CreateUserAsync(UserDTO userDTO);
+    Task<UserDto> GetUserByIdAsync(Guid userId);
+    Task<CrudResult<UserDto>> CreateUserAsync(UserDto userDto);
 
-    Task<int> DeleteUserAsync(UserDTO userDTO);
+    Task<int> DeleteUserAsync(UserDto userDto);
 
-    Task<UserDTO> GetUserByIdAsync(Guid userId);
-
-    Task<int> PatchUserAsync(UserDTO userDTO, List<PatchModel> patchlist);
+    Task<int> PatchUserAsync(UserDto userDto, List<PatchModel> patchlist);
 }

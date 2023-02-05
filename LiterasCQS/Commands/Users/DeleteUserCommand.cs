@@ -1,9 +1,9 @@
-﻿using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.Dto;
 using MediatR;
 
 namespace LiterasCQS.Commands.Users;
 
 public class DeleteUserCommand : IRequest<int>
 {
-    public UserDTO User { get; set; }
+    public UserDto User { get; set; }
 }

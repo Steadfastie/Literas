@@ -1,6 +1,8 @@
-﻿namespace LiterasDataTransfer.DTO;
+﻿using LiterasModels.Abstractions;
 
-public class UserDTO
+namespace LiterasDataTransfer.Dto;
+
+public class UserDto : IBaseDto
 {
     public Guid Id { get; set; }
     public string Login { get; set; }

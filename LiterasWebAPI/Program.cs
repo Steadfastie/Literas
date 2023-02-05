@@ -1,6 +1,8 @@
 using LiterasBusiness.Services;
+using LiterasCQS.Queries.Users;
 using LiterasData;
 using LiterasDataTransfer.ServiceAbstractions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -24,6 +26,9 @@ builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
 builder.Services.AddScoped<IDocumentsService, DocumentsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IContributorsService, ContributorsService>();
+
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddMediatR(typeof(GetUserByIdQuery).Assembly);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,9 +1,9 @@
-﻿using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.Dto;
 using MediatR;
 
 namespace LiterasCQS.Commands.Contributors;
 
 public class CreateContributorCommand : IRequest<int>
 {
-    public ContributorDTO Contributor { get; set; }
+    public ContributorDto Contributor { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Users;
 using LiterasCQS.Queries.Users;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.System;
 using MediatR;
@@ -19,7 +19,7 @@ public class UsersService : IUsersService
         _mediator = mediator;
     }
 
-    public async Task<UserDTO> GetUserByIdAsync(Guid userId)
+    public async Task<UserDto> GetUserByIdAsync(Guid userId)
     {
         if (userId != Guid.Empty)
         {
@@ -34,22 +34,45 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<int> CreateUserAsync(UserDTO userDTO)
+    public async Task<CrudResult<UserDto>> CreateUserAsync(UserDto userDto)
     {
-        if (userDTO != null)
+        if (userDto == null)
         {
-            return await _mediator.Send(new CreateUserCommand()
-            {
-                User = userDTO
-            });
+            throw new ArgumentNullException(nameof(userDto));
+        }
+
+        Guid userId;
+        if (userDto.Id == Guid.Empty)
+        {
+            userId = Guid.NewGuid();
+            userDto.Id = userId;
         }
         else
         {
-            throw new ArgumentNullException(nameof(UserDTO));
+            userId = userDto.Id;
+        }
+
+        int commandResult = await _mediator.Send(new CreateUserCommand()
+        {
+            User = userDto
+        });
+
+        if (commandResult == 1)
+        {
+            var createdUser = await _mediator.Send(new GetUserByIdQuery()
+            {
+                Id = userId
+            });
+
+            return new CrudResult<UserDto>(createdUser);
+        }
+        else
+        {
+            return new CrudResult<UserDto>();
         }
     }
 
-    public async Task<int> PatchUserAsync(UserDTO userDTO, List<PatchModel> patchlist)
+    public async Task<int> PatchUserAsync(UserDto userDto, List<PatchModel> patchlist)
     {
         var patchModelsWithId = patchlist
             .Where(l => l.PropertyName
@@ -60,32 +83,32 @@ public class UsersService : IUsersService
             throw new ArgumentException("Id cannot be changed");
         }
 
-        if (userDTO != null)
+        if (userDto != null)
         {
             return await _mediator.Send(new PatchUserCommand()
             {
-                User = userDTO,
+                User = userDto,
                 PatchList = patchlist
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(UserDTO));
+            throw new ArgumentNullException(nameof(UserDto));
         }
     }
 
-    public async Task<int> DeleteUserAsync(UserDTO UserDTO)
+    public async Task<int> DeleteUserAsync(UserDto UserDto)
     {
-        if (UserDTO != null)
+        if (UserDto != null)
         {
             return await _mediator.Send(new DeleteUserCommand()
             {
-                User = UserDTO
+                User = UserDto
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(UserDTO));
+            throw new ArgumentNullException(nameof(UserDto));
         }
     }
 }

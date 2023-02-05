@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using LiterasCQS.Queries.Users;
 using LiterasData;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiterasCQS.QueiryHandlers.Users;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDTO>
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
 {
     private readonly IMapper _mapper;
     private readonly NotesDBContext _dbContext;
@@ -18,11 +18,11 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDTO
         _mapper = mapper;
     }
 
-    public async Task<UserDTO> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == request.Id, cancellationToken: cancellationToken);
-        return _mapper.Map<UserDTO>(entity);
+        return _mapper.Map<UserDto>(entity);
     }
 }

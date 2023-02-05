@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Contributors;
 using LiterasCQS.Queries.Contributors;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using MediatR;
 
@@ -18,7 +18,7 @@ public class ContributorsService : IContributorsService
         _mediator = mediator;
     }
 
-    public async Task<ContributorDTO> GetContributorByIdAsync(Guid ContributorId)
+    public async Task<ContributorDto> GetContributorByIdAsync(Guid ContributorId)
     {
         if (ContributorId != Guid.Empty)
         {
@@ -33,7 +33,7 @@ public class ContributorsService : IContributorsService
         }
     }
 
-    public async Task<IEnumerable<DocumentDTO>> GetDocumentsByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<DocumentDto>> GetDocumentsByUserIdAsync(Guid userId)
     {
         if (userId != Guid.Empty)
         {
@@ -48,7 +48,7 @@ public class ContributorsService : IContributorsService
         }
     }
 
-    public async Task<IEnumerable<UserDTO>> GetUsersByDocumentIdAsync(Guid documentId)
+    public async Task<IEnumerable<UserDto>> GetUsersByDocumentIdAsync(Guid documentId)
     {
         if (documentId != Guid.Empty)
         {
@@ -63,33 +63,33 @@ public class ContributorsService : IContributorsService
         }
     }
 
-    public async Task<int> CreateContributorAsync(ContributorDTO ContributorDTO)
+    public async Task<int> CreateContributorAsync(ContributorDto ContributorDto)
     {
-        if (ContributorDTO != null)
+        if (ContributorDto != null)
         {
             return await _mediator.Send(new CreateContributorCommand()
             {
-                Contributor = ContributorDTO
+                Contributor = ContributorDto
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(ContributorDTO));
+            throw new ArgumentNullException(nameof(ContributorDto));
         }
     }
 
-    public async Task<int> DeleteContributorAsync(ContributorDTO ContributorDTO)
+    public async Task<int> DeleteContributorAsync(ContributorDto ContributorDto)
     {
-        if (ContributorDTO != null)
+        if (ContributorDto != null)
         {
             return await _mediator.Send(new DeleteContributorCommand()
             {
-                Contributor = ContributorDTO
+                Contributor = ContributorDto
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(ContributorDTO));
+            throw new ArgumentNullException(nameof(ContributorDto));
         }
     }
 }

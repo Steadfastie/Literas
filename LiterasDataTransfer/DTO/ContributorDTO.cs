@@ -1,8 +1,9 @@
 ﻿using LiterasData.Entities;
+using LiterasModels.Abstractions;
 
-namespace LiterasDataTransfer.DTO;
+namespace LiterasDataTransfer.Dto;
 
-public class ContributorDTO
+public class ContributorDto : IBaseDto
 {
     public Guid Id { get; set; }
 

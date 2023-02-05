@@ -1,16 +1,16 @@
-﻿using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.Dto;
 
 namespace LiterasDataTransfer.ServiceAbstractions;
 
 public interface IContributorsService
 {
-    Task<int> CreateContributorAsync(ContributorDTO ContributorDTO);
+    Task<int> CreateContributorAsync(ContributorDto ContributorDto);
 
-    Task<int> DeleteContributorAsync(ContributorDTO ContributorDTO);
+    Task<int> DeleteContributorAsync(ContributorDto ContributorDto);
 
-    Task<ContributorDTO> GetContributorByIdAsync(Guid ContributorId);
+    Task<ContributorDto> GetContributorByIdAsync(Guid ContributorId);
 
-    Task<IEnumerable<DocumentDTO>> GetDocumentsByUserIdAsync(Guid userId);
+    Task<IEnumerable<DocumentDto>> GetDocumentsByUserIdAsync(Guid userId);
 
-    Task<IEnumerable<UserDTO>> GetUsersByDocumentIdAsync(Guid documentId);
+    Task<IEnumerable<UserDto>> GetUsersByDocumentIdAsync(Guid documentId);
 }

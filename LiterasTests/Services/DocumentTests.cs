@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LiterasBusiness.Services;
 using LiterasCQS.Commands.Documents;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using LiterasModels.System;
 using MediatR;
 using Moq;
@@ -21,7 +21,7 @@ public class DocumentTests
 
     [Theory]
     [MemberData(nameof(GetDocumentAndPatchModel), parameters: true)]
-    public async Task PatchDocument_WithValidPatchModel(DocumentDTO document, List<PatchModel> patchlist)
+    public async Task PatchDocument_WithValidPatchModel(DocumentDto document, List<PatchModel> patchlist)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchDocumentCommand>(), It.IsAny<CancellationToken>()))
@@ -35,7 +35,7 @@ public class DocumentTests
 
     [Theory]
     [MemberData(nameof(GetDocumentAndPatchModel), parameters: false)]
-    public void PatchDocument_WithIdInPatchModel_ThrowsArgumentException(DocumentDTO document, List<PatchModel> patchlist)
+    public void PatchDocument_WithIdInPatchModel_ThrowsArgumentException(DocumentDto document, List<PatchModel> patchlist)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchDocumentCommand>(), It.IsAny<CancellationToken>()))
@@ -52,7 +52,7 @@ public class DocumentTests
         {
             new object[]
             {
-                new DocumentDTO()
+                new DocumentDto()
                 {
                     Id = Guid.NewGuid(),
                     Title = "Title",
@@ -69,7 +69,7 @@ public class DocumentTests
             },
             new object[]
             {
-                new DocumentDTO()
+                new DocumentDto()
                 {
                     Id = Guid.NewGuid(),
                     Title = "Title",

@@ -1,9 +1,9 @@
-﻿using LiterasDataTransfer.DTO;
+﻿using LiterasDataTransfer.Dto;
 using MediatR;
 
 namespace LiterasCQS.Queries.Documents;
 
-public class GetDocumentByIdQuery : IRequest<DocumentDTO>
+public class GetDocumentByIdQuery : IRequest<DocumentDto>
 {
     public Guid Id { get; set; }
 }

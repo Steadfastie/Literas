@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Documents;
 using LiterasCQS.Queries.Documents;
-using LiterasDataTransfer.DTO;
+using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.System;
 using MediatR;
@@ -19,7 +19,7 @@ public class DocumentsService : IDocumentsService
         _mediator = mediator;
     }
 
-    public async Task<DocumentDTO> GetDocumentByIdAsync(Guid documentId)
+    public async Task<DocumentDto> GetDocumentByIdAsync(Guid documentId)
     {
         if (documentId != Guid.Empty)
         {
@@ -34,7 +34,7 @@ public class DocumentsService : IDocumentsService
         }
     }
 
-    public async Task<DocumentDTO> GetDocumentByTitleAsync(string title)
+    public async Task<DocumentDto> GetDocumentByTitleAsync(string title)
     {
         if (title != string.Empty)
         {
@@ -49,22 +49,22 @@ public class DocumentsService : IDocumentsService
         }
     }
 
-    public async Task<int> CreateDocumentAsync(DocumentDTO documentDTO)
+    public async Task<int> CreateDocumentAsync(DocumentDto documentDto)
     {
-        if (documentDTO != null)
+        if (documentDto != null)
         {
             return await _mediator.Send(new CreateDocumentCommand()
             {
-                Document = documentDTO
+                Document = documentDto
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(documentDTO));
+            throw new ArgumentNullException(nameof(documentDto));
         }
     }
 
-    public async Task<int> PatchDocumentAsync(DocumentDTO documentDTO, List<PatchModel> patchlist)
+    public async Task<int> PatchDocumentAsync(DocumentDto documentDto, List<PatchModel> patchlist)
     {
         var patchModelsWithId = patchlist
             .Where(l => l.PropertyName
@@ -75,32 +75,32 @@ public class DocumentsService : IDocumentsService
             throw new ArgumentException("Id cannot be changed");
         }
 
-        if (documentDTO != null)
+        if (documentDto != null)
         {
             return await _mediator.Send(new PatchDocumentCommand()
             {
-                Document = documentDTO,
+                Document = documentDto,
                 PatchList = patchlist
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(documentDTO));
+            throw new ArgumentNullException(nameof(documentDto));
         }
     }
 
-    public async Task<int> DeleteDocumentAsync(DocumentDTO documentDTO)
+    public async Task<int> DeleteDocumentAsync(DocumentDto documentDto)
     {
-        if (documentDTO != null)
+        if (documentDto != null)
         {
             return await _mediator.Send(new DeleteDocumentCommand()
             {
-                Document = documentDTO
+                Document = documentDto
             });
         }
         else
         {
-            throw new ArgumentNullException(nameof(documentDTO));
+            throw new ArgumentNullException(nameof(documentDto));
         }
     }
 }
