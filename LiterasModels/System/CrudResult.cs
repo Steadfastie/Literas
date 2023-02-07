@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiterasModels.Abstractions;
+﻿using LiterasModels.Abstractions;
 
 namespace LiterasModels.System;
 
@@ -16,6 +11,7 @@ public class CrudResult<T> where T : IBaseDto
     {
         Result = OperationResult.Failure;
     }
+
     public CrudResult(T dto)
     {
         Dto = dto;

@@ -6,9 +6,10 @@ namespace LiterasDataTransfer.ServiceAbstractions;
 public interface IUsersService
 {
     Task<UserDto> GetUserByIdAsync(Guid userId);
+
     Task<CrudResult<UserDto>> CreateUserAsync(UserDto userDto);
 
-    Task<int> DeleteUserAsync(UserDto userDto);
+    Task<CrudResult<UserDto>> PatchUserAsync(Guid userId, UserDto userDto);
 
-    Task<int> PatchUserAsync(UserDto userDto, List<PatchModel> patchlist);
+    Task<CrudResult<UserDto>> DeleteUserAsync(Guid userId);
 }

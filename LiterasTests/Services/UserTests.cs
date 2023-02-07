@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LiterasBusiness.Services;
 using LiterasCQS.Commands.Users;
+using LiterasCQS.Queries.Users;
 using LiterasDataTransfer.Dto;
 using LiterasModels.System;
 using MediatR;
@@ -20,72 +21,78 @@ public class UserTests
     }
 
     [Theory]
-    [MemberData(nameof(GetUserAndPatchModel), parameters: true)]
-    public async Task PatchUser_WithValidPatchModel(UserDto User, List<PatchModel> patchlist)
+    [MemberData(nameof(GetData), parameters: 0)]
+    public async Task PatchUser_WhenUserExists(Guid userId, UserDto sourceDto, UserDto userDto)
     {
+        _mediatrMock.SetupSequence(mediator => mediator.Send(
+            It.IsAny<GetUserByIdQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(sourceDto)
+            .ReturnsAsync(userDto);
+
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new UsersService(_mapper, _mediatrMock.Object);
+        var result = await service.PatchUserAsync(userId, userDto);
 
-        var result = await service.PatchUserAsync(User, patchlist);
-        Assert.Equal(1, result);
+        Assert.IsType<CrudResult<UserDto>>(result);
+        Assert.Equal((int)OperationResult.Success, (int)result.Result);
+        Assert.Equal(userDto, result.Dto);
     }
 
     [Theory]
-    [MemberData(nameof(GetUserAndPatchModel), parameters: false)]
-    public void PatchUser_WithIdInPatchModel_ThrowsArgumentException(UserDto User, List<PatchModel> patchlist)
+    [MemberData(nameof(GetData), parameters: 1)]
+    public void PatchUser_WhenUserDoesNotExist(Guid userId, UserDto userDto)
     {
+        _mediatrMock.SetupSequence(mediator => mediator.Send(
+            It.IsAny<GetUserByIdQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ArgumentNullException(nameof(userId)));
+
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<PatchUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new UsersService(_mapper, _mediatrMock.Object);
 
-        Assert.ThrowsAsync<ArgumentException>(async () => await service.PatchUserAsync(User, patchlist));
+        Assert.ThrowsAsync<ArgumentNullException>(async () => await service.PatchUserAsync(userId, userDto));
     }
 
-    public static IEnumerable<object[]> GetUserAndPatchModel(bool valid)
+    public static IEnumerable<object[]> GetData(int index)
     {
-        var allDrugs = new List<object[]>()
+        var allSeeds = new List<object[]>()
         {
             new object[]
             {
+                Guid.NewGuid(),
                 new UserDto()
                 {
                     Id = Guid.NewGuid(),
                     Login = "Login",
-                    Password = "Password"
+                    Password = "Password",
+                    Fullname = "Old name"
                 },
-                new List<PatchModel>()
+                new UserDto()
                 {
-                    new PatchModel()
-                    {
-                        PropertyName = "Login",
-                        PropertyValue = "New login",
-                    },
-                }
+                    Id = Guid.NewGuid(),
+                    Login = "Login",
+                    Password = "Password",
+                    Fullname = "New name"
+                },
             },
             new object[]
             {
+                Guid.NewGuid(),
                 new UserDto()
                 {
                     Id = Guid.NewGuid(),
                     Login = "Login",
-                    Password = "Password"
+                    Password = "Password",
+                    Fullname = "Old name"
                 },
-                new List<PatchModel>()
-                {
-                    new PatchModel()
-                    {
-                        PropertyName = "Id",
-                        PropertyValue = Guid.NewGuid(),
-                    },
-                }
-            }
+            },
         };
 
-        return valid ? allDrugs.Take(1) : allDrugs.TakeLast(1);
+        return allSeeds.Where((_, i) => i == index);
     }
 }

@@ -25,9 +25,9 @@ public class UsersController : ControllerBase
 
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)] 
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetUserById(Guid userId)
+    public async Task<IActionResult> Details(Guid userId)
     {
         try
         {
@@ -57,7 +57,7 @@ public class UsersController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new user",
+                Message = "Could not find user",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -68,7 +68,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateUser(UserRequestModel userModel)
+    public async Task<IActionResult> Register([FromBody] UserRequestModel userModel)
     {
         try
         {
@@ -83,6 +83,88 @@ public class UsersController : ControllerBase
             else
             {
                 return BadRequest("Could not register new user");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                $"{Environment.NewLine} {Environment.NewLine} " +
+                $"{ex.StackTrace} " +
+                $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not register new user",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
+    [HttpPatch("{id}")]
+    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(UserRequestModel), StatusCodes.Status304NotModified)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Patch(Guid userId, [FromBody] UserRequestModel userModel)
+    {
+        try
+        {
+            if (userId == Guid.Empty)
+            {
+                BadRequest();
+            }
+
+            var userDto = _mapper.Map<UserDto>(userModel);
+            var patchedResult = await _usersService.PatchUserAsync(userId, userDto);
+
+            if (patchedResult.Result == OperationResult.Success)
+            {
+                var responseModel = _mapper.Map<UserResponseModel>(patchedResult.Dto);
+                return Ok(responseModel);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status304NotModified, userModel);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                $"{Environment.NewLine} {Environment.NewLine} " +
+                $"{ex.StackTrace} " +
+                $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not register new user",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Delete(Guid userId)
+    {
+        try
+        {
+            if (userId == Guid.Empty)
+            {
+                BadRequest();
+            }
+
+            var deleteResult = await _usersService.DeleteUserAsync(userId);
+
+            if (deleteResult.Result == OperationResult.Success)
+            {
+                var responseModel = _mapper.Map<UserResponseModel>(deleteResult.Dto);
+                return Ok(responseModel);
+            }
+            else
+            {
+                return BadRequest();
             }
         }
         catch (Exception ex)

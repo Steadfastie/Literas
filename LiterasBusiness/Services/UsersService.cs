@@ -36,11 +36,6 @@ public class UsersService : IUsersService
 
     public async Task<CrudResult<UserDto>> CreateUserAsync(UserDto userDto)
     {
-        if (userDto == null)
-        {
-            throw new ArgumentNullException(nameof(userDto));
-        }
-
         Guid userId;
         if (userDto.Id == Guid.Empty)
         {
@@ -72,43 +67,47 @@ public class UsersService : IUsersService
         }
     }
 
-    public async Task<int> PatchUserAsync(UserDto userDto, List<PatchModel> patchlist)
+    public async Task<CrudResult<UserDto>> PatchUserAsync(Guid userId, UserDto userDto)
     {
-        var patchModelsWithId = patchlist
-            .Where(l => l.PropertyName
-                .Equals("Id", StringComparison.InvariantCultureIgnoreCase));
-
-        if (patchModelsWithId.Any())
+        var sourceDto = await _mediator.Send(new GetUserByIdQuery() { Id = userId });
+        if (sourceDto == null)
         {
-            throw new ArgumentException("Id cannot be changed");
+            throw new ArgumentNullException(nameof(userId), "User with provided id does not exist");
         }
 
-        if (userDto != null)
+        var patchList = PatchModelCreator<UserDto>.Generate(sourceDto, userDto);
+
+        if (patchList.Any())
         {
-            return await _mediator.Send(new PatchUserCommand()
+            await _mediator.Send(new PatchUserCommand()
             {
                 User = userDto,
-                PatchList = patchlist
+                PatchList = patchList
             });
+
+            var updated = await _mediator.Send(new GetUserByIdQuery() { Id = userId });
+
+            return new CrudResult<UserDto>(updated);
         }
         else
         {
-            throw new ArgumentNullException(nameof(UserDto));
+            return new CrudResult<UserDto>();
         }
     }
 
-    public async Task<int> DeleteUserAsync(UserDto UserDto)
+    public async Task<CrudResult<UserDto>> DeleteUserAsync(Guid userId)
     {
-        if (UserDto != null)
+        var sourceDto = await _mediator.Send(new GetUserByIdQuery() { Id = userId });
+        if (sourceDto == null)
         {
-            return await _mediator.Send(new DeleteUserCommand()
-            {
-                User = UserDto
-            });
+            throw new ArgumentNullException(nameof(userId), "User with provided id does not exist");
         }
-        else
+
+        await _mediator.Send(new DeleteUserCommand()
         {
-            throw new ArgumentNullException(nameof(UserDto));
-        }
+            User = sourceDto
+        });
+
+        return new CrudResult<UserDto>(sourceDto);
     }
 }
