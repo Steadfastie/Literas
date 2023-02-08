@@ -1,12 +1,6 @@
 ﻿using LiterasBusiness;
 using LiterasDataTransfer.Dto;
 using LiterasModels.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace TestsLiteras.Static;
 
@@ -29,11 +23,16 @@ public class PatchModelCreatorTests
         Assert.Throws<ArgumentException>(() => PatchModelCreator<IBaseDto>.Generate(source, changed));
     }
 
+    /// <summary>
+    /// This method is used to provide test method with data. Look through the data below to pick.
+    /// </summary>
+    /// <param name="index">Index of array of object</param>
+    /// <param name="count">How many of them to take</param>
     public static IEnumerable<object[]> GetData(int index, int count = 1)
     {
         var allSeeds = new List<object[]>()
         {
-            // UserDtos with different values
+            // 1. UserDtos with different values
             new object[]
             {
                 new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
@@ -41,7 +40,7 @@ public class PatchModelCreatorTests
                 1
             },
 
-            // UserDtos with same values
+            // 2. UserDtos with same values
             new object[]
             {
                 new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
@@ -49,7 +48,7 @@ public class PatchModelCreatorTests
                 0
             },
 
-            // UserDtos with source null values
+            // 3. UserDtos with source null values
             new object[]
             {
                 new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
@@ -57,7 +56,7 @@ public class PatchModelCreatorTests
                 1
             },
 
-            // UserDtos with null values in changed
+            // 4. UserDtos with null values in changed
             new object[]
             {
                 new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name"},
@@ -65,7 +64,7 @@ public class PatchModelCreatorTests
                 0
             },
 
-            // DocumentDtos with different values
+            // 5. DocumentDtos with different values
             new object[]
             {
                 new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
@@ -73,7 +72,7 @@ public class PatchModelCreatorTests
                 1
             },
 
-            // DocumentDtos with different ids
+            // 6. DocumentDtos with different ids
             new object[]
             {
                 new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
@@ -81,7 +80,7 @@ public class PatchModelCreatorTests
                 2
             },
 
-            // DocumentDtos with UserDtos
+            // 7. DocumentDtos with UserDtos
             new object[]
             {
                 new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },

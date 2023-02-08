@@ -24,8 +24,7 @@ public class UsersProfile : Profile
 
         CreateMap<UserDto, UserResponseModel>()
            .ForCtorParam("login", opt => opt.MapFrom(dto => dto.Login))
-           .ForCtorParam("fullname", opt => opt.MapFrom(dto => dto.Fullname))
-           .ForMember(model => model.Login, opt => opt.MapFrom(dto => dto.Login));
+           .ForCtorParam("fullname", opt => opt.MapFrom(dto => dto.Fullname));
 
         CreateMap<UserRequestModel, UserDto>()
            .ForMember(dto => dto.Login, opt => opt.MapFrom(model => model.Login))
