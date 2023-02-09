@@ -1,20 +1,22 @@
 ﻿using AutoMapper;
 using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
+using LiterasModels.Requests;
 using LiterasModels.Responses;
+using LiterasModels.System;
 using LiterasWebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace TestsLiteras.Controllers.Users;
 
-public class GetTests
+public class DeleteTests
 {
     private readonly IMapper _mapper;
     private readonly Mock<IUsersService> _usersServiceMock;
     private readonly Mock<IContributorsService> _contributorsServiceMock;
 
-    public GetTests(IMapper mapper)
+    public DeleteTests(IMapper mapper)
     {
         _mapper = mapper;
         _usersServiceMock = new Mock<IUsersService>();
@@ -23,14 +25,15 @@ public class GetTests
 
     [Theory]
     [MemberData(nameof(GetData), 0, 1)]
-    public async Task Get_Returns200WithModel_WhenIdValid(Guid userId, UserDto userDto)
+    public async Task Delete_Returns200WithModel_WhenIdValid(
+        Guid userId, CrudResult<UserDto> operationResult)
     {
-        _usersServiceMock.Setup(service => service.GetUserByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(userDto);
+        _usersServiceMock.Setup(service => service.DeleteUserAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(operationResult);
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
-        var response = await usersContoller.Details(userId);
-        var responseModel = _mapper.Map<UserResponseModel>(userDto);
+        var response = await usersContoller.Delete(userId);
+        var responseModel = _mapper.Map<UserResponseModel>(operationResult.Dto);
 
         Assert.NotNull(response);
         Assert.IsType<OkObjectResult>(response);
@@ -43,13 +46,13 @@ public class GetTests
 
     [Theory]
     [MemberData(nameof(GetData), 1, 1)]
-    public async Task Get_Returns400_WhenIdEmpty(Guid userId)
+    public async Task Delete_Returns400_WhenIdEmpty(Guid userId)
     {
-        _usersServiceMock.Setup(service => service.GetUserByIdAsync(It.IsAny<Guid>()))!
-            .ReturnsAsync(new UserDto());
+        _usersServiceMock.Setup(service => service.DeleteUserAsync(It.IsAny<Guid>()))!
+            .ReturnsAsync(null as CrudResult<UserDto>);
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
-        var response = await usersContoller.Details(userId);
+        var response = await usersContoller.Delete(userId);
 
         Assert.NotNull(response);
         Assert.IsType<BadRequestResult>(response);
@@ -57,27 +60,29 @@ public class GetTests
 
     [Theory]
     [MemberData(nameof(GetData), 2, 1)]
-    public async Task Get_Returns404_WhenUserDoesNotExist(Guid userId)
+    public async Task Delete_Returns400WithMessage_WhenDeleteIsUnsuccessful(
+        Guid userId, CrudResult<UserDto> operationResult)
     {
-        _usersServiceMock.Setup(service => service.GetUserByIdAsync(It.IsAny<Guid>()))!
-            .ReturnsAsync(null as UserDto);
+        _usersServiceMock.Setup(service => service.DeleteUserAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(operationResult);
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
-        var response = await usersContoller.Details(userId);
+        var response = await usersContoller.Delete(userId);
 
         Assert.NotNull(response);
-        Assert.IsType<NotFoundResult>(response);
+        Assert.IsType<BadRequestObjectResult>(response);
+        Assert.NotNull((response as BadRequestObjectResult)?.Value);
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 2, 1)]
-    public async Task Get_Returns500_OnException(Guid userId)
+    [MemberData(nameof(GetData), 3, 1)]
+    public async Task Delete_Returns500_OnException(Guid userId)
     {
-        _usersServiceMock.Setup(service => service.GetUserByIdAsync(It.IsAny<Guid>()))!
+        _usersServiceMock.Setup(service => service.DeleteUserAsync(It.IsAny<Guid>()))
             .ThrowsAsync(new Exception());
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
-        var response = await usersContoller.Details(userId) as ObjectResult;
+        var response = await usersContoller.Delete(userId) as ObjectResult;
 
         Assert.NotNull(response);
         Assert.IsType<ProblemDetails>(response.Value);
@@ -94,23 +99,35 @@ public class GetTests
     {
         var allSeeds = new List<object[]>()
         {
-            // 1. Details with valid id
+            // 1. Delete with valid input
             new object[]
             {
                 Guid.NewGuid(),
-                new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" }
+                new CrudResult<UserDto>() {
+                    Dto = new UserDto() { Login = "Login", Password = "Password", Fullname = "New name" },
+                    Result = OperationResult.Success
+                },
             },
 
-            // 2. Details with empty id
+            // 2. Delete with empty id
             new object[]
             {
-                Guid.Empty
+                Guid.Empty,
             },
 
-            // 3. Details with empty dto
+            // 3. Delete with spoiled operation
             new object[]
             {
-                Guid.NewGuid()
+                Guid.NewGuid(),
+                new CrudResult<UserDto>() {
+                    Result = OperationResult.Failure
+                },
+            },
+
+            // 4. Delete with error
+            new object[]
+            {
+                Guid.NewGuid(),
             },
         };
 

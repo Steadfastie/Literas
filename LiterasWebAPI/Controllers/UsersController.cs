@@ -111,7 +111,7 @@ public class UsersController : ControllerBase
         {
             if (userId == Guid.Empty)
             {
-                BadRequest();
+                return BadRequest();
             }
 
             var userDto = _mapper.Map<UserDto>(userModel);
@@ -152,7 +152,7 @@ public class UsersController : ControllerBase
         {
             if (userId == Guid.Empty)
             {
-                BadRequest();
+                return BadRequest();
             }
 
             var deleteResult = await _usersService.DeleteUserAsync(userId);
@@ -164,7 +164,7 @@ public class UsersController : ControllerBase
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Operation unsuccessful");
             }
         }
         catch (Exception ex)
