@@ -23,9 +23,9 @@ builder.Services.AddDbContext<NotesDBContext>(options =>
 
 builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
 
-builder.Services.AddScoped<IDocumentsService, DocumentsService>();
+builder.Services.AddScoped<IDocsService, DocsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<IContributorsService, ContributorsService>();
+builder.Services.AddScoped<IEditorsService, EditorsService>();
 
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(typeof(GetUserByIdQuery).Assembly);

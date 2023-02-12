@@ -22,28 +22,7 @@ namespace LiterasData.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LiterasData.Entities.Contributor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DocumentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Contributors");
-                });
-
-            modelBuilder.Entity("LiterasData.Entities.Document", b =>
+            modelBuilder.Entity("LiterasData.Entities.Doc", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +41,28 @@ namespace LiterasData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Docs");
+                });
+
+            modelBuilder.Entity("LiterasData.Entities.Editor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DocId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Editors");
                 });
 
             modelBuilder.Entity("LiterasData.Entities.User", b =>
@@ -87,11 +87,11 @@ namespace LiterasData.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("LiterasData.Entities.Contributor", b =>
+            modelBuilder.Entity("LiterasData.Entities.Editor", b =>
                 {
-                    b.HasOne("LiterasData.Entities.Document", "Document")
+                    b.HasOne("LiterasData.Entities.Doc", "Doc")
                         .WithMany()
-                        .HasForeignKey("DocumentId")
+                        .HasForeignKey("DocId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -101,7 +101,7 @@ namespace LiterasData.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Document");
+                    b.Navigation("Doc");
 
                     b.Navigation("User");
                 });

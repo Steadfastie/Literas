@@ -9,38 +9,38 @@ using Serilog;
 
 namespace LiterasWebAPI.Controllers;
 
-[Route("users")]
-public class UsersController : ControllerBase
+[Route("docs")]
+public class DocsController : ControllerBase
 {
-    private readonly IUsersService _usersService;
+    private readonly IDocsService _docsService;
     private readonly IEditorsService _contributorsService;
     private readonly IMapper _mapper;
 
-    public UsersController(IUsersService usersService, IMapper mapper, IEditorsService contributorsService)
+    public DocsController(IDocsService docsService, IMapper mapper, IEditorsService contributorsService)
     {
-        _usersService = usersService;
+        _docsService = docsService;
         _mapper = mapper;
         _contributorsService = contributorsService;
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Details(Guid userId)
+    public async Task<IActionResult> Details(Guid docId)
     {
         try
         {
-            if (userId == Guid.Empty)
+            if (docId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var userDto = await _usersService.GetUserByIdAsync(userId);
+            var docDto = await _docsService.GetDocByIdAsync(docId);
 
-            if (userDto != null)
+            if (docDto != null)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(userDto);
+                var responseModel = _mapper.Map<DocResponseModel>(docDto);
 
                 return Ok(responseModel);
             }
@@ -57,7 +57,7 @@ public class UsersController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not find user",
+                Message = "Could not find doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -65,24 +65,24 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Register([FromBody] UserRequestModel userModel)
+    public async Task<IActionResult> Register([FromBody] DocRequestModel docModel)
     {
         try
         {
-            var userDto = _mapper.Map<UserDto>(userModel);
-            var creationResult = await _usersService.CreateUserAsync(userDto);
+            var docDto = _mapper.Map<DocDto>(docModel);
+            var creationResult = await _docsService.CreateDocAsync(docDto);
 
             if (creationResult.Result == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(creationResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(creationResult.Dto);
                 return Ok(responseModel);
             }
             else
             {
-                return BadRequest("Could not register new user");
+                return BadRequest("Could not register new doc");
             }
         }
         catch (Exception ex)
@@ -93,7 +93,7 @@ public class UsersController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new user",
+                Message = "Could not register new doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -101,30 +101,30 @@ public class UsersController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(UserRequestModel), StatusCodes.Status304NotModified)]
+    [ProducesResponseType(typeof(DocRequestModel), StatusCodes.Status304NotModified)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Patch(Guid userId, [FromBody] UserRequestModel userModel)
+    public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel)
     {
         try
         {
-            if (userId == Guid.Empty)
+            if (docId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var userDto = _mapper.Map<UserDto>(userModel);
-            var patchedResult = await _usersService.PatchUserAsync(userId, userDto);
+            var docDto = _mapper.Map<DocDto>(docModel);
+            var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
 
             if (patchedResult.Result == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(patchedResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Dto);
                 return Ok(responseModel);
             }
             else
             {
-                return StatusCode(StatusCodes.Status304NotModified, userModel);
+                return StatusCode(StatusCodes.Status304NotModified, docModel);
             }
         }
         catch (Exception ex)
@@ -135,7 +135,7 @@ public class UsersController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new user",
+                Message = "Could not register new doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -143,23 +143,23 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(Guid userId)
+    public async Task<IActionResult> Delete(Guid docId)
     {
         try
         {
-            if (userId == Guid.Empty)
+            if (docId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var deleteResult = await _usersService.DeleteUserAsync(userId);
+            var deleteResult = await _docsService.DeleteDocAsync(docId);
 
             if (deleteResult.Result == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(deleteResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Dto);
                 return Ok(responseModel);
             }
             else
@@ -175,7 +175,7 @@ public class UsersController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new user",
+                Message = "Could not register new doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);

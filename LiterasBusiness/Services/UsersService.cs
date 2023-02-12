@@ -5,6 +5,7 @@ using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.System;
 using MediatR;
+using System.Reflection;
 
 namespace LiterasBusiness.Services;
 
@@ -72,10 +73,15 @@ public class UsersService : IUsersService
         var sourceDto = await _mediator.Send(new GetUserByIdQuery() { Id = userId });
         if (sourceDto == null)
         {
-            throw new ArgumentNullException(nameof(userId), "User with provided id does not exist");
+            throw new ArgumentException("User with provided id does not exist", nameof(userId));
         }
 
-        var patchList = PatchModelCreator<UserDto>.Generate(sourceDto, userDto);
+        PropertyInfo[] ignoreFields = new PropertyInfo[]
+        {
+            userDto.GetType().GetProperty("Id")!,
+        };
+
+        var patchList = PatchModelCreator<UserDto>.Generate(sourceDto, userDto, ignoreFields);
 
         if (patchList.Any())
         {

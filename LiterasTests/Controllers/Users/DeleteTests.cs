@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
-using LiterasModels.Requests;
 using LiterasModels.Responses;
 using LiterasModels.System;
 using LiterasWebAPI.Controllers;
@@ -14,13 +13,13 @@ public class DeleteTests
 {
     private readonly IMapper _mapper;
     private readonly Mock<IUsersService> _usersServiceMock;
-    private readonly Mock<IContributorsService> _contributorsServiceMock;
+    private readonly Mock<IEditorsService> _contributorsServiceMock;
 
     public DeleteTests(IMapper mapper)
     {
         _mapper = mapper;
         _usersServiceMock = new Mock<IUsersService>();
-        _contributorsServiceMock = new Mock<IContributorsService>();
+        _contributorsServiceMock = new Mock<IEditorsService>();
     }
 
     [Theory]

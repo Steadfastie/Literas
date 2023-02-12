@@ -6,7 +6,7 @@ namespace LiterasBusiness;
 
 public static class PatchModelCreator<T> where T : IBaseDto
 {
-    public static List<PatchModel> Generate(T source, T changed)
+    public static List<PatchModel> Generate(T source, T changed, PropertyInfo[]? ignoreList = null)
     {
         if (source.GetType() != changed.GetType())
         {
@@ -17,7 +17,7 @@ public static class PatchModelCreator<T> where T : IBaseDto
 
         foreach (PropertyInfo property in source.GetType().GetProperties())
         {
-            if (property.Name == "Id")
+            if (ignoreList?.Contains(property) == true)
             {
                 continue;
             }

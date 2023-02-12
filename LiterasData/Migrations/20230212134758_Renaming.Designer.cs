@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiterasData.Migrations
 {
     [DbContext(typeof(NotesDBContext))]
-    [Migration("20230130164829_initial")]
-    partial class initial
+    [Migration("20230212134758_Renaming")]
+    partial class Renaming
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,27 +24,6 @@ namespace LiterasData.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LiterasData.Entities.Editor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DocId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Editors");
-                });
 
             modelBuilder.Entity("LiterasData.Entities.Doc", b =>
                 {
@@ -66,6 +45,27 @@ namespace LiterasData.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Docs");
+                });
+
+            modelBuilder.Entity("LiterasData.Entities.Editor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DocId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Editors");
                 });
 
             modelBuilder.Entity("LiterasData.Entities.User", b =>

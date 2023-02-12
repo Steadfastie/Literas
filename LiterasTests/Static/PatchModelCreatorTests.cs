@@ -1,13 +1,14 @@
 ﻿using LiterasBusiness;
 using LiterasDataTransfer.Dto;
 using LiterasModels.Abstractions;
+using System.Reflection;
 
 namespace TestsLiteras.Static;
 
 public class PatchModelCreatorTests
 {
     [Theory]
-    [MemberData(nameof(GetData), 0, 6)]
+    [MemberData(nameof(GetData), 0, 5)]
     public void Generate_WithDifferentValues(IBaseDto source, IBaseDto changed, int modelAmount)
     {
         var modelList = PatchModelCreator<IBaseDto>.Generate(source, changed);
@@ -17,10 +18,21 @@ public class PatchModelCreatorTests
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 6, 1)]
+    [MemberData(nameof(GetData), 5, 1)]
     public void Generate_WithDifferentTypes(IBaseDto source, IBaseDto changed)
     {
         Assert.Throws<ArgumentException>(() => PatchModelCreator<IBaseDto>.Generate(source, changed));
+    }
+
+    [Theory]
+    [MemberData(nameof(GetData), 6, 2)]
+    public void Generate_WithIgnoredProperties(
+        IBaseDto source, IBaseDto changed, PropertyInfo[] ignoredProperties, int modelAmount)
+    {
+        var modelList = PatchModelCreator<IBaseDto>.Generate(source, changed, ignoredProperties);
+
+        Assert.NotNull(modelList);
+        Assert.Equal(modelAmount, modelList.Count);
     }
 
     /// <summary>
@@ -64,27 +76,46 @@ public class PatchModelCreatorTests
                 0
             },
 
-            // 5. DocumentDtos with different values
+            // 5. DocDtos with different values
             new object[]
             {
-                new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
-                new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Different content" },
+                new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+                new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Different content" },
                 1
             },
 
-            // 6. DocumentDtos with different ids
+            // 6. DocDtos with UserDtos
             new object[]
             {
-                new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
-                new DocumentDto() { Id = Guid.NewGuid(), CreatorId = Guid.Empty, Title = "Different title", Content = "Different content" },
+                new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+                new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
+            },
+
+            // 7. DocDtos with list of ignored properties
+            new object[]
+            {
+                new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+                new DocDto() { Id = Guid.NewGuid(), CreatorId = Guid.NewGuid(), Title = "New title", Content = "New content" },
+                new PropertyInfo[]
+                {
+                    typeof(DocDto).GetProperty("Id")!,
+                    typeof(DocDto).GetProperty("CreatorId")!
+                },
                 2
             },
 
-            // 7. DocumentDtos with UserDtos
+            // 8. DocDtos with spoiled list of ignored properties
             new object[]
             {
-                new DocumentDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
-                new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
+                new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+                new DocDto() { Id = Guid.NewGuid(), CreatorId = Guid.NewGuid(), Title = "New title", Content = "New content" },
+                new PropertyInfo[]
+                {
+                    typeof(DocDto).GetProperty("Id")!,
+                    typeof(DocDto).GetProperty("CreatorId")!,
+                    typeof(UserDto).GetProperty("Fullname")!
+                },
+                2
             },
         };
 

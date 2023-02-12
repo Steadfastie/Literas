@@ -14,13 +14,13 @@ public class PatchTests
 {
     private readonly IMapper _mapper;
     private readonly Mock<IUsersService> _usersServiceMock;
-    private readonly Mock<IContributorsService> _contributorsServiceMock;
+    private readonly Mock<IEditorsService> _contributorsServiceMock;
 
     public PatchTests(IMapper mapper)
     {
         _mapper = mapper;
         _usersServiceMock = new Mock<IUsersService>();
-        _contributorsServiceMock = new Mock<IContributorsService>();
+        _contributorsServiceMock = new Mock<IEditorsService>();
     }
 
     [Theory]

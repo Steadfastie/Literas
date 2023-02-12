@@ -12,13 +12,13 @@ public class GetTests
 {
     private readonly IMapper _mapper;
     private readonly Mock<IUsersService> _usersServiceMock;
-    private readonly Mock<IContributorsService> _contributorsServiceMock;
+    private readonly Mock<IEditorsService> _contributorsServiceMock;
 
     public GetTests(IMapper mapper)
     {
         _mapper = mapper;
         _usersServiceMock = new Mock<IUsersService>();
-        _contributorsServiceMock = new Mock<IContributorsService>();
+        _contributorsServiceMock = new Mock<IEditorsService>();
     }
 
     [Theory]
