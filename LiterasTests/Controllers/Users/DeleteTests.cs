@@ -32,7 +32,7 @@ public class DeleteTests
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
         var response = await usersContoller.Delete(userId);
-        var responseModel = _mapper.Map<UserResponseModel>(operationResult.Dto);
+        var responseModel = _mapper.Map<UserResponseModel>(operationResult.Result);
 
         Assert.NotNull(response);
         Assert.IsType<OkObjectResult>(response);
@@ -103,8 +103,8 @@ public class DeleteTests
             {
                 Guid.NewGuid(),
                 new CrudResult<UserDto>() {
-                    Dto = new UserDto() { Login = "Login", Password = "Password", Fullname = "New name" },
-                    Result = OperationResult.Success
+                    Result = new UserDto() { Login = "Login", Password = "Password", Fullname = "New name" },
+                    ResultStatus = OperationResult.Success
                 },
             },
 
@@ -119,7 +119,7 @@ public class DeleteTests
             {
                 Guid.NewGuid(),
                 new CrudResult<UserDto>() {
-                    Result = OperationResult.Failure
+                    ResultStatus = OperationResult.Failure
                 },
             },
 

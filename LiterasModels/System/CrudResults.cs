@@ -2,19 +2,19 @@
 
 namespace LiterasModels.System;
 
-public class CrudResult<T> where T : IBaseDto
+public class CrudResults<T> where T : IEnumerable<IBaseDto>
 {
-    public T? Result { get; set; }
+    public T? Results { get; set; }
     public OperationResult ResultStatus { get; set; }
 
-    public CrudResult()
+    public CrudResults()
     {
         ResultStatus = OperationResult.Failure;
     }
 
-    public CrudResult(T result)
+    public CrudResults(T results)
     {
-        Result = result;
+        Results = results;
         ResultStatus = OperationResult.Success;
     }
 }

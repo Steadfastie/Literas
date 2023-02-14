@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using LiterasCQS.Commands.Editors;
+using LiterasCQS.Queries.Docs;
 using LiterasCQS.Queries.Editors;
+using LiterasCQS.Queries.Users;
 using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
+using LiterasModels.System;
 using MediatR;
 
 namespace LiterasBusiness.Services;
@@ -18,78 +21,100 @@ public class EditorsService : IEditorsService
         _mediator = mediator;
     }
 
-    public async Task<EditorDto> GetEditorByIdAsync(Guid EditorId)
+    public async Task<CrudResult<EditorDto>> GetEditorByIdAsync(Guid editorId)
     {
-        if (EditorId != Guid.Empty)
+        if (editorId == Guid.Empty)
         {
-            return await _mediator.Send(new GetEditorByIdQuery()
-            {
-                Id = EditorId
-            });
+            throw new ArgumentException(
+                $"Provided ID (..{editorId.ToString()[^5..]}) is empty");
         }
-        else
+
+        var editorDto = await _mediator.Send(new GetEditorByIdQuery()
         {
-            throw new ArgumentException("Provided id is empty");
-        }
+            Id = editorId
+        });
+
+        return new CrudResult<EditorDto>(editorDto);
     }
 
-    public async Task<IEnumerable<DocDto>> GetDocsByUserIdAsync(Guid userId)
+    public async Task<CrudResults<IEnumerable<DocDto>>> GetDocsByUserIdAsync(Guid userId)
     {
         if (userId != Guid.Empty)
         {
-            return await _mediator.Send(new GetDocsByUserIdQuery()
-            {
-                UserId = userId
-            });
+            throw new ArgumentException($"User ID (..{userId.ToString()[^5..]}) is empty");
         }
-        else
+
+        var docsDtos = await _mediator.Send(new GetDocsByUserIdQuery()
         {
-            throw new ArgumentException("User id is empty");
-        }
+            UserId = userId
+        });
+
+        return docsDtos.Any()
+            ? new CrudResults<IEnumerable<DocDto>>(docsDtos)
+            : new CrudResults<IEnumerable<DocDto>>();
     }
 
-    public async Task<IEnumerable<UserDto>> GetUsersByDocIdAsync(Guid documentId)
+    public async Task<CrudResults<IEnumerable<UserDto>>> GetUsersByDocIdAsync(Guid docId)
     {
-        if (documentId != Guid.Empty)
+        if (docId != Guid.Empty)
         {
-            return await _mediator.Send(new GetUsersByDocIdQuery()
-            {
-                DocId = documentId
-            });
+            throw new ArgumentException(
+                $"Doc ID (..{docId.ToString()[^5..]}) is empty");
         }
-        else
+
+        var usersDtos = await _mediator.Send(new GetUsersByDocIdQuery()
         {
-            throw new ArgumentException("Doc id is empty");
-        }
+            DocId = docId
+        });
+
+        return usersDtos.Any()
+            ? new CrudResults<IEnumerable<UserDto>>(usersDtos)
+            : new CrudResults<IEnumerable<UserDto>>();
     }
 
-    public async Task<int> CreateEditorAsync(EditorDto EditorDto)
+    public async Task<CrudResult<EditorDto>> CreateEditorAsync(EditorDto editorDto)
     {
-        if (EditorDto != null)
+        var userDto = await _mediator.Send(new GetUserByIdQuery() { Id = editorDto.UserId });
+        var docDto = await _mediator.Send(new GetDocByIdQuery() { Id = editorDto.DocId });
+
+        if (userDto == null)
         {
-            return await _mediator.Send(new CreateEditorCommand()
-            {
-                Editor = EditorDto
-            });
+            throw new ArgumentException(
+            $"User's ID (..{editorDto.UserId.ToString()[^5..]}) is invalid");
         }
-        else
+
+        if (docDto == null)
         {
-            throw new ArgumentNullException(nameof(EditorDto));
+            throw new ArgumentException(
+            $"Doc's ID (..{editorDto.DocId.ToString()[^5..]}) is invalid");
         }
+
+        if (editorDto.Id == Guid.Empty) editorDto.Id = Guid.NewGuid();
+
+        var saveChangesResult = await _mediator.Send(new CreateEditorCommand()
+        {
+            Editor = editorDto
+        });
+
+        return saveChangesResult == 1
+            ? new CrudResult<EditorDto>(editorDto)
+            : new CrudResult<EditorDto>();
     }
 
-    public async Task<int> DeleteEditorAsync(EditorDto EditorDto)
+    public async Task<CrudResult<EditorDto>> DeleteEditorAsync(Guid editorId)
     {
-        if (EditorDto != null)
+        var sourceDto = await _mediator.Send(new GetEditorByIdQuery() { Id = editorId });
+        if (sourceDto == null)
         {
-            return await _mediator.Send(new DeleteEditorCommand()
-            {
-                Editor = EditorDto
-            });
+            throw new ArgumentException(
+                $"Editor's ID {editorId.ToString()[^5..]}) is invalid");
         }
-        else
-        {
-            throw new ArgumentNullException(nameof(EditorDto));
-        }
+
+        var saveChangesResult = await _mediator.Send(
+            new DeleteEditorCommand() { Editor = sourceDto });
+
+        return saveChangesResult == 1
+            ? new CrudResult<EditorDto>(sourceDto)
+            : new CrudResult<EditorDto>();
     }
 }

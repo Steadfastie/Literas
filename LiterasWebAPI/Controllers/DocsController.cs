@@ -38,16 +38,11 @@ public class DocsController : ControllerBase
 
             var docDto = await _docsService.GetDocByIdAsync(docId);
 
-            if (docDto != null)
-            {
-                var responseModel = _mapper.Map<DocResponseModel>(docDto);
+            if (docDto.Result == null) return NotFound();
 
-                return Ok(responseModel);
-            }
-            else
-            {
-                return NotFound();
-            }
+            var responseModel = _mapper.Map<DocResponseModel>(docDto);
+
+            return Ok(responseModel);
         }
         catch (Exception ex)
         {
@@ -55,6 +50,42 @@ public class DocsController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine} " +
                 $"{ex.StackTrace} " +
                 $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not find doc",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
+    [HttpGet("{id}/editors")]
+    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAllEditors(Guid docId)
+    {
+        try
+        {
+            if (docId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var docDto = await _contributorsService.GetUsersByDocIdAsync(docId);
+
+            if (docDto == null) return NotFound();
+
+            var responseModel = _mapper.Map<DocResponseModel>(docDto);
+
+            return Ok(responseModel);
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                      $"{Environment.NewLine} {Environment.NewLine} " +
+                      $"{ex.StackTrace} " +
+                      $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
                 Message = "Could not find doc",
@@ -75,9 +106,9 @@ public class DocsController : ControllerBase
             var docDto = _mapper.Map<DocDto>(docModel);
             var creationResult = await _docsService.CreateDocAsync(docDto);
 
-            if (creationResult.Result == OperationResult.Success)
+            if (creationResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<DocResponseModel>(creationResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
                 return Ok(responseModel);
             }
             else
@@ -117,9 +148,9 @@ public class DocsController : ControllerBase
             var docDto = _mapper.Map<DocDto>(docModel);
             var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
 
-            if (patchedResult.Result == OperationResult.Success)
+            if (patchedResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
                 return Ok(responseModel);
             }
             else
@@ -157,9 +188,9 @@ public class DocsController : ControllerBase
 
             var deleteResult = await _docsService.DeleteDocAsync(docId);
 
-            if (deleteResult.Result == OperationResult.Success)
+            if (deleteResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Dto);
+                var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
                 return Ok(responseModel);
             }
             else

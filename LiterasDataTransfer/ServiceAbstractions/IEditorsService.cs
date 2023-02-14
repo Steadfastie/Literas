@@ -1,16 +1,17 @@
 ﻿using LiterasDataTransfer.Dto;
+using LiterasModels.System;
 
 namespace LiterasDataTransfer.ServiceAbstractions;
 
 public interface IEditorsService
 {
-    Task<int> CreateEditorAsync(EditorDto EditorDto);
+    Task<CrudResult<EditorDto>> CreateEditorAsync(EditorDto editorDto);
 
-    Task<int> DeleteEditorAsync(EditorDto EditorDto);
+    Task<CrudResult<EditorDto>> DeleteEditorAsync(Guid editorId);
 
-    Task<EditorDto> GetEditorByIdAsync(Guid EditorId);
+    Task<CrudResult<EditorDto>> GetEditorByIdAsync(Guid editorId);
 
-    Task<IEnumerable<DocDto>> GetDocsByUserIdAsync(Guid userId);
+    Task<CrudResults<IEnumerable<DocDto>>> GetDocsByUserIdAsync(Guid userId);
 
-    Task<IEnumerable<UserDto>> GetUsersByDocIdAsync(Guid documentId);
+    Task<CrudResults<IEnumerable<UserDto>>> GetUsersByDocIdAsync(Guid documentId);
 }

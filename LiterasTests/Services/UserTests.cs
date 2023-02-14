@@ -36,9 +36,9 @@ public class UserTests
         var result = await service.CreateUserAsync(userDto);
 
         Assert.IsType<CrudResult<UserDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(userDto, result.Dto);
-        Assert.Equal(userDto.Id, result.Dto!.Id);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(userDto, result.Result);
+        Assert.Equal(userDto.Id, result.Result!.Id);
     }
 
     [Theory]
@@ -57,9 +57,9 @@ public class UserTests
         var result = await service.CreateUserAsync(userDto);
 
         Assert.IsType<CrudResult<UserDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(userDto, result.Dto);
-        Assert.NotEqual(Guid.Empty, result.Dto!.Id);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(userDto, result.Result);
+        Assert.NotEqual(Guid.Empty, result.Result!.Id);
     }
 
     [Theory]
@@ -79,8 +79,8 @@ public class UserTests
         var result = await service.PatchUserAsync(userId, userDto);
 
         Assert.IsType<CrudResult<UserDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(userDto, result.Dto);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(userDto, result.Result);
     }
 
     [Theory]
@@ -116,8 +116,8 @@ public class UserTests
         var result = await service.DeleteUserAsync(userId);
 
         Assert.IsType<CrudResult<UserDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(sourceDto, result.Dto);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(sourceDto, result.Result);
     }
 
     [Theory]

@@ -5,7 +5,6 @@ using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.System;
 using MediatR;
-using System.Reflection;
 
 namespace LiterasBusiness.Services;
 
@@ -22,74 +21,52 @@ public class DocsService : IDocsService
 
     public async Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId)
     {
-        if (docId != Guid.Empty)
+        if (docId == Guid.Empty)
         {
-            var docFromDb = await _mediator.Send(new GetDocByIdQuery()
-            {
-                Id = docId
-            });
+            throw new ArgumentException(
+                $"Provided ID (..{docId.ToString()[^5..]}) is empty");
+        }
 
-            if (docFromDb != null)
-            {
-                return new CrudResult<DocDto>(docFromDb);
-            }
-            else
-            {
-                return new CrudResult<DocDto>();
-            }
-        }
-        else
+        var docFromDb = await _mediator.Send(new GetDocByIdQuery()
         {
-            throw new ArgumentException("Provided id is empty");
-        }
+            Id = docId
+        });
+
+        return docFromDb != null
+            ? new CrudResult<DocDto>(docFromDb)
+            : new CrudResult<DocDto>();
     }
 
     public async Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId)
     {
         if (creatorId != Guid.Empty)
         {
-            var docFromDb = await _mediator.Send(new GetDocByCreatorIdQuery()
-            {
-                CreatorId = creatorId
-            });
+            throw new ArgumentException(
+                $"Provided ID (..{creatorId.ToString()[^5..]}) is empty");
+        }
 
-            if (docFromDb != null)
-            {
-                return new CrudResult<DocDto>(docFromDb);
-            }
-            else
-            {
-                return new CrudResult<DocDto>();
-            }
-        }
-        else
+        var docFromDb = await _mediator.Send(new GetDocByCreatorIdQuery()
         {
-            throw new ArgumentException("Provided id is empty");
-        }
+            CreatorId = creatorId
+        });
+
+        return docFromDb != null
+            ? new CrudResult<DocDto>(docFromDb)
+            : new CrudResult<DocDto>();
     }
 
     public async Task<CrudResult<DocDto>> GetDocByTitleAsync(string title)
     {
-        if (title != string.Empty)
-        {
-            var docFromDb = await _mediator.Send(new GetDocByTitleQuery()
-            {
-                Title = title
-            });
+        if (title != string.Empty) throw new ArgumentException("Title is empty");
 
-            if (docFromDb != null)
-            {
-                return new CrudResult<DocDto>(docFromDb);
-            }
-            else
-            {
-                return new CrudResult<DocDto>();
-            }
-        }
-        else
+        var docFromDb = await _mediator.Send(new GetDocByTitleQuery()
         {
-            throw new ArgumentException("Title is empty");
-        }
+            Title = title
+        });
+
+        return docFromDb != null
+            ? new CrudResult<DocDto>(docFromDb)
+            : new CrudResult<DocDto>();
     }
 
     public async Task<CrudResult<DocDto>> CreateDocAsync(DocDto docDto)
@@ -101,22 +78,18 @@ public class DocsService : IDocsService
 
         if (docDto.CreatorId == Guid.Empty)
         {
-            throw new ArgumentException("Creator ID can't be empty");
+            throw new ArgumentException(
+                $"Creator ID (..{docDto.CreatorId.ToString()[^5..]}) can't be empty");
         }
 
-        int saveChangesResult = await _mediator.Send(new CreateDocCommand()
+        var saveChangesResult = await _mediator.Send(new CreateDocCommand()
         {
             Doc = docDto
         });
 
-        if (saveChangesResult == 1)
-        {
-            return new CrudResult<DocDto>(docDto);
-        }
-        else
-        {
-            return new CrudResult<DocDto>();
-        }
+        return saveChangesResult == 1
+            ? new CrudResult<DocDto>(docDto)
+            : new CrudResult<DocDto>();
     }
 
     public async Task<CrudResult<DocDto>> PatchDocAsync(Guid docId, DocDto docDto)
@@ -124,10 +97,11 @@ public class DocsService : IDocsService
         var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
         if (sourceDto == null)
         {
-            throw new ArgumentException("Found no doc with provided ID", nameof(docId));
+            throw new ArgumentException(
+                $"Found no doc with provided ID (..{docId.ToString()[^5..]})");
         }
 
-        PropertyInfo[] ignoreFields = new PropertyInfo[]
+        var ignoreFields = new[]
         {
             docDto.GetType().GetProperty("Id")!,
             docDto.GetType().GetProperty("CreatorId")!,
@@ -135,22 +109,20 @@ public class DocsService : IDocsService
 
         var patchList = PatchModelCreator<DocDto>.Generate(sourceDto, docDto, ignoreFields);
 
-        if (patchList.Any())
-        {
-            await _mediator.Send(new PatchDocCommand()
-            {
-                Doc = docDto,
-                PatchList = patchList
-            });
-
-            var updatedDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-
-            return new CrudResult<DocDto>(updatedDto);
-        }
-        else
+        if (!patchList.Any())
         {
             return new CrudResult<DocDto>();
         }
+
+        await _mediator.Send(new PatchDocCommand()
+        {
+            Doc = docDto,
+            PatchList = patchList
+        });
+
+        var updatedDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
+
+        return new CrudResult<DocDto>(updatedDto);
     }
 
     public async Task<CrudResult<DocDto>> DeleteDocAsync(Guid docId)
@@ -158,21 +130,17 @@ public class DocsService : IDocsService
         var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
         if (sourceDto == null)
         {
-            throw new ArgumentException("Found no doc with provided ID", nameof(docId));
+            throw new ArgumentException(
+                $"Found no doc with provided ID (..{docId.ToString()[^5..]})", nameof(docId));
         }
 
-        int saveChangesResult = await _mediator.Send(new DeleteDocCommand()
+        var saveChangesResult = await _mediator.Send(new DeleteDocCommand()
         {
             Doc = sourceDto
         });
 
-        if (saveChangesResult == 1)
-        {
-            return new CrudResult<DocDto>(sourceDto);
-        }
-        else
-        {
-            return new CrudResult<DocDto>();
-        }
+        return saveChangesResult == 1
+            ? new CrudResult<DocDto>(sourceDto)
+            : new CrudResult<DocDto>();
     }
 }

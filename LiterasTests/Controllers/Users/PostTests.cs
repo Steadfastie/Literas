@@ -32,7 +32,7 @@ public class PostTests
 
         var usersContoller = new UsersController(_usersServiceMock.Object, _mapper, _contributorsServiceMock.Object);
         var response = await usersContoller.Register(requestModel);
-        var responseModel = _mapper.Map<UserResponseModel>(created.Dto);
+        var responseModel = _mapper.Map<UserResponseModel>(created.Result);
 
         Assert.NotNull(response);
         Assert.IsType<OkObjectResult>(response);
@@ -87,8 +87,8 @@ public class PostTests
             {
                 new UserRequestModel() { Login = "Login", Password = "Password" },
                 new CrudResult<UserDto>() {
-                    Result = OperationResult.Success,
-                    Dto = new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" }
+                    ResultStatus = OperationResult.Success,
+                    Result = new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" }
                 }
             },
 
@@ -97,7 +97,7 @@ public class PostTests
             {
                 new UserRequestModel() { Password = "Password" },
                 new CrudResult<UserDto>() {
-                    Result = OperationResult.Failure,
+                    ResultStatus = OperationResult.Failure,
                 }
             },
 

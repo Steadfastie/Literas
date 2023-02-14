@@ -21,7 +21,7 @@ public class DocTests
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 0)]
+    [MemberData(nameof(GetData), 0, 1)]
     public async Task CreateDoc_IdProvided(DocDto docDto)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
@@ -36,13 +36,13 @@ public class DocTests
         var result = await service.CreateDocAsync(docDto);
 
         Assert.IsType<CrudResult<DocDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(docDto, result.Dto);
-        Assert.Equal(docDto.Id, result.Dto!.Id);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(docDto, result.Result);
+        Assert.Equal(docDto.Id, result.Result!.Id);
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 1)]
+    [MemberData(nameof(GetData), 1, 1)]
     public async Task CreateDoc_WithEmptyId(DocDto docDto)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
@@ -57,13 +57,13 @@ public class DocTests
         var result = await service.CreateDocAsync(docDto);
 
         Assert.IsType<CrudResult<DocDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(docDto, result.Dto);
-        Assert.NotEqual(Guid.Empty, result.Dto!.Id);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(docDto, result.Result);
+        Assert.NotEqual(Guid.Empty, result.Result!.Id);
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 2)]
+    [MemberData(nameof(GetData), 2, 1)]
     public async Task CreateDoc_WithEmptyCreatorId(DocDto docDto)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
@@ -80,7 +80,7 @@ public class DocTests
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 3)]
+    [MemberData(nameof(GetData), 3, 1)]
     public async Task PatchDoc_WhenDocExists(Guid docId, DocDto sourceDto, DocDto docDto)
     {
         _mediatrMock.SetupSequence(mediator => mediator.Send(
@@ -96,13 +96,13 @@ public class DocTests
         var result = await service.PatchDocAsync(docId, docDto);
 
         Assert.IsType<CrudResult<DocDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(docDto.Title, result.Dto?.Title);
-        Assert.Equal(docDto.Content, result.Dto?.Content);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(docDto.Title, result.Result?.Title);
+        Assert.Equal(docDto.Content, result.Result?.Content);
     }
 
     [Theory]
-    [MemberData(nameof(GetData), 4)]
+    [MemberData(nameof(GetData), 4, 1)]
     public void PatchDoc_WhenDocDoesNotExist(Guid docId, DocDto docDto)
     {
         _mediatrMock.SetupSequence(mediator => mediator.Send(
@@ -119,7 +119,7 @@ public class DocTests
     }
 
     [Theory]
-    [MemberData(nameof(GetData), parameters: 5)]
+    [MemberData(nameof(GetData), 5, 1)]
     public async Task DeleteDoc_WhenDocExists(Guid docId, DocDto sourceDto)
     {
         _mediatrMock.Setup(mediator => mediator.Send(
@@ -134,12 +134,12 @@ public class DocTests
         var result = await service.DeleteDocAsync(docId);
 
         Assert.IsType<CrudResult<DocDto>>(result);
-        Assert.Equal((int)OperationResult.Success, (int)result.Result);
-        Assert.Equal(sourceDto, result.Dto);
+        Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
+        Assert.Equal(sourceDto, result.Result);
     }
 
     [Theory]
-    [MemberData(nameof(GetData), parameters: 6)]
+    [MemberData(nameof(GetData), 6, 1)]
     public void DeleteDoc_WhenDocDoesNotExist(Guid docId)
     {
         _mediatrMock.SetupSequence(mediator => mediator.Send(

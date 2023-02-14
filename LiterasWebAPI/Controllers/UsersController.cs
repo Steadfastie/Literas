@@ -75,9 +75,9 @@ public class UsersController : ControllerBase
             var userDto = _mapper.Map<UserDto>(userModel);
             var creationResult = await _usersService.CreateUserAsync(userDto);
 
-            if (creationResult.Result == OperationResult.Success)
+            if (creationResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(creationResult.Dto);
+                var responseModel = _mapper.Map<UserResponseModel>(creationResult.Result);
                 return Ok(responseModel);
             }
             else
@@ -117,9 +117,9 @@ public class UsersController : ControllerBase
             var userDto = _mapper.Map<UserDto>(userModel);
             var patchedResult = await _usersService.PatchUserAsync(userId, userDto);
 
-            if (patchedResult.Result == OperationResult.Success)
+            if (patchedResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(patchedResult.Dto);
+                var responseModel = _mapper.Map<UserResponseModel>(patchedResult.Result);
                 return Ok(responseModel);
             }
             else
@@ -157,9 +157,9 @@ public class UsersController : ControllerBase
 
             var deleteResult = await _usersService.DeleteUserAsync(userId);
 
-            if (deleteResult.Result == OperationResult.Success)
+            if (deleteResult.ResultStatus == OperationResult.Success)
             {
-                var responseModel = _mapper.Map<UserResponseModel>(deleteResult.Dto);
+                var responseModel = _mapper.Map<UserResponseModel>(deleteResult.Result);
                 return Ok(responseModel);
             }
             else
