@@ -13,14 +13,14 @@ namespace LiterasWebAPI.Controllers;
 public class DocsController : ControllerBase
 {
     private readonly IDocsService _docsService;
-    private readonly IEditorsService _contributorsService;
+    private readonly IEditorsService _editorsService;
     private readonly IMapper _mapper;
 
-    public DocsController(IDocsService docsService, IMapper mapper, IEditorsService contributorsService)
+    public DocsController(IDocsService docsService, IMapper mapper, IEditorsService editorsService)
     {
         _docsService = docsService;
         _mapper = mapper;
-        _contributorsService = contributorsService;
+        _editorsService = editorsService;
     }
 
     [HttpGet("{id}")]
@@ -38,7 +38,7 @@ public class DocsController : ControllerBase
 
             var docDto = await _docsService.GetDocByIdAsync(docId);
 
-            if (docDto.Result == null) return NotFound();
+            if (docDto.Result == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
 
             var responseModel = _mapper.Map<DocResponseModel>(docDto);
 
@@ -60,7 +60,7 @@ public class DocsController : ControllerBase
     }
 
     [HttpGet("{id}/editors")]
-    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<DocResponseModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllEditors(Guid docId)
@@ -72,13 +72,13 @@ public class DocsController : ControllerBase
                 return BadRequest();
             }
 
-            var docDto = await _contributorsService.GetUsersByDocIdAsync(docId);
+            var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
 
-            if (docDto == null) return NotFound();
+            if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
 
-            var responseModel = _mapper.Map<DocResponseModel>(docDto);
+            var responseModels = _mapper.Map<List<DocResponseModel>>(docDtos.Results.ToList());
 
-            return Ok(responseModel);
+            return Ok(responseModels);
         }
         catch (Exception ex)
         {
@@ -88,7 +88,7 @@ public class DocsController : ControllerBase
                       $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not find doc",
+                Message = "Could not find editors for this doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -99,22 +99,32 @@ public class DocsController : ControllerBase
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Register([FromBody] DocRequestModel docModel)
+    public async Task<IActionResult> Create([FromBody] DocRequestModel docModel)
     {
         try
         {
             var docDto = _mapper.Map<DocDto>(docModel);
+
+            if (docDto.Id == Guid.Empty)
+            {
+                docDto.Id = Guid.NewGuid();
+            }
+
+            if (docDto.CreatorId == Guid.Empty)
+            {
+                // TODO: Update when authentication is configured
+                docDto.CreatorId = Guid.NewGuid();
+            }
+
             var creationResult = await _docsService.CreateDocAsync(docDto);
 
-            if (creationResult.ResultStatus == OperationResult.Success)
+            if (creationResult.ResultStatus == OperationResult.Failure)
             {
-                var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
-                return Ok(responseModel);
+                return BadRequest("Could not create new doc");
             }
-            else
-            {
-                return BadRequest("Could not register new doc");
-            }
+
+            var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
+            return Ok(responseModel);
         }
         catch (Exception ex)
         {
@@ -124,7 +134,7 @@ public class DocsController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new doc",
+                Message = "Could not create new doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
@@ -140,23 +150,19 @@ public class DocsController : ControllerBase
     {
         try
         {
-            if (docId == Guid.Empty)
-            {
-                return BadRequest();
-            }
+            if (docId == Guid.Empty || docId != docModel.Id) return BadRequest();
 
             var docDto = _mapper.Map<DocDto>(docModel);
+
             var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
 
-            if (patchedResult.ResultStatus == OperationResult.Success)
-            {
-                var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
-                return Ok(responseModel);
-            }
-            else
+            if (patchedResult.ResultStatus != OperationResult.Success)
             {
                 return StatusCode(StatusCodes.Status304NotModified, docModel);
             }
+
+            var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
+            return Ok(responseModel);
         }
         catch (Exception ex)
         {
@@ -181,22 +187,17 @@ public class DocsController : ControllerBase
     {
         try
         {
-            if (docId == Guid.Empty)
-            {
-                return BadRequest();
-            }
+            if (docId == Guid.Empty) return BadRequest();
 
             var deleteResult = await _docsService.DeleteDocAsync(docId);
 
-            if (deleteResult.ResultStatus == OperationResult.Success)
-            {
-                var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
-                return Ok(responseModel);
-            }
-            else
+            if (deleteResult.ResultStatus == OperationResult.Failure)
             {
                 return BadRequest("Operation unsuccessful");
             }
+
+            var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
+            return Ok(responseModel);
         }
         catch (Exception ex)
         {
@@ -206,7 +207,7 @@ public class DocsController : ControllerBase
                 $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
-                Message = "Could not register new doc",
+                Message = "Could not delete doc",
                 StatusCode = StatusCodes.Status500InternalServerError,
             };
             return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);

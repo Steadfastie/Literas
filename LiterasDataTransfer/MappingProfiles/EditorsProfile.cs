@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using LiterasData.Entities;
 using LiterasDataTransfer.Dto;
+using LiterasModels.Requests;
+using LiterasModels.Responses;
 
 namespace LiterasDataTransfer.MappingProfiles;
 
@@ -19,5 +21,41 @@ public class EditorsProfile : Profile
             .ForMember(con => con.Id, opt => opt.MapFrom(dto => dto.Id))
             .ForMember(con => con.UserId, opt => opt.MapFrom(dto => dto.UserId))
             .ForMember(con => con.DocId, opt => opt.MapFrom(dto => dto.DocId));
+
+        CreateMap<EditorRequestModel, EditorDto>()
+            .ForMember(
+                dto => dto.Id,
+                opt => opt.MapFrom(
+                    mod => mod.Id))
+            .ForMember(
+                dto => dto.UserId,
+                opt => opt.MapFrom(
+                    mod => mod.UserId))
+            .ForMember(
+                dto => dto.DocId,
+                opt => opt.MapFrom(
+                    mod => mod.DocId));
+
+        CreateMap<EditorDto, EditorResponseModel>()
+            .ForMember(
+                mod => mod.Id,
+                opt => opt.MapFrom(
+                    dto => dto.Id))
+            .ForMember(
+                mod => mod.UserId,
+                opt => opt.MapFrom(
+                    dto => dto.UserId))
+            .ForMember(
+                mod => mod.User,
+                opt => opt.MapFrom(
+                    dto => dto.User))
+            .ForMember(
+                mod => mod.DocId,
+                opt => opt.MapFrom(
+                    dto => dto.DocId))
+            .ForMember(
+            mod => mod.Doc,
+            opt => opt.MapFrom(
+                dto => dto.Doc));
     }
 }

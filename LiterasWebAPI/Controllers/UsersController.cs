@@ -64,6 +64,39 @@ public class UsersController : ControllerBase
         }
     }
 
+    [HttpGet("{id}/docs")]
+    [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAllDocs(Guid userId)
+    {
+        try
+        {
+            if (userId == Guid.Empty) return BadRequest();
+
+            var userDtos = await _contributorsService.GetDocsByUserIdAsync(userId);
+
+            if (userDtos.Results == null || userDtos.ResultStatus == OperationResult.Failure) return NotFound();
+
+            var responseModels = _mapper.Map<List<UserResponseModel>>(userDtos.Results.ToList());
+
+            return Ok(responseModels);
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                      $"{Environment.NewLine} {Environment.NewLine} " +
+                      $"{ex.StackTrace} " +
+                      $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not find docs for user",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(UserResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
