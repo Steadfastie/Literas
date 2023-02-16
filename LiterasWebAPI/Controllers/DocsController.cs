@@ -120,7 +120,7 @@ public class DocsController : ControllerBase
 
             if (creationResult.ResultStatus == OperationResult.Failure)
             {
-                return BadRequest("Could not create new doc");
+                return BadRequest("Could not save your doc");
             }
 
             var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
@@ -141,7 +141,7 @@ public class DocsController : ControllerBase
         }
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("{docId}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(DocRequestModel), StatusCodes.Status304NotModified)]
@@ -179,7 +179,7 @@ public class DocsController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{docId}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]

@@ -82,6 +82,12 @@ public class DocsService : IDocsService
                 $"Creator ID (..{docDto.CreatorId.ToString()[^5..]}) can't be empty");
         }
 
+        var presenceCheck = await _mediator.Send(new GetDocByIdQuery() { Id = docDto.Id });
+        if (presenceCheck is not null)
+        {
+            return new CrudResult<DocDto>();
+        }
+
         var saveChangesResult = await _mediator.Send(new CreateDocCommand()
         {
             Doc = docDto
@@ -114,11 +120,16 @@ public class DocsService : IDocsService
             return new CrudResult<DocDto>();
         }
 
-        await _mediator.Send(new PatchDocCommand()
+        var saveChangesResult = await _mediator.Send(new PatchDocCommand()
         {
-            Doc = docDto,
+            Doc = sourceDto,
             PatchList = patchList
         });
+
+        if (saveChangesResult == 0)
+        {
+            return new CrudResult<DocDto>();
+        }
 
         var updatedDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
 
