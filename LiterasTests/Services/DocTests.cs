@@ -30,7 +30,7 @@ public class DocTests
 
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(docDto);
+            .ReturnsAsync(null as DocDto);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);
         var result = await service.CreateDocAsync(docDto);
@@ -51,7 +51,7 @@ public class DocTests
 
         _mediatrMock.Setup(mediator => mediator.Send(
             It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(docDto);
+            .ReturnsAsync(null as DocDto);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);
         var result = await service.CreateDocAsync(docDto);
