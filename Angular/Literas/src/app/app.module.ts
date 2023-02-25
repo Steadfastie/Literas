@@ -10,6 +10,7 @@ import { PageNotFoundComponent } from './components/system/page-not-found/page-n
 import { DocsComponent } from './components/docs/docs/docs.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
+import {docsReducer} from "./state/reducers/docs.reducer";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { StoreModule } from '@ngrx/store';
     BrowserAnimationsModule,
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     StoreModule.forRoot({}, {}),
+    StoreModule.forFeature('docs', docsReducer)
   ],
   providers: [],
   bootstrap: [AppComponent]
