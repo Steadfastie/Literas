@@ -1,7 +1,7 @@
 import {createAction, props} from "@ngrx/store";
 import {IDocRequestModel} from "../../models/docs/docs.request.model";
 import {IDocResponseModel} from "../../models/docs/docs.response.model";
-import {IErrorModel} from "../../models/system/i.error.model";
+import {IErrorModel} from "../../models/system/error.model";
 
 export enum DocsCrudActions{
   FetchDocs = '[Docs] Doc fetch initialized',

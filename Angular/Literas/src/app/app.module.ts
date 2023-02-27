@@ -11,6 +11,7 @@ import { DocsComponent } from './components/docs/docs/docs.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
 import {docsReducer} from "./state/reducers/docs.reducer";
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {docsReducer} from "./state/reducers/docs.reducer";
     BrowserAnimationsModule,
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     StoreModule.forRoot({}, {}),
-    StoreModule.forFeature('docs', docsReducer)
+    StoreModule.forFeature('docs', docsReducer),
+    EffectsModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -76,7 +76,7 @@ public class DocsController : ControllerBase
 
             if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
 
-            var responseModels = _mapper.Map<List<DocResponseModel>>(docDtos.Results.ToList());
+            var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
 
             return Ok(responseModels);
         }
