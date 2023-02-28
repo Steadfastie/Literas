@@ -9,7 +9,7 @@ import {Guid} from "guid-typescript";
 @Injectable({
   providedIn: 'root'
 })
-export class DocsService {
+export class DocService {
 
   constructor(private apiService: ApiService) { }
 
