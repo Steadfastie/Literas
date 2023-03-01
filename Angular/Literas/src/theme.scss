@@ -1,4 +1,3 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
@@ -12,7 +11,7 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$Literas-primary: mat.define-palette(mat.$deep-purple-palette, 500, 50, 700, 900);
+$Literas-primary: mat.define-palette(mat.$green-palette, 500, 50, 700, 900);
 $Literas-accent: mat.define-palette(mat.$grey-palette, 500, 50, 700, 900);
 
 // The warn palette is optional (defaults to red).
@@ -33,6 +32,7 @@ $Literas-theme: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($Literas-theme);
 
+@import url('https://fonts.googleapis.com/css2?family=Sanchez&display=swap');
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: 'Sanchez', serif; }
