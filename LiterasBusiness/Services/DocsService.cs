@@ -37,6 +37,15 @@ public class DocsService : IDocsService
             : new CrudResult<DocDto>();
     }
 
+    public async Task<CrudResults<IEnumerable<DocDto>>> GetDocThumbnailsAsync()
+    {
+        var docThumbnails = await _mediator.Send(new GetDocThumbnailsQuery());
+
+        return docThumbnails != null
+            ? new CrudResults<IEnumerable<DocDto>>(docThumbnails)
+            : new CrudResults<IEnumerable<DocDto>>();
+    }
+
     public async Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId)
     {
         if (creatorId != Guid.Empty)

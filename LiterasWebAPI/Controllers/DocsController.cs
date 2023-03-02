@@ -23,6 +23,37 @@ public class DocsController : ControllerBase
         _editorsService = editorsService;
     }
 
+    [HttpGet("thumbnails")]
+    [ProducesResponseType(typeof(DocThumbnailResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetDocTumbnails()
+    {
+        try
+        {
+            var docDto = await _docsService.GetDocThumbnailsAsync();
+
+            if (docDto.Results == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
+
+            var responseModel = _mapper.Map<DocResponseModel>(docDto);
+
+            return Ok(responseModel);
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                      $"{Environment.NewLine} {Environment.NewLine} " +
+                      $"{ex.StackTrace} " +
+                      $"{Environment.NewLine} {Environment.NewLine}");
+            ErrorModel errorModel = new()
+            {
+                Message = "Could not find doc",
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
+            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+        }
+    }
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]

@@ -7,6 +7,8 @@ public interface IDocsService
 {
     Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId);
 
+    Task<CrudResults<IEnumerable<DocDto>>> GetDocThumbnailsAsync();
+
     Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId);
 
     Task<CrudResult<DocDto>> GetDocByTitleAsync(string title);
