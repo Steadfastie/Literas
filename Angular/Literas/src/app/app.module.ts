@@ -12,6 +12,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
 import {docsReducer} from "./state/reducers/docs.reducer";
 import { EffectsModule } from '@ngrx/effects';
+import { DocEditComponent } from './components/docs/doc.edit/doc.edit.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { EffectsModule } from '@ngrx/effects';
     DocCreateComponent,
     DocListComponent,
     PageNotFoundComponent,
-    DocsComponent
+    DocsComponent,
+    DocEditComponent
   ],
   imports: [
     BrowserModule,

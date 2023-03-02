@@ -6,10 +6,11 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
   styleUrls: ['./docs.component.sass']
 })
 export class DocsComponent implements OnInit, OnDestroy{
-  ngOnDestroy(): void {
-  }
 
+  constructor() {
+  }
   ngOnInit(): void {
   }
-
+  ngOnDestroy(): void {
+  }
 }

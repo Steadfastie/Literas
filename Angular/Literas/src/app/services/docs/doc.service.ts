@@ -5,6 +5,7 @@ import {Observable} from "rxjs";
 import {IUserResponseModel} from "../../models/users/user.response.model";
 import {IDocRequestModel} from "../../models/docs/docs.request.model";
 import {Guid} from "guid-typescript";
+import {IDocThumbnail} from "../../models/docs/doc.thumbnail";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class DocService {
 
   getDocById(docId: string): Observable<IDocResponseModel>{
     return this.apiService.get(`docs/${docId}`).pipe();
+  }
+
+  getDocThumbnails(): Observable<IDocThumbnail[]>{
+    return this.apiService.get(`docs/thumbnails`).pipe();
   }
 
   getEditorsByDocId(docId: string): Observable<IUserResponseModel[]>{
