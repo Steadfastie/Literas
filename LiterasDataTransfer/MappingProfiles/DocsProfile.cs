@@ -54,5 +54,15 @@ public class DocsProfile : Profile
                 mod => mod.Content,
                 opt => opt.MapFrom(
                     dto => dto.Content));
+
+        CreateMap<DocDto, DocThumbnailResponseModel>()
+            .ForMember(
+                mod => mod.Id,
+                opt => opt.MapFrom(
+                    dto => dto.Id))
+            .ForMember(
+                mod => mod.Title,
+                opt => opt.MapFrom(
+                    dto => dto.Title));
     }
 }

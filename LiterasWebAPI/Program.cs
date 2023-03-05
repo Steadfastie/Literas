@@ -10,6 +10,25 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: "literas",
+        policy =>
+        {
+            policy.WithOrigins(
+                    "http://localhost:4200",
+                    "http://localhost:4200/",
+                    "https://localhost:4200",
+                    "https://localhost:4200/",
+                    "localhost:4200",
+                    "localhost:4200/")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
+
 builder.Host.UseSerilog((ctx, lc) =>
         lc.WriteTo.File(
             builder.Configuration["Serilog"],
@@ -45,6 +64,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("literas");
 
 app.UseAuthorization();
 

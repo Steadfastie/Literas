@@ -35,7 +35,7 @@ public class DocsController : ControllerBase
 
             if (docDto.Results == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
 
-            var responseModel = _mapper.Map<DocResponseModel>(docDto);
+            var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponseModel>>(docDto.Results);
 
             return Ok(responseModel);
         }
