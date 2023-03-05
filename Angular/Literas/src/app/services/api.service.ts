@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpRequest} from "@angular/common/http";
 import {apiUrl} from "../../environment/dev";
-import * as queryString from "querystring";
 import {Observable} from "rxjs";
+import queryString from 'query-string';
 
 @Injectable({
   providedIn: 'root'

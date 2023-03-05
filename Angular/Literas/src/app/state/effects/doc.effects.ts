@@ -9,7 +9,7 @@ import {doc_thumbnails_fetch_failed} from "../actions/docs.crud.actions";
 @Injectable({
   providedIn: 'root'
 })
-export class DocsEffectsService {
+export class DocCrudEffects {
 
   constructor(private actions$: Actions,
               private docService: DocService) { }

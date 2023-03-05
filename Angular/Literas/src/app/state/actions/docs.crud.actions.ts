@@ -64,16 +64,16 @@ export const doc_create_failed = createAction(
 )
 
 export const doc_thumbnails_fetch = createAction(
-  DocsCrudActions.FetchDocs
+  DocsCrudActions.FetchDocThumbnails
 )
 
 export const doc_thumbnails_fetch_success = createAction(
-  DocsCrudActions.FetchDocsSuccess,
+  DocsCrudActions.FetchDocThumbnailsSuccess,
   props<{fetched: IDocThumbnail[]}>()
 )
 
 export const doc_thumbnails_fetch_failed = createAction(
-  DocsCrudActions.FetchDocsFailed,
+  DocsCrudActions.FetchDocThumbnailsFailed,
   props<IErrorModel>()
 )
 

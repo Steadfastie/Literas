@@ -10,9 +10,11 @@ import { PageNotFoundComponent } from './components/system/page-not-found/page-n
 import { DocsComponent } from './components/docs/docs/docs.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
-import {docsReducer} from "./state/reducers/docs.reducer";
+import { docsReducer } from "./state/reducers/docs.reducer";
 import { EffectsModule } from '@ngrx/effects';
 import { DocEditComponent } from './components/docs/doc.edit/doc.edit.component';
+import { DocCrudEffects } from "./state/effects/doc.effects";
+import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -27,10 +29,10 @@ import { DocEditComponent } from './components/docs/doc.edit/doc.edit.component'
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
+    StoreModule.forRoot({ 'docs_crud': docsReducer }, {}),
+    EffectsModule.forRoot([DocCrudEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
-    StoreModule.forRoot({}, {}),
-    StoreModule.forFeature('docs', docsReducer),
-    EffectsModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]
