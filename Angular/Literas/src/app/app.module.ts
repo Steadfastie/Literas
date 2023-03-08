@@ -15,6 +15,9 @@ import { EffectsModule } from '@ngrx/effects';
 import { DocEditComponent } from './components/docs/doc.edit/doc.edit.component';
 import { DocCrudEffects } from "./state/effects/doc.effects";
 import { HttpClientModule } from "@angular/common/http";
+import { DocNewComponent } from './components/docs/doc.list/doc.new/doc.new.component';
+import { MaterialModule } from "./modules/material.module";
+import { DocThumbnailComponent } from './components/docs/doc.list/doc.thumbnail/doc.thumbnail.component';
 
 @NgModule({
   declarations: [
@@ -23,13 +26,16 @@ import { HttpClientModule } from "@angular/common/http";
     DocListComponent,
     PageNotFoundComponent,
     DocsComponent,
-    DocEditComponent
+    DocEditComponent,
+    DocNewComponent,
+    DocThumbnailComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    MaterialModule,
     StoreModule.forRoot({ 'docs_crud': docsReducer }, {}),
     EffectsModule.forRoot([DocCrudEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),

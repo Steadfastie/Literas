@@ -1,4 +1,5 @@
 <div>List of docs:</div>
+<doc-new></doc-new>
 <div *ngFor="let thumbnail of docs">
-  <li>{{thumbnail.title}}</li>
+  <doc-thumbnail [thumbnail]="thumbnail"></doc-thumbnail>
 </div>
