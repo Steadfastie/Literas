@@ -1,1 +1,16 @@
-<p>doc.create works!</p>
+<quill-editor
+  placeholder = "Enter text here..."
+  [styles]="{'min-width':'fit-content'}">
+    <div quill-editor-toolbar>
+      <span class="ql-formats">
+        <button class="ql-bold"></button>
+        <button class="ql-italic"></button>
+        <button class="ql-blockquote"></button>
+        <button class="ql-code-block"></button>
+        <button class="ql-header" value="2"></button>
+        <button class="ql-header" value="1"></button>
+        <button class="ql-list" value="bullet"></button>
+        <button class="ql-list" value="ordered"></button>
+      </span>
+    </div>
+</quill-editor>

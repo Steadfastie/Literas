@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-docs',
+  selector: 'doc',
   templateUrl: './docs.component.html',
   styleUrls: ['./docs.component.sass']
 })

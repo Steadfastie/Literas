@@ -18,6 +18,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { DocNewComponent } from './components/docs/doc.list/doc.new/doc.new.component';
 import { MaterialModule } from "./modules/material.module";
 import { DocThumbnailComponent } from './components/docs/doc.list/doc.thumbnail/doc.thumbnail.component';
+import {QuillModule} from "ngx-quill";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,13 @@ import { DocThumbnailComponent } from './components/docs/doc.list/doc.thumbnail/
     StoreModule.forRoot({ 'docs_crud': docsReducer }, {}),
     EffectsModule.forRoot([DocCrudEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    QuillModule.forRoot({
+      theme: 'bubble',
+      customOptions: [{
+        import: 'formats/font',
+        whitelist: ['Sanchez', 'serif']
+      }]
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
