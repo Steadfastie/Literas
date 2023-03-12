@@ -19,6 +19,7 @@ import { DocNewComponent } from './components/docs/doc.list/doc.new/doc.new.comp
 import { MaterialModule } from "./modules/material.module";
 import { DocThumbnailComponent } from './components/docs/doc.list/doc.thumbnail/doc.thumbnail.component';
 import {QuillModule} from "ngx-quill";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -45,8 +46,9 @@ import {QuillModule} from "ngx-quill";
       customOptions: [{
         import: 'formats/font',
         whitelist: ['Sanchez', 'serif']
-      }]
+      }],
     }),
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
