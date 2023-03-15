@@ -9,26 +9,12 @@
   <div class="form-group">
     <quill-editor #contentQuill
       placeholder = "Content..."
-      formControlName="content">
-        <div quill-editor-toolbar>
-          <span class="ql-formats">
-            <button class="ql-bold"><mat-icon>touch_app</mat-icon></button>
-            <button class="ql-italic"></button>
-            <button class="ql-blockquote"></button>
-            <button class="ql-code-block"></button>
-            <button class="ql-header" value="2"></button>
-            <button class="ql-header" value="1"></button>
-            <button class="ql-list" value="bullet"></button>
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-subHeader">
-              <svg viewBox="0 0 18 18">
-                <text class='toolbar-text'
-                      transform="matrix(1 0 0 1 -2.181828e-04 17.232)"
-                      font-family="'Sanchez-Regular'" font-size="24px">H</text>
-              </svg>
-            </button>
-          </span>
-        </div>
+      formControlName="content"
+      (onSelectionChanged)="adaptToolBar($event)"
+      (onBlur)="focusOff()">
+      <div quill-editor-toolbar>
+        <toolbar [editor]="content"></toolbar>
+      </div>
     </quill-editor>
   </div>
 </form>

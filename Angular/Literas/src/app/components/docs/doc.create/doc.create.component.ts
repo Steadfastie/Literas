@@ -1,7 +1,10 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {DocService} from "../../../services/docs/doc.service";
-import {QuillEditorComponent} from "ngx-quill";
+import {Blur, QuillEditorComponent} from "ngx-quill";
+import {Store} from "@ngrx/store";
+import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
+import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 
 @Component({
   selector: 'doc-create',
@@ -14,9 +17,23 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
     content: ['', Validators.required, Validators.minLength(3)]
   });
   @ViewChild('titleQuill') title?: QuillEditorComponent;
-  @ViewChild('contentQuill') content?: QuillEditorComponent;
+  @ViewChild('contentQuill') content!: QuillEditorComponent;
   constructor(private fb: FormBuilder,
-              private docService: DocService){}
+              private docService: DocService,
+              private el: ElementRef,
+              private store: Store){}
+
+  adaptToolBar(selectionChange: SelectionChange){
+    let range = selectionChange.range!;
+    let selectedText = this.content.quillEditor.getText(range.index, range.length);
+    let selectedTextFormats = this.content.quillEditor.getFormat(range.index, range.length);
+    this.store.dispatch(quillSelectionActions.quill_newSelection(
+      {range: range, text: selectedText, formats: selectedTextFormats}));
+  }
+
+  focusOff(){
+    this.store.dispatch(quillSelectionActions.quill_focusOff());
+  }
 
   ngOnInit(): void {
 
