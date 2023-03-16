@@ -1,0 +1,36 @@
+<button mat-mini-fab
+        class="boldButton {{active['bold'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+        [disabled]="active['code-block']"
+        (click)="setBold()">B</button>
+<button mat-mini-fab
+        class="italicButton {{active['italic'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+        [disabled]="active['code-block']"
+        (click)="setItalic()">I</button>
+<button mat-mini-fab
+        class="headerButton {{active['size'] == 'large' ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+        [disabled]="active['code-block']"
+        (click)="setHeader()">H</button>
+<button mat-mini-fab
+        class="codeButton {{active['code-block'] ? 'active' : ''}}"
+        (click)="setCodeBlock()">C</button>
+<button mat-mini-fab
+        class="quoteButton {{active['list'] == 'ordered' ? 'active' : ''}}"
+        (click)="setOrderedList()">O</button>
+<button mat-mini-fab
+        class="quoteButton {{active['list'] == 'bullet' ? 'active' : ''}}"
+        (click)="setBulletList()">BU</button>
+<button mat-mini-fab
+        class="linkButton {{active['link'] ? 'active' : ''}}"
+        (click)="setLink()">L</button>
+
+
+<!--
+<button class="ql-subHeader">
+  <div class="custom-button">
+    <svg viewBox="0 0 18 18">
+      <text class='toolbar-text'
+            transform="matrix(1 0 0 1 -2.181828e-04 17.232)"
+            font-family="'Sanchez-Regular'" font-size="24px">H</text>
+    </svg>
+  </div>
+</button>- -->

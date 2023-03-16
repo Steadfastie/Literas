@@ -1,0 +1,17 @@
+button
+  fill: #ababab
+  color: #ababab
+  margin: 3px
+  transition: 0.5s
+  &:hover
+    fill: white
+    transition: 0.5s
+  &.active
+    color: white
+    fill: white
+  &.boldButton:not(.available), &.italicButton:not(.available), &.headerButton:not(.available)
+    fill: #5f5f5f
+    color: #5f5f5f
+  &.available
+    fill: #ababab
+    color: #ababab
