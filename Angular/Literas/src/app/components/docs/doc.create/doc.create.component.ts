@@ -3,8 +3,9 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {DocService} from "../../../services/docs/doc.service";
 import {Blur, QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
-import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
+import {ContentChange, SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
+import {Observable, Subject} from "rxjs";
 
 @Component({
   selector: 'doc-create',
@@ -25,10 +26,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   adaptToolBar(selectionChange: SelectionChange){
     let range = selectionChange.range!;
-    let selectedText = this.content.quillEditor.getText(range.index, range.length);
-    let selectedTextFormats = this.content.quillEditor.getFormat(range.index, range.length);
-    this.store.dispatch(quillSelectionActions.quill_newSelection(
-      {range: range, text: selectedText, formats: selectedTextFormats}));
+    if (range.length !==0 ){
+      let selectedText = this.content.quillEditor.getText(range.index, range.length);
+      let selectedTextFormats = this.content.quillEditor.getFormat(range.index, range.length);
+      this.store.dispatch(quillSelectionActions.quill_newSelection(
+        {range: range, text: selectedText, formats: selectedTextFormats}));
+    }
   }
 
   focusOff(){

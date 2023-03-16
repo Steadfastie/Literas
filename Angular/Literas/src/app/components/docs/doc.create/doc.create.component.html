@@ -8,8 +8,8 @@
   </div>
   <div class="form-group">
     <quill-editor #contentQuill
-      placeholder = "Content..."
       formControlName="content"
+                  placeholder="Content..."
       (onSelectionChanged)="adaptToolBar($event)"
       (onBlur)="focusOff()">
       <div quill-editor-toolbar>

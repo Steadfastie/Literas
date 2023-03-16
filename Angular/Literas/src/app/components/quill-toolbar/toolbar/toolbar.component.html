@@ -1,5 +1,18 @@
-<button mat-mini-fab class="boldButton" (click)="setBold()">B</button>
-<button mat-mini-fab class="italicButton" (click)="setItalic()">I</button>
+<button mat-mini-fab
+        class="boldButton {{active['bold'] ? 'active' : ''}}"
+        (click)="setBold()">B</button>
+<button mat-mini-fab
+        class="italicButton {{active['italic'] ? 'active' : ''}}"
+        (click)="setItalic()">I</button>
+<button mat-mini-fab
+        class="linkButton {{active['link'] ? 'active' : ''}}"
+        (click)="setLink()">L</button>
+<button mat-mini-fab
+        class="codeButton {{active['code'] ? 'active' : ''}}"
+        (click)="setCodeBlock()">C</button>
+<button mat-mini-fab
+        class="headerButton {{active['header'] ? 'active' : ''}}"
+        (click)="setHeader()">H</button>
 <!--
 <button class="ql-subHeader">
   <div class="custom-button">

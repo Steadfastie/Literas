@@ -13,6 +13,9 @@ export const quillSelectionReducer = createReducer(
   on(quillSelectionActions.quill_newSelection,
     (state, selection: IQuillState) => ({...state, range: selection.range, text: selection.text, formats: selection.formats})
   ),
+  on(quillSelectionActions.quill_formatChange,
+    (state, {format, value}) => ({...state, formats: {...state.formats, [format]: value}})
+    ),
   on(quillSelectionActions.quill_focusOff,
     (state) => (quillInitialSelectionState)
   )
