@@ -44,6 +44,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
 
   setBold(){
     if (!this.currentSelection) return;
+    if (this.active['code-block']) return;
 
     this.editor.quillEditor.formatText(
       this.currentSelection.range!.index,
@@ -59,6 +60,8 @@ export class ToolbarComponent implements OnInit, OnDestroy{
   }
   setItalic(){
     if (!this.currentSelection) return;
+    if (this.active['code-block']) return;
+
     this.editor.quillEditor.formatText(
       this.currentSelection.range!.index,
       this.currentSelection.range!.length,
@@ -96,6 +99,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
 
   setHeader(){
     if (!this.currentSelection) return;
+    if (this.active['code-block']) return;
 
     let updatedSize =
       this.currentSelection.formats['size'] === undefined ? 'large' :
@@ -161,7 +165,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
 
   ngOnInit(): void {
 

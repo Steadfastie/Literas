@@ -6,6 +6,6 @@ export const ToolBarConfig: IToolbarModel = {
   bold: false,
   italic: false,
   size: false,
-  codeBlock: false,
+  'code-block': false,
   list: false,
 }
