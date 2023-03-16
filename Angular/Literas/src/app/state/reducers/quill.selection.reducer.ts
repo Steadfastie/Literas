@@ -15,8 +15,17 @@ export const quillSelectionReducer = createReducer(
   ),
   on(quillSelectionActions.quill_formatChange,
     (state, {format, value}) => ({...state, formats: {...state.formats, [format]: value}})
-    ),
+  ),
+  on(quillSelectionActions.quill_formatsChange,
+    (state, { formats }) => {
+      const newFormats = { ...state.formats };
+      formats.forEach(format => {
+        newFormats[format.format] = format.value;
+      });
+      return { ...state, formats: newFormats };
+    }
+  ),
   on(quillSelectionActions.quill_focusOff,
-    (state) => (quillInitialSelectionState)
+    () => (quillInitialSelectionState)
   )
 )

@@ -85,8 +85,11 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       !this.currentSelection.formats['code-block']);
 
     this.store.dispatch(
-      quillSelectionActions.quill_formatChange(
-        {format: 'code-block', value: !this.currentSelection.formats['code-block']}
+      quillSelectionActions.quill_formatsChange(
+        {formats: [
+            {format: 'list', value: false},
+            {format: 'code-block', value: !this.currentSelection.formats['code-block']}
+          ]}
       )
     );
   }
@@ -107,6 +110,54 @@ export class ToolbarComponent implements OnInit, OnDestroy{
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
         {format: 'size', value: updatedSize}
+      )
+    );
+  }
+
+  setOrderedList(){
+    if (!this.currentSelection) return;
+
+    let updatedOrderedList =
+      this.currentSelection.formats['list'] === undefined ? 'ordered' :
+      this.currentSelection.formats['list'] === false ? 'ordered' :
+      this.currentSelection.formats['list'] === 'bullet' ? 'ordered' : false;
+
+    this.editor.quillEditor.formatLine(
+      this.currentSelection.range!.index,
+      this.currentSelection.range!.length,
+      'list',
+      updatedOrderedList);
+
+    this.store.dispatch(
+      quillSelectionActions.quill_formatsChange(
+        {formats: [
+            {format: 'code-block', value: false},
+            {format: 'list', value: updatedOrderedList},
+          ]}
+      )
+    );
+  }
+
+  setBulletList(){
+    if (!this.currentSelection) return;
+
+    let updatedBulletList =
+      this.currentSelection.formats['list'] === undefined ? 'bullet' :
+      this.currentSelection.formats['list'] === false ? 'bullet' :
+      this.currentSelection.formats['list'] === 'ordered' ? 'bullet' : false;
+
+    this.editor.quillEditor.formatLine(
+      this.currentSelection.range!.index,
+      this.currentSelection.range!.length,
+      'list',
+      updatedBulletList);
+
+    this.store.dispatch(
+      quillSelectionActions.quill_formatsChange(
+        {formats: [
+            {format: 'code-block', value: false},
+            {format: 'list', value: updatedBulletList}
+          ]}
       )
     );
   }
