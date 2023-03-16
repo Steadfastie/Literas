@@ -78,7 +78,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
 
   setCodeBlock(){
     if (!this.currentSelection) return;
-    this.editor.quillEditor.formatText(
+    this.editor.quillEditor.formatLine(
       this.currentSelection.range!.index,
       this.currentSelection.range!.length,
       'code-block',

@@ -16,5 +16,12 @@
         <toolbar [editor]="content"></toolbar>
       </div>
     </quill-editor>
+
+    <quill-editor #contentQuill
+                  formControlName="content"
+                  placeholder="Content..."
+                  (onSelectionChanged)="adaptToolBar($event)"
+                  (onBlur)="focusOff()">
+    </quill-editor>
   </div>
 </form>
