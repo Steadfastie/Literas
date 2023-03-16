@@ -93,15 +93,20 @@ export class ToolbarComponent implements OnInit, OnDestroy{
 
   setHeader(){
     if (!this.currentSelection) return;
+
+    let updatedSize =
+      this.currentSelection.formats['size'] === undefined ? 'large' :
+      this.currentSelection.formats['size'] === false ? 'large' : false;
+
     this.editor.quillEditor.formatText(
       this.currentSelection.range!.index,
       this.currentSelection.range!.length,
       'size',
-      !this.currentSelection.formats['size']);
+      updatedSize);
 
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
-        {format: 'header', value: !this.currentSelection.formats['header']}
+        {format: 'size', value: updatedSize}
       )
     );
   }

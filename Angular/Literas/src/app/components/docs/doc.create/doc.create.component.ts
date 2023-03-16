@@ -18,7 +18,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
     content: ['', Validators.required, Validators.minLength(3)]
   });
   @ViewChild('titleQuill') title?: QuillEditorComponent;
-  @ViewChild('contentQuill') content!: QuillEditorComponent;
+  @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
   constructor(private fb: FormBuilder,
               private docService: DocService,
               private el: ElementRef,
@@ -27,8 +27,8 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   adaptToolBar(selectionChange: SelectionChange){
     let range = selectionChange.range!;
     if (range.length !==0 ){
-      let selectedText = this.content.quillEditor.getText(range.index, range.length);
-      let selectedTextFormats = this.content.quillEditor.getFormat(range.index, range.length);
+      let selectedText = selectionChange.editor.getText(range.index, range.length);
+      let selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
       this.store.dispatch(quillSelectionActions.quill_newSelection(
         {range: range, text: selectedText, formats: selectedTextFormats}));
     }

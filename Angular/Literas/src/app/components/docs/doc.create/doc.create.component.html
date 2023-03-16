@@ -12,7 +12,7 @@
                   placeholder="Content..."
       (onSelectionChanged)="adaptToolBar($event)"
       (onBlur)="focusOff()">
-      <div quill-editor-toolbar>
+      <div quill-editor-toolbar class="toolbar">
         <toolbar [editor]="content"></toolbar>
       </div>
     </quill-editor>

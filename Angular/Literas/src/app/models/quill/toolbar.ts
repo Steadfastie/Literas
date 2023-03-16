@@ -1,8 +1,9 @@
 export interface IToolbarModel {
-  [key: string]: boolean;
+  [key: string]: any;
 }
 
 export const ToolBarConfig: IToolbarModel = {
   bold: false,
-  italic: false
+  italic: false,
+  size: false,
 }

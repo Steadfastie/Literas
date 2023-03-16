@@ -14,7 +14,7 @@ export const quill_newSelection = createAction(
 
 export const quill_formatChange = createAction(
   QuillSelectionActions.FormatChange,
-  props<{format: string, value: boolean}>()
+  props<{format: string, value: any}>()
 )
 
 export const quill_focusOff = createAction(

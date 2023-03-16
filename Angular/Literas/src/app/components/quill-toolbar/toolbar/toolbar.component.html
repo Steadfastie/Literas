@@ -11,7 +11,7 @@
         class="codeButton {{active['code'] ? 'active' : ''}}"
         (click)="setCodeBlock()">C</button>
 <button mat-mini-fab
-        class="headerButton {{active['header'] ? 'active' : ''}}"
+        class="headerButton {{active['size'] == 'large' ? 'active' : ''}}"
         (click)="setHeader()">H</button>
 <!--
 <button class="ql-subHeader">
