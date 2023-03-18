@@ -1,11 +1,10 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {DocService} from "../../../services/docs/doc.service";
-import {Blur, QuillEditorComponent} from "ngx-quill";
+import {QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
-import {ContentChange, SelectionChange} from "ngx-quill/lib/quill-editor.component";
+import { SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
-import {Observable, Subject} from "rxjs";
 
 @Component({
   selector: 'doc-create',
@@ -30,7 +29,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       let selectedText = selectionChange.editor.getText(range.index, range.length);
       let selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
       this.store.dispatch(quillSelectionActions.quill_newSelection(
-        {range: range, text: selectedText, formats: selectedTextFormats}));
+        {range: range, text: selectedText, formats: selectedTextFormats, linkInputOpenState: false}));
     }
   }
 

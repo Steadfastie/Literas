@@ -4,4 +4,5 @@ export interface IQuillState {
   range: RangeStatic | null;
   text: string;
   formats: StringMap;
+  linkInputOpenState: boolean;
 }

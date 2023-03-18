@@ -1,0 +1,21 @@
+<button *ngIf="!inputOpened"  mat-mini-fab
+        class="linkButton {{hasUrl ? 'active' : ''}}"
+        (click)="switchInput()">L</button>
+<form *ngIf="inputOpened" class="urlInput" [formGroup]="urlForm">
+  <mat-form-field appearance="outline" [hideRequiredMarker]="true">
+    <mat-label>URL</mat-label>
+    <input matInput
+           placeholder="link..."
+           formControlName="url"
+           type="url" minlength="3" size="10">
+    <button mat-button
+            *ngIf="urlForm.value.url == null || urlForm.value.url.toString.length < 3">close</button>
+    <button mat-button
+            *ngIf="urlForm.value.url != null && urlForm.value.url.toString.length > 3"
+            (click)="urlForm.reset()">undo</button>
+    <button mat-button
+            *ngIf="urlForm.value.url != null && urlForm.value.url.toString.length > 3"
+            (click)="submit()">link</button>
+  </mat-form-field>
+</form>
+

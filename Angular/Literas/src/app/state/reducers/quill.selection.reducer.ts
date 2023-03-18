@@ -6,6 +6,7 @@ export const quillInitialSelectionState: IQuillState = {
   range: null,
   text: '',
   formats: {},
+  linkInputOpenState: false
 }
 
 export const quillSelectionReducer = createReducer(
@@ -24,6 +25,9 @@ export const quillSelectionReducer = createReducer(
       });
       return { ...state, formats: newFormats };
     }
+  ),
+  on(quillSelectionActions.quill_switchLinkInput,
+    (state) => ({...state, linkInputOpenState: !state.linkInputOpenState})
   ),
   on(quillSelectionActions.quill_focusOff,
     () => (quillInitialSelectionState)

@@ -1,13 +1,11 @@
 import {IDocsState} from "../models/docs.state";
 import {createReducer, on} from "@ngrx/store";
 import * as docsCrudActions from "../actions/docs.crud.actions";
-import {docs_fetch} from "../actions/docs.crud.actions";
-import {IDocResponseModel} from "../../models/docs/docs.response.model";
 
 export const docsInitialState: IDocsState = {
   doc_thumbnails: [],
   docs: [],
-  errors: []
+  errors: [],
 }
 
 export const docsReducer = createReducer(

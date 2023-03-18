@@ -23,6 +23,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {toolbarOptions} from "./config/quill-toolbar";
 import { ToolbarComponent } from './components/quill-toolbar/toolbar/toolbar.component';
 import {quillSelectionReducer} from "./state/reducers/quill.selection.reducer";
+import { LinkComponent } from './components/quill-toolbar/link/link.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {quillSelectionReducer} from "./state/reducers/quill.selection.reducer";
     DocEditComponent,
     DocNewComponent,
     DocThumbnailComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    LinkComponent
   ],
   imports: [
     BrowserModule,

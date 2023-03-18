@@ -6,6 +6,7 @@ export enum QuillSelectionActions{
   NewSelection = '[Quill] New Selection',
   FormatChange = '[Quill] Format Change',
   FormatsChange = '[Quill] Formats Change',
+  SwitchLinkInput = '[Quill] Switch Link Input',
   FocusOff = '[Quill] Focus Off',
 }
 
@@ -22,6 +23,10 @@ export const quill_formatChange = createAction(
 export const quill_formatsChange = createAction(
   QuillSelectionActions.FormatsChange,
   props<{formats: QuillFormat[]}>()
+)
+
+export const quill_switchLinkInput = createAction(
+  QuillSelectionActions.SwitchLinkInput,
 )
 
 export const quill_focusOff = createAction(

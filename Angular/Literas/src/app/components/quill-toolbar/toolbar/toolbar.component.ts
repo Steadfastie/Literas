@@ -16,6 +16,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
   @Input() editor!: QuillEditorComponent;
   currentSelection?: IQuillState;
   active: IToolbarModel = ToolBarConfig;
+  linkInputOpen: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private el: ElementRef,
               private renderer: Renderer2,
@@ -39,6 +40,12 @@ export class ToolbarComponent implements OnInit, OnDestroy{
             this.active[format] = false;
           });
         }
+      });
+
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(status => {
+        this.linkInputOpen = status;
       });
   }
 
