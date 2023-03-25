@@ -24,6 +24,9 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
               private store: Store){}
 
   adaptToolBar(selectionChange: SelectionChange){
+    /*if (selectionChange.range == null) {
+      this.content.quillEditor.setSelection(selectionChange.oldRange!.index, selectionChange.oldRange!.length);
+    }*/
     let range = selectionChange.range!;
     if (range.length !==0 ){
       let selectedText = selectionChange.editor.getText(range.index, range.length);

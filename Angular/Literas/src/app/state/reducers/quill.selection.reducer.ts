@@ -12,10 +12,19 @@ export const quillInitialSelectionState: IQuillState = {
 export const quillSelectionReducer = createReducer(
   quillInitialSelectionState,
   on(quillSelectionActions.quill_newSelection,
-    (state, selection: IQuillState) => ({...state, range: selection.range, text: selection.text, formats: selection.formats})
+    (state, selection: IQuillState) => (
+      {...state,
+        range: selection.range,
+        text: selection.text,
+        formats: selection.formats,
+        linkInputOpenState: false
+      })
   ),
   on(quillSelectionActions.quill_formatChange,
-    (state, {format, value}) => ({...state, formats: {...state.formats, [format]: value}})
+    (state, {format, value}) => (
+      {...state,
+        formats: {...state.formats, [format]: value}
+      })
   ),
   on(quillSelectionActions.quill_formatsChange,
     (state, { formats }) => {

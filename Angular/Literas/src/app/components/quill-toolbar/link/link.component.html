@@ -1,21 +1,45 @@
 <button *ngIf="!inputOpened"  mat-mini-fab
         class="linkButton {{hasUrl ? 'active' : ''}}"
         (click)="switchInput()">L</button>
-<form *ngIf="inputOpened" class="urlInput" [formGroup]="urlForm">
+<!--<form *ngIf="inputOpened" class="urlInput" [formGroup]="urlForm">
   <mat-form-field appearance="outline" [hideRequiredMarker]="true">
     <mat-label>URL</mat-label>
     <input matInput
-           placeholder="link..."
            formControlName="url"
+           placeholder="https://"
            type="url" minlength="3" size="10">
-    <button mat-button
-            *ngIf="urlForm.value.url == null || urlForm.value.url.toString.length < 3">close</button>
-    <button mat-button
+    <button mat-mini-fab matSuffix
+            *ngIf="urlForm.value.url == null || urlForm.value.url.toString.length < 3">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button mat-button matSuffix
             *ngIf="urlForm.value.url != null && urlForm.value.url.toString.length > 3"
             (click)="urlForm.reset()">undo</button>
-    <button mat-button
+    <button mat-button matSuffix
             *ngIf="urlForm.value.url != null && urlForm.value.url.toString.length > 3"
             (click)="submit()">link</button>
   </mat-form-field>
-</form>
+</form>-->
+<span *ngIf="inputOpened" class="urlInput">
+  <input id="url" type="url"
+         [formControl]="urlForm"
+         placeholder="https://"
+         minlength="3" size="10">
+  <button mat-mini-fab
+          *ngIf="urlForm.value == null || urlForm.value.toString.length < 3">
+         X
+  </button>
+
+  <button mat-mini-fab
+          *ngIf="urlForm.value != null && urlForm.value.toString.length > 3"
+          (click)="urlForm.reset()">
+         U
+  </button>
+  <button mat-mini-fab
+          *ngIf="urlForm.value != null && urlForm.value.toString.length > 3"
+          (click)="submit()">
+         S
+  </button>
+</span>
+
 

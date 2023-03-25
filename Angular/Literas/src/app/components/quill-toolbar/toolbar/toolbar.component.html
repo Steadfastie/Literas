@@ -1,26 +1,29 @@
-<div *ngIf="!linkInputOpen">
-  <button mat-mini-fab
-          class="boldButton {{active['bold'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
-          [disabled]="active['code-block']"
-          (click)="setBold()">B</button>
-  <button mat-mini-fab
-          class="italicButton {{active['italic'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
-          [disabled]="active['code-block']"
-          (click)="setItalic()">I</button>
-  <button mat-mini-fab
-          class="headerButton {{active['size'] == 'large' ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
-          [disabled]="active['code-block']"
-          (click)="setHeader()">H</button>
-  <button mat-mini-fab
-          class="codeButton {{active['code-block'] ? 'active' : ''}}"
-          (click)="setCodeBlock()">C</button>
-  <button mat-mini-fab
-          class="quoteButton {{active['list'] == 'ordered' ? 'active' : ''}}"
-          (click)="setOrderedList()">O</button>
-  <button mat-mini-fab
-          class="quoteButton {{active['list'] == 'bullet' ? 'active' : ''}}"
-          (click)="setBulletList()">BU</button>
+<div class="tooltip" [hidden]="toolbarOpened">
+  <div *ngIf="!linkInputOpen">
+    <button mat-mini-fab
+            class="boldButton {{active['bold'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+            [disabled]="active['code-block']"
+            (click)="setBold()">B</button>
+    <button mat-mini-fab
+            class="italicButton {{active['italic'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+            [disabled]="active['code-block']"
+            (click)="setItalic()">I</button>
+    <button mat-mini-fab
+            class="headerButton {{active['size'] == 'large' ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+            [disabled]="active['code-block']"
+            (click)="setHeader()">H</button>
+    <button mat-mini-fab
+            class="codeButton {{active['code-block'] ? 'active' : ''}}"
+            (click)="setCodeBlock()">C</button>
+    <button mat-mini-fab
+            class="quoteButton {{active['list'] == 'ordered' ? 'active' : ''}}"
+            (click)="setOrderedList()">O</button>
+    <button mat-mini-fab
+            class="quoteButton {{active['list'] == 'bullet' ? 'active' : ''}}"
+            (click)="setBulletList()">BU</button>
+  </div>
 </div>
+
 <quill-link></quill-link>
 
 

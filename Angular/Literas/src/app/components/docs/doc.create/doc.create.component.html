@@ -2,16 +2,15 @@
   <div class="form-group">
     <quill-editor #titleQuill
       placeholder = "Title..."
-      formControlName="title"
-                  [modules]="{toolbar: false}">
+      formControlName="title" [modules]="{toolbar: false}">
     </quill-editor>
   </div>
   <div class="form-group">
     <quill-editor #contentQuill
-      formControlName="content"
-                  placeholder="Content..."
+      formControlName="content" placeholder="Content..."
       (onSelectionChanged)="adaptToolBar($event)"
-      (onBlur)="focusOff()">
+      (onBlur)="focusOff()"
+      [modules]="{toolbar: false}">
       <div quill-editor-toolbar class="toolbar">
         <toolbar [editor]="content"></toolbar>
       </div>

@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import {Subject, takeUntil} from "rxjs";
-import {FormBuilder, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, Validators} from "@angular/forms";
 
 @Component({
   selector: 'quill-link',
@@ -20,9 +20,9 @@ export class LinkComponent implements OnInit, OnDestroy{
               private fb: FormBuilder) {
     this.store.select(quillSelectionsSelectors.selectCurrentSelectionFormats)
       .pipe(takeUntil(this.subManager$))
-      .subscribe(selections => {
-        this.hasUrl = selections['link'].length > 3;
-        if (this.hasUrl) this.url = selections['link'];
+      .subscribe(formats => {
+        this.hasUrl = formats['link']?.length > 3;
+        if (this.hasUrl) this.url = formats['link'];
       });
 
     this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
@@ -31,9 +31,8 @@ export class LinkComponent implements OnInit, OnDestroy{
         this.inputOpened = status;
       });
   }
-  urlForm = this.fb.group({
-    url: ['', Validators.minLength(3)],
-  })
+
+  urlForm = new FormControl('', Validators.minLength(3));
 
   switchInput(){
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
@@ -41,10 +40,10 @@ export class LinkComponent implements OnInit, OnDestroy{
 
   submit(){
     if(this.urlForm.invalid) return;
-    if(this.urlForm.value.url?.length! < 3) return;
+    if(this.urlForm.value?.length! < 3) return;
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
-      {format: 'link', value: this.urlForm.value.url}
+      {format: 'link', value: this.urlForm.value}
       )
     );
   }
@@ -53,5 +52,4 @@ export class LinkComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     this.subManager$.next('destroyed');
   }
-
 }
