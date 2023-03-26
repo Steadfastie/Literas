@@ -4,6 +4,7 @@ import * as quillSelectionActions from "../actions/quill.selection.actions";
 
 export const quillInitialSelectionState: IQuillState = {
   range: null,
+  bounds: null,
   text: '',
   formats: {},
   linkInputOpenState: false
@@ -15,6 +16,7 @@ export const quillSelectionReducer = createReducer(
     (state, selection: IQuillState) => (
       {...state,
         range: selection.range,
+        bounds: selection.bounds,
         text: selection.text,
         formats: selection.formats,
         linkInputOpenState: false

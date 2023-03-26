@@ -11,16 +11,7 @@
       (onSelectionChanged)="adaptToolBar($event)"
       (onBlur)="focusOff()"
       [modules]="{toolbar: false}">
-      <div quill-editor-toolbar class="toolbar">
-        <toolbar [editor]="content"></toolbar>
-      </div>
     </quill-editor>
-
-    <quill-editor #contentQuill
-                  formControlName="content"
-                  placeholder="Content..."
-                  (onSelectionChanged)="adaptToolBar($event)"
-                  (onBlur)="focusOff()">
-    </quill-editor>
+    <toolbar [editor]="content"></toolbar>
   </div>
 </form>
