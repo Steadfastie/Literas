@@ -5,6 +5,8 @@ import {QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
 import { SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
+import * as quillSelectionsSelectors from "../../../state/selectors/quill.selection.selectors";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'doc-create',
@@ -18,12 +20,34 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   });
   @ViewChild('titleQuill') title?: QuillEditorComponent;
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
+  linkInputOpenState: boolean = false;
+  subManager$: Subject<any> = new Subject();
   constructor(private fb: FormBuilder,
               private docService: DocService,
               private el: ElementRef,
-              private store: Store){}
+              private store: Store){
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(status => {
+        this.linkInputOpenState = status;
+      });
+  }
 
   adaptToolBar(selectionChange: SelectionChange){
+    if (this.linkInputOpenState){
+      selectionChange.editor.formatText(
+        selectionChange.oldRange?.index!,
+        selectionChange.oldRange?.length!,
+        'background', '#338dfa'
+      );
+      selectionChange.editor.formatText(
+        selectionChange.oldRange?.index!,
+        selectionChange.oldRange?.length!,
+        'color', 'white'
+      );
+      return;
+    }
+
     let range = selectionChange.range!;
     if (range.length !==0 ){
       let selectedText = selectionChange.editor.getText(range.index, range.length);
@@ -40,10 +64,9 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
         linkInputOpenState: false
       }));
     }
-  }
-
-  focusOff(){
-    this.store.dispatch(quillSelectionActions.quill_focusOff());
+    else {
+      this.store.dispatch(quillSelectionActions.quill_focusOff());
+    }
   }
 
   ngOnInit(): void {
@@ -51,7 +74,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+   this.subManager$.next('destroyed');
   }
 
   ngAfterViewInit(): void {
@@ -60,6 +83,10 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.content){
       this.content.styles = {'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '1rem'};
+      this.content.writeValue(
+        `This content was auto generated.
+       Please, proceed with caution.
+      `)
     }
   }
 }

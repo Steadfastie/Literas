@@ -1,8 +1,8 @@
-<div *ngIf="!linkInputOpen" class="tooltip"
+<div class="tooltip"
      [hidden]="currentSelection?.range == null"
      [style.left.px] = "currentSelection?.bounds?.left"
      [style.top.px] = "currentSelection?.bounds?.top">
-  <mat-button-toggle-group appearance="legacy" multiple>
+  <mat-button-toggle-group *ngIf="!linkInputOpen" appearance="legacy" multiple>
     <mat-button-toggle
       class="boldButton {{active['bold'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
       [disabled]="active['code-block']"
@@ -41,9 +41,15 @@
       (click)="setBulletList()">
       <mat-icon> format_list_numbered</mat-icon>
     </mat-button-toggle>
-  </mat-button-toggle-group>
-</div>
 
-<!--
-<quill-link></quill-link>-->
+    <mat-button-toggle
+      class="quoteButton {{active['link'] ? 'active' : ''}}"
+      (click)="editLink()">
+      <mat-icon *ngIf="!active['link']">link</mat-icon>
+      <mat-icon *ngIf="active['link']">link_off</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <quill-link *ngIf="linkInputOpen" [editor]="editor"></quill-link>
+</div>
 
