@@ -5,7 +5,7 @@ import * as quillSelectionActions from "../actions/quill.selection.actions";
 export const quillInitialSelectionState: IQuillState = {
   range: null,
   bounds: null,
-  text: '',
+  text: null,
   formats: {},
   linkInputOpenState: false
 }

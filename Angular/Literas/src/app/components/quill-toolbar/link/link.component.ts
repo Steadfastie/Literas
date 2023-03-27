@@ -1,9 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import {Subject, takeUntil} from "rxjs";
 import {FormBuilder, FormControl, Validators} from "@angular/forms";
+import {RangeStatic} from "quill";
+import {QuillEditorComponent} from "ngx-quill";
 
 @Component({
   selector: 'quill-link',
@@ -11,7 +13,9 @@ import {FormBuilder, FormControl, Validators} from "@angular/forms";
   styleUrls: ['./link.component.sass']
 })
 export class LinkComponent implements OnInit, OnDestroy{
-  hasUrl: boolean = false;
+  @Input() editor!: QuillEditorComponent;
+  hasValidUrl: boolean = false;
+  currentSelectionRange?: RangeStatic | null;
   url?: string;
   inputOpened: boolean = false;
   subManager$: Subject<any> = new Subject();
@@ -21,8 +25,8 @@ export class LinkComponent implements OnInit, OnDestroy{
     this.store.select(quillSelectionsSelectors.selectCurrentSelectionFormats)
       .pipe(takeUntil(this.subManager$))
       .subscribe(formats => {
-        this.hasUrl = formats['link']?.length > 3;
-        if (this.hasUrl) this.url = formats['link'];
+        this.hasValidUrl = formats['link']?.length > 3;
+        if (this.hasValidUrl) this.url = formats['link'];
       });
 
     this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
@@ -30,17 +34,37 @@ export class LinkComponent implements OnInit, OnDestroy{
       .subscribe(status => {
         this.inputOpened = status;
       });
+
+    this.store.select(quillSelectionsSelectors.selectCurrentRange)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(range => {
+        this.currentSelectionRange = range;
+      });
   }
 
-  urlForm = new FormControl('', Validators.minLength(3));
+  urlForm = this.fb.group({
+    url: ['', Validators.minLength(3)]
+  })
 
   switchInput(){
+    this.urlForm.reset();
+    this.editor.quillEditor.formatText(
+      this.currentSelectionRange!.index,
+      this.currentSelectionRange!.length,
+      'background', ''
+    );
+    this.editor.quillEditor.formatText(
+      this.currentSelectionRange!.index,
+      this.currentSelectionRange!.length,
+      'color', ''
+    );
+    this.editor.quillEditor.setSelection(this.currentSelectionRange!.index, this.currentSelectionRange!.length);
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
   }
 
   submit(){
     if(this.urlForm.invalid) return;
-    if(this.urlForm.value?.length! < 3) return;
+    if(this.urlForm.value?.url?.length! < 3) return;
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
       {format: 'link', value: this.urlForm.value}

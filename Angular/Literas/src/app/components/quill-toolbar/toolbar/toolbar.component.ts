@@ -6,6 +6,7 @@ import {IQuillState} from "../../../state/models/quill.state";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import {IToolbarModel, ToolBarConfig} from "../../../models/quill/toolbar";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
+import {quill_switchLinkInput} from "src/app/state/actions/quill.selection.actions";
 
 @Component({
   selector: 'toolbar',
@@ -82,8 +83,10 @@ export class ToolbarComponent implements OnInit, OnDestroy{
     );
   }
 
-  setLink(){
+  editLink(){
+    if (!this.currentSelection) return;
 
+    this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
   }
 
   setCodeBlock(){
