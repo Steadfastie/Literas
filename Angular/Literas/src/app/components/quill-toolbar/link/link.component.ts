@@ -3,7 +3,7 @@ import {Store} from "@ngrx/store";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import {Subject, takeUntil} from "rxjs";
-import {FormBuilder, FormControl, Validators} from "@angular/forms";
+import {FormBuilder, Validators} from "@angular/forms";
 import {RangeStatic} from "quill";
 import {QuillEditorComponent} from "ngx-quill";
 
@@ -43,7 +43,7 @@ export class LinkComponent implements OnInit, OnDestroy{
   }
 
   urlForm = this.fb.group({
-    url: ['', Validators.minLength(3)]
+    url: ['', [Validators.minLength(3),Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]]
   })
 
   switchInput(){
