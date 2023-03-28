@@ -3,20 +3,19 @@
          placeholder="https://"
          [type]="'url'" minlength="3" [size]="10">
   <button mat-icon-button matSuffix
-          *ngIf="urlForm.value?.url?.length! < 3"
+          *ngIf="urlForm.value?.url?.length! <= 3"
           (click)="switchInput()">
     <mat-icon class="available">close</mat-icon>
   </button>
   <button mat-icon-button matSuffix
-          *ngIf="urlForm.value?.url?.length! >= 3"
+          *ngIf="urlForm.value?.url?.length! > 3"
           (click)="urlForm.reset()">
     <mat-icon class="available">undo</mat-icon>
   </button>
-  <button mat-icon-button matSuffix
-          *ngIf="urlForm.value?.url?.length! >= 3"
-          [disabled]="!urlForm.controls.url.valid"
+  <button #saveButton mat-icon-button matSuffix
+          *ngIf="urlForm.value?.url?.length! > 3"
           (click)="submit()">
-    <mat-icon class="{{urlForm.controls.url.valid ? 'available' : 'unavailable'}}">save</mat-icon>
+    <mat-icon>save</mat-icon>
   </button>
 </form>
 

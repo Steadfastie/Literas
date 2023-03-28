@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from "@ngrx/store";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
@@ -18,6 +18,7 @@ export class LinkComponent implements OnInit, OnDestroy{
   currentSelectionRange?: RangeStatic | null;
   url?: string;
   inputOpened: boolean = false;
+  @ViewChild('saveButton', { read: ElementRef }) save?: ElementRef;
   subManager$: Subject<any> = new Subject();
 
   constructor(private store: Store,
@@ -72,6 +73,27 @@ export class LinkComponent implements OnInit, OnDestroy{
     );
   }
   ngOnInit(): void {
+    this.urlForm.statusChanges
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(status => {
+        if (this.save){
+          if (status === 'INVALID') {
+            this.save.nativeElement.disabled = true;
+            this.save.nativeElement.style.color = '#e0e0e0';
+          }
+          else if (status === 'VALID') {
+            this.save.nativeElement.disabled = false;
+            this.save.nativeElement.style = `
+            {
+                color: #e0e0e0
+                transition: 0.5s
+                 &:hover
+                   color: #5f5f5f
+                   transition: 0.5s
+            }`;
+          }
+        }
+    })
   }
   ngOnDestroy(): void {
     this.subManager$.next('destroyed');
