@@ -52,9 +52,11 @@ import { LinkComponent } from './components/quill-toolbar/link/link.component';
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     QuillModule.forRoot({
       modules: {
-        toolbar: toolbarOptions
+        toolbar: toolbarOptions,
+        link: true
       },
-      theme: 'bubble',
+      theme: 'snow',
+      bounds: document.body,
       customOptions: [{
         import: 'formats/font',
         whitelist: ['Sanchez', 'serif']

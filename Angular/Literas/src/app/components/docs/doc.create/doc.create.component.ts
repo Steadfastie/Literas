@@ -15,8 +15,8 @@ import {Subject, takeUntil} from "rxjs";
 })
 export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   creationForm = this.fb.group({
-    title: ['', Validators.required, Validators.minLength(3)],
-    content: ['', Validators.required, Validators.minLength(3)]
+    title: ['', [Validators.required, Validators.minLength(3)]],
+    content: ['', [Validators.required, Validators.minLength(3)]]
   });
   @ViewChild('titleQuill') title?: QuillEditorComponent;
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
@@ -34,15 +34,15 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   adaptToolBar(selectionChange: SelectionChange){
-    if (this.linkInputOpenState){
+    if (this.linkInputOpenState && selectionChange.oldRange){
       selectionChange.editor.formatText(
-        selectionChange.oldRange?.index!,
-        selectionChange.oldRange?.length!,
+        selectionChange.oldRange.index,
+        selectionChange.oldRange.length,
         'background', '#338dfa'
       );
       selectionChange.editor.formatText(
-        selectionChange.oldRange?.index!,
-        selectionChange.oldRange?.length!,
+        selectionChange.oldRange.index,
+        selectionChange.oldRange.length,
         'color', 'white'
       );
       return;
@@ -88,5 +88,14 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
        Please, proceed with caution.
       `)
     }
+
+    this.content.elementRef.nativeElement.addEventListener('click', (event: Event) => {
+      const target = event.target as HTMLElement;
+
+      if (target.tagName === 'A') {
+        event.preventDefault();
+        window.open(target.getAttribute('href')!, '_blank');
+      }
+    });
   }
 }
