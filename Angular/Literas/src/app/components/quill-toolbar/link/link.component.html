@@ -14,6 +14,8 @@
   </button>
   <button #saveButton mat-icon-button matSuffix
           *ngIf="urlForm.value?.url?.length! > 3"
+          [disabled]="!urlForm.valid"
+          [style.color]="'#ffc2c2'"
           (click)="submit()">
     <mat-icon>save</mat-icon>
   </button>

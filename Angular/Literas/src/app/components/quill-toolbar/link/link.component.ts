@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from "@ngrx/store";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
@@ -12,7 +12,7 @@ import {QuillEditorComponent} from "ngx-quill";
   templateUrl: './link.component.html',
   styleUrls: ['./link.component.sass']
 })
-export class LinkComponent implements OnInit, OnDestroy{
+export class LinkComponent implements OnInit, AfterViewInit, OnDestroy{
   @Input() editor!: QuillEditorComponent;
   hasValidUrl: boolean = false;
   currentSelectionRange?: RangeStatic | null;
@@ -43,6 +43,8 @@ export class LinkComponent implements OnInit, OnDestroy{
       });
   }
 
+
+
   urlForm = this.fb.group({
     url: ['', [Validators.minLength(3),Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]]
   })
@@ -59,27 +61,43 @@ export class LinkComponent implements OnInit, OnDestroy{
       this.currentSelectionRange!.length,
       'color', ''
     );
-    this.editor.quillEditor.setSelection(this.currentSelectionRange!.index, this.currentSelectionRange!.length);
+
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
+    this.editor.quillEditor.setSelection(this.currentSelectionRange!.index, this.currentSelectionRange!.length);
   }
 
   submit(){
     if(this.urlForm.invalid) return;
-    if(this.urlForm.value?.url?.length! < 3) return;
+    if(this.urlForm.value?.url?.length! <= 3) return;
+
+    let formValue = this.urlForm.value.url!;
+    if (!/^https?:\/\//i.test(formValue)) {
+      formValue = 'https://' + formValue;
+    }
+
+    this.editor.quillEditor.formatText(
+      this.currentSelectionRange!.index,
+      this.currentSelectionRange!.length,
+      'link', formValue
+    );
+
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
-      {format: 'link', value: this.urlForm.value}
+      {format: 'link', value: formValue}
       )
     );
+    this.switchInput();
   }
   ngOnInit(): void {
+  }
+  ngAfterViewInit(): void {
     this.urlForm.statusChanges
       .pipe(takeUntil(this.subManager$))
       .subscribe(status => {
         if (this.save){
           if (status === 'INVALID') {
             this.save.nativeElement.disabled = true;
-            this.save.nativeElement.style.color = '#e0e0e0';
+            this.save.nativeElement.style.color = '#ffc2c2';
           }
           else if (status === 'VALID') {
             this.save.nativeElement.disabled = false;
@@ -93,7 +111,7 @@ export class LinkComponent implements OnInit, OnDestroy{
             }`;
           }
         }
-    })
+      })
   }
   ngOnDestroy(): void {
     this.subManager$.next('destroyed');
