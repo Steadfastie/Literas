@@ -1,7 +1,7 @@
-import {IQuillState} from "../models/quill.state";
+import {QuillState} from "../models/quill.state";
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 
-export const selectQuillState = createFeatureSelector<IQuillState>('quill');
+export const selectQuillState = createFeatureSelector<QuillState>('quill');
 
 export const selectCurrentRange = createSelector(
   selectQuillState,

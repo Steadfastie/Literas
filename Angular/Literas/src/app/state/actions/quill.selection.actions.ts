@@ -1,5 +1,5 @@
 import {createAction, props} from "@ngrx/store";
-import {IQuillState} from "../models/quill.state";
+import {QuillState} from "../models/quill.state";
 import {QuillFormat} from "../../models/quill/format";
 
 export enum QuillSelectionActions{
@@ -12,7 +12,7 @@ export enum QuillSelectionActions{
 
 export const quill_newSelection = createAction(
   QuillSelectionActions.NewSelection,
-  props<IQuillState>()
+  props<QuillState>()
 )
 
 export const quill_formatChange = createAction(

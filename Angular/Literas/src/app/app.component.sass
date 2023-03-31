@@ -1,11 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap')
 .header
+  display: flex
+  flex-direction: row
+  flex-wrap: nowrap
+  justify-content: space-between
+  align-items: baseline
   margin-left: 1rem
+  margin-right: 1rem
+
 .appName
   color: #1b5e20
   font-size: 48px
   font-weight: bold
   font-family: 'Lobster', cursive
+
+.saveButton
+  color: #e5e5e5
+  transition: 0.5s
+  &:hover
+    color: #1b5e20
+    transition: 0.5s
 
 .subline
   margin-left: 0.5rem

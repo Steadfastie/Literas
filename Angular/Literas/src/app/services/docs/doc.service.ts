@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {ApiService} from "../api.service";
-import {IDocResponseModel} from "../../models/docs/docs.response.model";
+import {DocResponseModel} from "../../models/docs/docs.response.model";
 import {Observable} from "rxjs";
 import {IUserResponseModel} from "../../models/users/user.response.model";
-import {IDocRequestModel} from "../../models/docs/docs.request.model";
+import {DocRequestModel} from "../../models/docs/docs.request.model";
 import {Guid} from "guid-typescript";
-import {IDocThumbnail} from "../../models/docs/doc.thumbnail";
+import {DocThumbnail} from "../../models/docs/doc.thumbnail";
 
 @Injectable({
   providedIn: 'root'
@@ -14,15 +14,15 @@ export class DocService {
 
   constructor(private apiService: ApiService) { }
 
-  getAllDocs(): Observable<IDocResponseModel[]>{
+  getAllDocs(): Observable<DocResponseModel[]>{
     return this.apiService.get('docs').pipe();
   }
 
-  getDocById(docId: string): Observable<IDocResponseModel>{
+  getDocById(docId: string): Observable<DocResponseModel>{
     return this.apiService.get(`docs/${docId}`).pipe();
   }
 
-  getDocThumbnails(): Observable<IDocThumbnail[]>{
+  getDocThumbnails(): Observable<DocThumbnail[]>{
     return this.apiService.get(`docs/thumbnails`).pipe();
   }
 
@@ -30,15 +30,15 @@ export class DocService {
     return this.apiService.get(`docs/${docId}/editors`).pipe();
   }
 
-  create(doc: IDocRequestModel): Observable<IDocResponseModel>{
+  create(doc: DocRequestModel): Observable<DocResponseModel>{
     return this.apiService.post(`docs`, doc).pipe();
   }
 
-  patch(doc: IDocRequestModel): Observable<IDocResponseModel>{
+  patch(doc: DocRequestModel): Observable<DocResponseModel>{
     return this.apiService.patch(`docs/${doc.id}`, doc).pipe();
   }
 
-  delete(docId: Guid): Observable<IDocResponseModel>{
+  delete(docId: Guid): Observable<DocResponseModel>{
     return this.apiService.delete(`doc/${docId}`).pipe();
   }
 }

@@ -3,8 +3,6 @@ import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {DocService} from "../../services/docs/doc.service";
 import * as docCrudActions from "../actions/docs.crud.actions";
 import {catchError, exhaustMap, map, of} from "rxjs";
-import {IErrorModel} from "../../models/system/error.model";
-import {doc_thumbnails_fetch_failed} from "../actions/docs.crud.actions";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +21,7 @@ export class DocCrudEffects {
       ))
   ))
 
-  fetchDocThumbnails = createEffect(() => this.actions$.pipe(
+  fetchDocThumbnails$ = createEffect(() => this.actions$.pipe(
     ofType(docCrudActions.doc_thumbnails_fetch),
     exhaustMap(() => this.docService.getDocThumbnails()
       .pipe(
@@ -31,4 +29,13 @@ export class DocCrudEffects {
         catchError(error => of(docCrudActions.doc_thumbnails_fetch_failed(error)))
     ))
   ))
+
+  createDoc$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_create),
+    exhaustMap((doc) => this.docService.create(doc)
+      .pipe(
+        map(docResponse => docCrudActions.doc_create_success(docResponse)),
+        catchError(error => of(docCrudActions.doc_create_failed(error)))
+      )
+    )))
 }

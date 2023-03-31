@@ -2,11 +2,10 @@ import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angul
 import {QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
 import {Subject, takeUntil} from "rxjs";
-import {IQuillState} from "../../../state/models/quill.state";
+import {QuillState} from "../../../state/models/quill.state";
 import * as quillSelectionsSelectors from "src/app/state/selectors/quill.selection.selectors";
 import {IToolbarModel, ToolBarConfig} from "../../../models/quill/toolbar";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
-import {quill_switchLinkInput} from "src/app/state/actions/quill.selection.actions";
 
 @Component({
   selector: 'toolbar',
@@ -15,7 +14,7 @@ import {quill_switchLinkInput} from "src/app/state/actions/quill.selection.actio
 })
 export class ToolbarComponent implements OnInit, OnDestroy{
   @Input() editor!: QuillEditorComponent;
-  currentSelection?: IQuillState;
+  currentSelection?: QuillState;
   active: IToolbarModel = ToolBarConfig;
   linkInputOpen: boolean = false;
   subManager$: Subject<any> = new Subject();

@@ -6,7 +6,10 @@ import {Store} from "@ngrx/store";
 import { SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as quillSelectionsSelectors from "../../../state/selectors/quill.selection.selectors";
+import * as docCrudActions from "../../../state/actions/docs.crud.actions";
+import * as docCrudSelectors from "../../../state/selectors/docs.crud.selectors";
 import {Subject, takeUntil} from "rxjs";
+import {Guid} from "guid-typescript";
 
 @Component({
   selector: 'doc-create',
@@ -31,6 +34,26 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(status => {
         this.linkInputOpenState = status;
       });
+
+    this.store.select(docCrudSelectors.selectSavingState)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe((saving) => {
+        if (saving){
+          this.creationForm.disable();
+          this.submit();
+        }
+      })
+  }
+
+  submit(){
+    if (this.creationForm.valid){
+      let doc = {
+        id: Guid.create(),
+        title: this.creationForm.value.title!,
+        content: this.creationForm.value.content!
+      }
+      this.store.dispatch(docCrudActions.doc_create(doc));
+    }
   }
 
   adaptToolBar(selectionChange: SelectionChange){

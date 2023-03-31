@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {IDocThumbnail} from "../../../../models/docs/doc.thumbnail";
+import {DocThumbnail} from "../../../../models/docs/doc.thumbnail";
 import { NavigationEnd, Router } from "@angular/router";
 import {filter} from "rxjs";
 
@@ -10,7 +10,7 @@ import {filter} from "rxjs";
   styleUrls: ['./doc.thumbnail.component.sass']
 })
 export class DocThumbnailComponent implements OnInit, OnDestroy {
-  @Input() thumbnail!: IDocThumbnail;
+  @Input() thumbnail!: DocThumbnail;
   isActive: boolean = false;
   constructor(private store: Store,
               private router: Router) {

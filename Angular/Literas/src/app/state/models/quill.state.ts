@@ -1,8 +1,7 @@
-import {BoundsStatic, Quill, RangeStatic, StringMap} from "quill";
-import {QuillEditorComponent} from "ngx-quill";
+import {RangeStatic, StringMap} from "quill";
 import {Bounds} from "../../models/quill/bounds";
 
-export interface IQuillState {
+export interface QuillState {
   range: RangeStatic | null;
   bounds: Bounds | null;
   text: string | null;
