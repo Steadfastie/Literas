@@ -1,4 +1,4 @@
-export interface IErrorModel {
+export interface ErrorModel {
   message: string,
   statusCode: number
 }

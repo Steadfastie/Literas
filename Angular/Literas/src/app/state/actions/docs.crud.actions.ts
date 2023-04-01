@@ -1,8 +1,8 @@
 import {createAction, props} from "@ngrx/store";
-import {IDocRequestModel} from "../../models/docs/docs.request.model";
-import {IDocResponseModel} from "../../models/docs/docs.response.model";
-import {IErrorModel} from "../../models/system/error.model";
-import {IDocThumbnail} from "../../models/docs/doc.thumbnail";
+import {DocRequestModel} from "../../models/docs/docs.request.model";
+import {DocResponseModel} from "../../models/docs/docs.response.model";
+import {ErrorModel} from "../../models/system/error.model";
+import {DocThumbnail} from "../../models/docs/doc.thumbnail";
 
 export enum DocsCrudActions{
   FetchDocs = '[Docs] Doc fetch initialized',
@@ -17,6 +17,7 @@ export enum DocsCrudActions{
   FetchDocThumbnails = '[Docs] Doc thumbnails fetch initialized',
   FetchDocThumbnailsSuccess = '[Docs] Doc thumbnails fetch successful',
   FetchDocThumbnailsFailed = '[Docs] Doc thumbnails fetch failure',
+  SaveDoc = '[Docs] Doc saving initialized',
 }
 
 export const docs_fetch = createAction(
@@ -25,12 +26,12 @@ export const docs_fetch = createAction(
 
 export const docs_fetch_success = createAction(
   DocsCrudActions.FetchDocsSuccess,
-  props<{fetched: IDocResponseModel[]}>()
+  props<{fetched: DocResponseModel[]}>()
 )
 
 export const docs_fetch_failed = createAction(
   DocsCrudActions.FetchDocsFailed,
-  props<IErrorModel>()
+  props<ErrorModel>()
 )
 
 export const docs_load = createAction(
@@ -40,27 +41,27 @@ export const docs_load = createAction(
 
 export const docs_load_success = createAction(
   DocsCrudActions.LoadDocSuccess,
-  props<IDocResponseModel>()
+  props<DocResponseModel>()
 )
 
 export const docs_load_failed = createAction(
   DocsCrudActions.LoadDocFailed,
-  props<IErrorModel>()
+  props<ErrorModel>()
 )
 
 export const doc_create = createAction(
   DocsCrudActions.CreateDoc,
-  props<IDocRequestModel>()
+  props<DocRequestModel>()
 )
 
 export const doc_create_success = createAction(
   DocsCrudActions.CreateDocSuccess,
-  props<IDocResponseModel>()
+  props<DocResponseModel>()
 )
 
 export const doc_create_failed = createAction(
   DocsCrudActions.CreateDocFailed,
-  props<IErrorModel>()
+  props<ErrorModel>()
 )
 
 export const doc_thumbnails_fetch = createAction(
@@ -69,12 +70,16 @@ export const doc_thumbnails_fetch = createAction(
 
 export const doc_thumbnails_fetch_success = createAction(
   DocsCrudActions.FetchDocThumbnailsSuccess,
-  props<{fetched: IDocThumbnail[]}>()
+  props<{fetched: DocThumbnail[]}>()
 )
 
 export const doc_thumbnails_fetch_failed = createAction(
   DocsCrudActions.FetchDocThumbnailsFailed,
-  props<IErrorModel>()
+  props<ErrorModel>()
+)
+
+export const doc_save = createAction(
+  DocsCrudActions.SaveDoc
 )
 
 

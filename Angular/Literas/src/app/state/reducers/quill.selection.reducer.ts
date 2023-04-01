@@ -1,8 +1,8 @@
-import {IQuillState} from "../models/quill.state";
+import {QuillState} from "../models/quill.state";
 import {createReducer, on} from "@ngrx/store";
 import * as quillSelectionActions from "../actions/quill.selection.actions";
 
-export const quillInitialSelectionState: IQuillState = {
+export const quillInitialSelectionState: QuillState = {
   range: null,
   bounds: null,
   text: null,
@@ -13,7 +13,7 @@ export const quillInitialSelectionState: IQuillState = {
 export const quillSelectionReducer = createReducer(
   quillInitialSelectionState,
   on(quillSelectionActions.quill_newSelection,
-    (state, selection: IQuillState) => (
+    (state, selection: QuillState) => (
       {...state,
         range: selection.range,
         bounds: selection.bounds,

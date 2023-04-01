@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {DocService} from "../../services/docs/doc.service";
 import * as docCrudActions from "../actions/docs.crud.actions";
-import {catchError, exhaustMap, map, of} from "rxjs";
-import {IErrorModel} from "../../models/system/error.model";
-import {doc_thumbnails_fetch_failed} from "../actions/docs.crud.actions";
+import {catchError, exhaustMap, map, of, tap} from "rxjs";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,8 @@ import {doc_thumbnails_fetch_failed} from "../actions/docs.crud.actions";
 export class DocCrudEffects {
 
   constructor(private actions$: Actions,
-              private docService: DocService) { }
+              private docService: DocService,
+              private router: Router) { }
 
   fetchDocs$ = createEffect(() => this.actions$.pipe(
     ofType(docCrudActions.docs_fetch),
@@ -23,7 +23,7 @@ export class DocCrudEffects {
       ))
   ))
 
-  fetchDocThumbnails = createEffect(() => this.actions$.pipe(
+  fetchDocThumbnails$ = createEffect(() => this.actions$.pipe(
     ofType(docCrudActions.doc_thumbnails_fetch),
     exhaustMap(() => this.docService.getDocThumbnails()
       .pipe(
@@ -31,4 +31,22 @@ export class DocCrudEffects {
         catchError(error => of(docCrudActions.doc_thumbnails_fetch_failed(error)))
     ))
   ))
+
+  createDoc$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_create),
+    exhaustMap((doc) => this.docService.create(doc)
+      .pipe(
+        map(docResponse => docCrudActions.doc_create_success(docResponse)),
+        catchError(error => of(docCrudActions.doc_create_failed(error)))
+      )
+    )))
+
+  createDocSuccess$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_create_success),
+    tap((docResponse) => {
+      setTimeout(() => {
+        this.router.navigate([`/docs/${docResponse.id}`]);
+      }, 0);
+    })),
+    {dispatch: false})
 }

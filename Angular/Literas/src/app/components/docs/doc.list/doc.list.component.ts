@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {Store} from "@ngrx/store";
-import {IDocThumbnail} from "../../../models/docs/doc.thumbnail";
+import {DocThumbnail} from "../../../models/docs/doc.thumbnail";
 import * as docActions from "../../../state/actions/docs.crud.actions";
 import * as selectors from "../../../state/selectors/docs.crud.selectors";
-import {Observable, Subject, takeUntil} from "rxjs";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'doc-list',
@@ -11,7 +11,7 @@ import {Observable, Subject, takeUntil} from "rxjs";
   styleUrls: ['./doc.list.component.sass']
 })
 export class DocListComponent implements OnInit, OnDestroy {
-  docs: IDocThumbnail[] = [];
+  docs: DocThumbnail[] = [];
   subManager$: Subject<any> = new Subject();
   constructor(private store: Store){
     this.store.select(selectors.selectDocThumbnails)

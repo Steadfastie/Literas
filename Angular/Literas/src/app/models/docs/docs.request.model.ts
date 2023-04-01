@@ -1,7 +1,5 @@
-import {Guid} from "guid-typescript";
-
-export interface IDocRequestModel {
-    id: Guid,
+export interface DocRequestModel {
+    id: string,
     title: string,
     content: string
 }

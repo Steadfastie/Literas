@@ -1,9 +1,10 @@
-import {IDocResponseModel} from "../../models/docs/docs.response.model";
-import {IErrorModel} from "../../models/system/error.model";
-import {IDocThumbnail} from "../../models/docs/doc.thumbnail";
+import {DocResponseModel} from "../../models/docs/docs.response.model";
+import {ErrorModel} from "../../models/system/error.model";
+import {DocThumbnail} from "../../models/docs/doc.thumbnail";
 
-export interface IDocsState{
-  doc_thumbnails: IDocThumbnail[]
-  docs: IDocResponseModel[],
-  errors: IErrorModel[]
+export interface DocsState {
+  docThumbnails: DocThumbnail[]
+  currentDocLastSave?: DocResponseModel,
+  errors: ErrorModel[],
+  saving: boolean,
 }
