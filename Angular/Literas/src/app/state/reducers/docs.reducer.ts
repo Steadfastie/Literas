@@ -17,7 +17,7 @@ export const docsReducer = createReducer(
     (state, error) => ({...state, errors: [...state.errors, error]})),
 
   on(docsCrudActions.doc_thumbnails_fetch_success,
-    (state, thumbnails) => ({...state, doc_thumbnails: [...state.docThumbnails, ...thumbnails.fetched]})),
+    (state, thumbnails) => ({...state, docThumbnails: [...state.docThumbnails, ...thumbnails.fetched]})),
   on(docsCrudActions.doc_thumbnails_fetch_failed,
     (state, error) => ({...state, errors: [...state.errors, error]})),
 

@@ -3,7 +3,7 @@ import {DocsState} from "../models/docs.state";
 
 export const selectWholeDocsCrudState = createFeatureSelector<DocsState>('docs_crud');
 
-export const selectDocsCrudState = createSelector(
+export const selectCurrentDocLastSave = createSelector(
   selectWholeDocsCrudState,
   (state) => state.currentDocLastSave
 )

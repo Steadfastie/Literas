@@ -19,7 +19,7 @@ const routes: Routes = [
       },
     ]
   },
-  {path:'', redirectTo: '/currentDocLastSave', pathMatch: 'full'},
+  {path:'', redirectTo: '/docs', pathMatch: 'full'},
   {path:'**', component: PageNotFoundComponent},
 ];
 

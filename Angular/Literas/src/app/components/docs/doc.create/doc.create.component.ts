@@ -22,7 +22,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
     content: ['', [Validators.required, Validators.minLength(3)]]
   });
   @ViewChild('titleQuill') title?: QuillEditorComponent;
-  @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
+  @ViewChild('contentQuill') content!: QuillEditorComponent;
   linkInputOpenState: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private fb: FormBuilder,
@@ -39,7 +39,6 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.subManager$))
       .subscribe((saving) => {
         if (saving){
-          this.creationForm.disable();
           this.submit();
         }
       })
@@ -48,8 +47,8 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   submit(){
     if (this.creationForm.valid){
       let doc = {
-        id: Guid.create(),
-        title: this.creationForm.value.title!,
+        id: Guid.create().toString(),
+        title: this.title?.quillEditor.getText()!,
         content: this.creationForm.value.content!
       }
       this.store.dispatch(docCrudActions.doc_create(doc));
@@ -93,7 +92,10 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-
+    this.creationForm.controls.content.setValue(
+      `This content was auto generated.
+        Please, proceed with caution.`
+    );
   }
 
   ngOnDestroy(): void {
@@ -106,13 +108,9 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.content){
       this.content.styles = {'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '1rem'};
-      this.content.writeValue(
-        `This content was auto generated.
-       Please, proceed with caution.
-      `)
     }
 
-    this.content.elementRef.nativeElement.addEventListener('click', (event: Event) => {
+    this.content!.elementRef.nativeElement.addEventListener('click', (event: Event) => {
       const target = event.target as HTMLElement;
 
       if (target.tagName === 'A') {
