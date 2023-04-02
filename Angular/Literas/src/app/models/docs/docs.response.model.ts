@@ -1,7 +1,5 @@
-import {Guid} from "guid-typescript";
-
 export interface DocResponseModel {
-    id: Guid,
+    id: string,
     creatorId:string,
     title: string,
     content: string

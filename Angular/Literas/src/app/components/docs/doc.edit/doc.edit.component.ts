@@ -1,10 +1,15 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
-import {Subject} from "rxjs";
+import {filter, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
+import * as docSelectors from 'src/app/state/selectors/docs.crud.selectors';
+import * as docCrudActions from "../../../state/actions/docs.crud.actions";
 import {Store} from "@ngrx/store";
+import {DocResponseModel} from "../../../models/docs/docs.response.model";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {Guid} from "guid-typescript";
 
 @Component({
   selector: 'doc-edit',
@@ -12,6 +17,9 @@ import {Store} from "@ngrx/store";
   styleUrls: ['./doc.edit.component.sass']
 })
 export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
+  currentDoc?: DocResponseModel;
+  urlGuid?: Guid;
+  fetchedDoc?: DocResponseModel;
   editForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
     content: ['', [Validators.required, Validators.minLength(3)]]
@@ -21,10 +29,38 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   linkInputOpenState: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private fb: FormBuilder,
-              private store: Store){
-
+              private store: Store,
+              private router: Router,
+              private activatedRoute: ActivatedRoute){
+    this.store.select(docSelectors.selectCurrentDocLastSave)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(doc => {
+        this.fetchedDoc = doc;
+        if (this.urlGuid){
+          this.loadForm();
+        }
+      });
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(e => {
+        this.urlGuid = Guid.parse((e as NavigationEnd).url.split('/')[2]);
+      });
+    this.activatedRoute.params.subscribe(params => {
+      const guid = params['id'];
+      this.urlGuid = Guid.parse(guid);
+    });
   }
 
+  loadForm(){
+    if (this.fetchedDoc == undefined || this.fetchedDoc.id !== this.urlGuid?.toString()) {
+      this.store.dispatch(docCrudActions.doc_fetch({id: this.urlGuid!.toString()}));
+    } else {
+      this.editForm.patchValue({
+        title: this.fetchedDoc?.title,
+        content: this.fetchedDoc?.content
+      });
+    }
+  }
   adaptToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpenState && selectionChange.oldRange){
       selectionChange.editor.formatText(
@@ -60,8 +96,6 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
       this.store.dispatch(quillSelectionActions.quill_focusOff());
     }
   }
-
-
   ngOnInit(): void {
   }
   ngAfterViewInit(): void {
@@ -80,8 +114,9 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         window.open(target.getAttribute('href')!, '_blank');
       }
     });
-  }
 
+    this.loadForm();
+  }
   ngOnDestroy(): void {
     this.subManager$.next('destroyed');
   }

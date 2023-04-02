@@ -14,6 +14,16 @@ export class DocCrudEffects {
               private docService: DocService,
               private router: Router) { }
 
+
+  fetchDoc$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_fetch),
+    exhaustMap((docId) => this.docService.getDocById(docId.id)
+      .pipe(
+        map(doc => docCrudActions.doc_fetch_success(doc)),
+        catchError(error => of(docCrudActions.doc_fetch_failed(error)))
+      ))
+  ))
+
   fetchDocs$ = createEffect(() => this.actions$.pipe(
     ofType(docCrudActions.docs_fetch),
     exhaustMap(() => this.docService.getAllDocs()

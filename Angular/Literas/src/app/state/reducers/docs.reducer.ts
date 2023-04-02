@@ -11,6 +11,12 @@ export const docsInitialState: DocsState = {
 
 export const docsReducer = createReducer(
   docsInitialState,
+
+  on(docsCrudActions.doc_fetch_success,
+    (state, doc) => ({...state, currentDocLastSave: doc})),
+  on(docsCrudActions.doc_fetch_failed,
+    (state, error) => ({...state, errors: [...state.errors, error]})),
+
   on(docsCrudActions.docs_fetch_success,
     (state, docs) => ({...state, docs: docs.fetched})),
   on(docsCrudActions.docs_fetch_failed,

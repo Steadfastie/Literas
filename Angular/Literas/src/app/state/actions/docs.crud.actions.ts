@@ -34,17 +34,17 @@ export const docs_fetch_failed = createAction(
   props<ErrorModel>()
 )
 
-export const docs_load = createAction(
+export const doc_fetch = createAction(
   DocsCrudActions.LoadDoc,
   props<{id: string}>()
 )
 
-export const docs_load_success = createAction(
+export const doc_fetch_success = createAction(
   DocsCrudActions.LoadDocSuccess,
   props<DocResponseModel>()
 )
 
-export const docs_load_failed = createAction(
+export const doc_fetch_failed = createAction(
   DocsCrudActions.LoadDocFailed,
   props<ErrorModel>()
 )
