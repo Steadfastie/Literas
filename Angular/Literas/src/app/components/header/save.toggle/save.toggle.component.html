@@ -1,0 +1,10 @@
+<button mat-icon-button
+        *ngIf="!isSaving"
+        class="saveButton"
+        (click)="saveCurrentDoc()">
+  <mat-icon>save</mat-icon>
+</button>
+<mat-spinner
+  *ngIf="isSaving"
+  diameter="24">2
+</mat-spinner>
