@@ -46,11 +46,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       })
   }
   submit(){
+    let contentFromEditor = this.content.quillEditor.getContents();
     if (this.creationForm.valid){
       let doc = {
         id: Guid.create().toString(),
         title: this.title?.quillEditor.getText()!,
-        content: this.creationForm.value.content!
+        content: JSON.stringify(contentFromEditor)
       }
       this.store.dispatch(docCrudActions.doc_create(doc));
     }

@@ -66,6 +66,9 @@ export const docsReducer = createReducer(
       errors: [...state.errors, error],
       saving: false
     })),
+
+  on(docsCrudActions.doc_clear_last_save,
+    (state) => ({...state, currentDocLastSave: undefined}))
 )
 
 

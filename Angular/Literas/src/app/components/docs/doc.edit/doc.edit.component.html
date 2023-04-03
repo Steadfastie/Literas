@@ -9,6 +9,7 @@
     <quill-editor #contentQuill
                   formControlName="content" placeholder="Content..."
                   (onSelectionChanged)="adaptToolBar($event)"
+                  (onEditorCreated)="loadForm()"
                   [modules]="{toolbar: false}">
     </quill-editor>
     <toolbar [editor]="content"></toolbar>
