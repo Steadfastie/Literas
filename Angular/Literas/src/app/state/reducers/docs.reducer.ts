@@ -40,7 +40,29 @@ export const docsReducer = createReducer(
         {id: docResponse.id, title: docResponse.title}]
     })),
   on(docsCrudActions.doc_create_failed,
-    (state, error) => ({...state, errors: [...state.errors, error], saving: false})),
+    (state, error) => ({
+      ...state,
+      errors: [...state.errors, error],
+      saving: false
+    })),
+
+  on(docsCrudActions.doc_patch_success,
+    (state, docResponse) => ({
+      ...state,
+      currentDocLastSave: docResponse,
+      saving: false,
+      docThumbnails: state.docThumbnails.map(
+        thumbnail => thumbnail.id === docResponse.id && thumbnail.title !== docResponse.title
+          ? { ...thumbnail, title: docResponse.title }
+          : thumbnail
+      )
+    })),
+  on(docsCrudActions.doc_patch_failed,
+    (state, error) => ({
+      ...state,
+      errors: [...state.errors, error],
+      saving: false
+    })),
 )
 
 

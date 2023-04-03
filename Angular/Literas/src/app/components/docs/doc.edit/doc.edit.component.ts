@@ -1,14 +1,14 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
-import {filter, Subject, takeUntil} from "rxjs";
+import {debounceTime, distinctUntilChanged, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as docSelectors from 'src/app/state/selectors/docs.crud.selectors';
 import * as docCrudActions from "../../../state/actions/docs.crud.actions";
 import {Store} from "@ngrx/store";
 import {DocResponseModel} from "../../../models/docs/docs.response.model";
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Guid} from "guid-typescript";
 
 @Component({
@@ -40,14 +40,12 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
           this.loadForm();
         }
       });
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(e => {
-        this.urlGuid = Guid.parse((e as NavigationEnd).url.split('/')[2]);
-      });
     this.activatedRoute.params.subscribe(params => {
       const guid = params['id'];
-      this.urlGuid = Guid.parse(guid);
+      if (this.urlGuid !== Guid.parse(guid)){
+        this.urlGuid = Guid.parse(guid);
+        this.loadForm();
+      }
     });
   }
 
@@ -96,7 +94,33 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
       this.store.dispatch(quillSelectionActions.quill_focusOff());
     }
   }
+  submit(){
+    if (this.editForm.valid){
+      let docFromForm = {
+        id: this.urlGuid!.toString(),
+        title: this.editForm.value.title!,
+        content: this.editForm.value.content!
+      }
+
+      if (docFromForm.title == this.fetchedDoc?.title && docFromForm.content == this.fetchedDoc.content) return;
+
+      this.store.dispatch(docCrudActions.doc_save());
+      this.store.dispatch(docCrudActions.doc_patch(docFromForm));
+    }
+  }
   ngOnInit(): void {
+    this.editForm.valueChanges
+      .pipe(
+        takeUntil(this.subManager$),
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe(value => {
+        if (this.fetchedDoc?.title != value.title ||
+            this.fetchedDoc?.content != value.content){
+          this.submit();
+        }
+      })
   }
   ngAfterViewInit(): void {
     if (this.title){

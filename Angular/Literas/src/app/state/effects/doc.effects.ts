@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {DocService} from "../../services/docs/doc.service";
 import * as docCrudActions from "../actions/docs.crud.actions";
-import {catchError, exhaustMap, map, of, tap} from "rxjs";
+import {catchError, exhaustMap, map, of, switchMap, tap} from "rxjs";
 import {Router} from "@angular/router";
 
 @Injectable({
@@ -59,4 +59,12 @@ export class DocCrudEffects {
       }, 0);
     })),
     {dispatch: false})
+
+  patchDoc$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_patch),
+    switchMap((doc) => this.docService.patch(doc)
+      .pipe(
+        map(docResponse => docCrudActions.doc_patch_success(docResponse)),
+        catchError(error => of(docCrudActions.doc_patch_failed(error)))
+      ))))
 }
