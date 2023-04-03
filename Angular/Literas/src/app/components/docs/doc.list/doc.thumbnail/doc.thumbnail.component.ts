@@ -22,6 +22,8 @@ export class DocThumbnailComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(id => {
         if (id){
           this.isActive = this.thumbnail.id === id;
+        } else {
+          this.isActive = false;
         }
       })
   }
@@ -29,6 +31,6 @@ export class DocThumbnailComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subManager$.next('destroyed')
+    this.subManager$.next('destroyed');
   }
 }

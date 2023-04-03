@@ -50,7 +50,6 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         }
       });
   }
-
   loadForm(){
     if (this.fetchedDoc == undefined || this.fetchedDoc.id !== this.urlGuid?.toString()) {
       this.store.dispatch(docCrudActions.doc_fetch({id: this.urlGuid!.toString()}));
@@ -100,7 +99,7 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     if (this.editForm.valid){
       let docFromForm = {
         id: this.urlGuid!.toString(),
-        title: this.editForm.value.title!,
+        title: this.title?.quillEditor.getText()!,
         content: this.editForm.value.content!
       }
 
@@ -144,6 +143,8 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     this.loadForm();
   }
   ngOnDestroy(): void {
+    this.submit();
+    this.store.dispatch(docCrudActions.url_id_change({id: undefined}));
     this.subManager$.next('destroyed');
   }
 }

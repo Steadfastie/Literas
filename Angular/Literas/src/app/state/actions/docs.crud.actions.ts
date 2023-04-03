@@ -81,7 +81,7 @@ export const doc_thumbnails_fetch_failed = createAction(
 
 export const url_id_change = createAction(
   DocsCrudActions.UrlIdChange,
-  props<{ id: string }>()
+  props<{ id?: string }>()
 )
 export const doc_save = createAction(
   DocsCrudActions.SaveDoc
