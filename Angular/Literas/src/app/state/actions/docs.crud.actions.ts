@@ -21,6 +21,7 @@ export enum DocsCrudActions{
   FetchDocThumbnailsSuccess = '[Docs] Doc thumbnails fetch successful',
   FetchDocThumbnailsFailed = '[Docs] Doc thumbnails fetch failure',
 
+  UrlIdChange = '[Docs] Url id change',
   SaveDoc = '[Docs] Doc saving initialized',
 
   PatchDoc = '[Docs] Doc patching initialized',
@@ -78,6 +79,10 @@ export const doc_thumbnails_fetch_failed = createAction(
   props<ErrorModel>()
 )
 
+export const url_id_change = createAction(
+  DocsCrudActions.UrlIdChange,
+  props<{ id: string }>()
+)
 export const doc_save = createAction(
   DocsCrudActions.SaveDoc
 )

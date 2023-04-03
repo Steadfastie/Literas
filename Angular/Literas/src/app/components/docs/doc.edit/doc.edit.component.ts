@@ -32,21 +32,23 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
               private store: Store,
               private router: Router,
               private activatedRoute: ActivatedRoute){
-    this.store.select(docSelectors.selectCurrentDocLastSave)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(doc => {
-        this.fetchedDoc = doc;
-        if (this.urlGuid){
-          this.loadForm();
-        }
-      });
     this.activatedRoute.params.subscribe(params => {
       const guid = params['id'];
       if (this.urlGuid !== Guid.parse(guid)){
         this.urlGuid = Guid.parse(guid);
+        this.store.dispatch(docCrudActions.url_id_change({id: this.urlGuid.toString()}));
         this.loadForm();
       }
     });
+    this.store.select(docSelectors.selectCurrentDocLastSave)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(doc => {
+        let prevID = this.fetchedDoc?.id
+        this.fetchedDoc = doc;
+        if (this.editForm.pristine || prevID !== this.fetchedDoc?.id){
+          this.loadForm();
+        }
+      });
   }
 
   loadForm(){
@@ -112,7 +114,7 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     this.editForm.valueChanges
       .pipe(
         takeUntil(this.subManager$),
-        debounceTime(400),
+        debounceTime(1000),
         distinctUntilChanged()
       )
       .subscribe(value => {

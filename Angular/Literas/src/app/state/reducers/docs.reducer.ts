@@ -6,6 +6,7 @@ export const docsInitialState: DocsState = {
   docThumbnails: [],
   currentDocLastSave: undefined,
   errors: [],
+  urlId: undefined,
   saving: false,
 }
 
@@ -27,6 +28,8 @@ export const docsReducer = createReducer(
   on(docsCrudActions.doc_thumbnails_fetch_failed,
     (state, error) => ({...state, errors: [...state.errors, error]})),
 
+  on(docsCrudActions.url_id_change,
+    (state, urlId) => ({...state, urlId: urlId.id})),
   on(docsCrudActions.doc_save,
     (state) => ({...state, saving: true})),
 
