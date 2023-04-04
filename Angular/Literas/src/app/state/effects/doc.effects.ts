@@ -67,4 +67,21 @@ export class DocCrudEffects {
         map(docResponse => docCrudActions.doc_patch_success(docResponse)),
         catchError(error => of(docCrudActions.doc_patch_failed(error)))
       ))))
+
+  deleteDoc$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_delete),
+    exhaustMap((docId) => this.docService.delete(docId.id)
+      .pipe(
+        map(docResponse => docCrudActions.doc_delete_success(docResponse)),
+        catchError(error => of(docCrudActions.doc_delete_failed(error)))
+      ))))
+
+  deleteDocSuccess$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_delete_success),
+    tap(() => {
+      setTimeout(() => {
+        this.router.navigate(['/docs']);
+      }, 0);
+    })),
+    {dispatch: false})
 }

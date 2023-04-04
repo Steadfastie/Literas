@@ -68,7 +68,21 @@ export const docsReducer = createReducer(
     })),
 
   on(docsCrudActions.doc_clear_last_save,
-    (state) => ({...state, currentDocLastSave: undefined}))
+    (state) => ({...state, currentDocLastSave: undefined})),
+
+  on(docsCrudActions.doc_delete_success,
+    (state, docResponse) => ({
+      ...state,
+      currentDocLastSave: undefined,
+      saving: false,
+      urlId: undefined,
+      docThumbnails: state.docThumbnails.filter(thumbnail => thumbnail.id !== docResponse.id)
+    })),
+  on(docsCrudActions.doc_delete_failed,
+    (state, error) => ({
+      ...state,
+      errors: [...state.errors, error],
+    })),
 )
 
 

@@ -1,4 +1,90 @@
 .container
   margin: 5px
+
+.link
+  margin: 10px
+  text-decoration: none
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  align-items: center
+  flex-wrap: nowrap
+  width: calc(12ch + 20px)
+  box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px
+  border-radius: 10px
+  transition: 0.5s
+  &:hover
+    transform: translate(5px)
+    transition: 0.5s
+
 .activeLink
   border-right: 2px solid #1b5e20
+  &:hover
+    transform: translate(0)
+    transition: 0.5s
+
+.link .linkContainer
+  position: relative
+  width: calc(12ch + 20px)
+
+.link .linkContainer::after
+  content: ""
+  border-radius: 10px
+  position: absolute
+  top: 0
+  bottom: 0
+  right: 0
+  width: 50px
+  background: linear-gradient(to right, transparent, #fff 80%)
+  pointer-events: none
+
+.linkText
+  position: relative
+  color: #5f5f5f
+  width: 10ch
+  max-width: calc(12ch + 20px)
+  text-overflow: clip
+  overflow: hidden
+  white-space: nowrap
+  padding: 5px 15px 5px 15px
+
+.activeLink .linkText
+  width: 8ch
+
+.buttonToggle
+  display: flex
+  align-items: center
+  justify-content: center
+  padding-right: 12px
+
+button
+  border: none
+  background: none
+  padding: 0
+  margin: 0
+  cursor: pointer
+  display: inline-flex
+  align-items: center
+  justify-content: center
+
+.confirmation
+  color: #5f5f5f
+  transition: 0.5s
+  transform: translate(-5px)
+  &:hover
+    color: #1b5e20
+    transition: 0.5s
+
+.revise
+  color: #5f5f5f
+  transition: 0.5s
+  &:hover
+    color: #c70000
+    transition: 0.5s
+
+.trashBin
+  color: #f5f5f5
+  transition: 0.5s
+  &:hover
+    color: #5f5f5f
+    transition: 0.5s

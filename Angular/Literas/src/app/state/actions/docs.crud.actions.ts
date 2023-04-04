@@ -28,7 +28,11 @@ export enum DocsCrudActions{
   PatchDocSuccess = '[Docs] Doc patching successful',
   PatchDocFailed = '[Docs] Doc patching failed',
 
-  ClearLastSave = '[Docs] Clear last save'
+  ClearLastSave = '[Docs] Clear last save',
+
+  DeleteDoc = '[Docs] Doc deletion initialized',
+  DeleteDocSuccess = '[Docs] Doc deletion successful',
+  DeleteDocFailed = '[Docs] Doc deletion failed',
 }
 
 export const docs_fetch = createAction(
@@ -104,6 +108,19 @@ export const doc_patch_failed = createAction(
 
 export const doc_clear_last_save = createAction(
   DocsCrudActions.ClearLastSave
+)
+
+export const doc_delete = createAction(
+  DocsCrudActions.DeleteDoc,
+  props<{id: string}>()
+)
+export const doc_delete_success = createAction(
+  DocsCrudActions.DeleteDocSuccess,
+  props<DocResponseModel>()
+)
+export const doc_delete_failed = createAction(
+  DocsCrudActions.DeleteDocFailed,
+  props<ErrorModel>()
 )
 
 
