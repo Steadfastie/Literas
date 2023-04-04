@@ -18,6 +18,10 @@ export const selectErrorsInDocCrudState = createSelector(
   (state) => state.errors
 )
 
+export const selectUrlIdState = createSelector(
+  selectWholeDocsCrudState,
+  (state) => state.urlId
+)
 export const selectSavingState = createSelector(
   selectWholeDocsCrudState,
   (state) => state.saving

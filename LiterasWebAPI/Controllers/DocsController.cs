@@ -54,7 +54,7 @@ public class DocsController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{docId}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]

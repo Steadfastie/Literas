@@ -24,6 +24,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('titleQuill') title?: QuillEditorComponent;
   @ViewChild('contentQuill') content!: QuillEditorComponent;
   linkInputOpenState: boolean = false;
+  saved: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private fb: FormBuilder,
               private docService: DocService,
@@ -39,22 +40,22 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.subManager$))
       .subscribe((saving) => {
         if (saving){
+          this.saved = true;
           this.submit();
         }
       })
   }
-
   submit(){
+    let contentFromEditor = this.content.quillEditor.getContents();
     if (this.creationForm.valid){
       let doc = {
         id: Guid.create().toString(),
         title: this.title?.quillEditor.getText()!,
-        content: this.creationForm.value.content!
+        content: JSON.stringify(contentFromEditor)
       }
       this.store.dispatch(docCrudActions.doc_create(doc));
     }
   }
-
   adaptToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpenState && selectionChange.oldRange){
       selectionChange.editor.formatText(
@@ -90,18 +91,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.store.dispatch(quillSelectionActions.quill_focusOff());
     }
   }
-
   ngOnInit(): void {
     this.creationForm.controls.content.setValue(
       `This content was auto generated.
         Please, proceed with caution.`
     );
   }
-
-  ngOnDestroy(): void {
-   this.subManager$.next('destroyed');
-  }
-
   ngAfterViewInit(): void {
     if (this.title){
       this.title.styles = {'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '2.5rem'};
@@ -118,5 +113,11 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
         window.open(target.getAttribute('href')!, '_blank');
       }
     });
+
+    this.store.dispatch(docCrudActions.url_id_change({id: undefined}));
+  }
+  ngOnDestroy(): void {
+    if (!this.saved) this.submit();
+    this.subManager$.next('destroyed');
   }
 }

@@ -1,8 +1,9 @@
 import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {DocThumbnail} from "../../../../models/docs/doc.thumbnail";
-import { NavigationEnd, Router } from "@angular/router";
-import {filter} from "rxjs";
+import * as docSelectors from 'src/app/state/selectors/docs.crud.selectors';
+import * as docActions from 'src/app/state/actions/docs.crud.actions';
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'doc-thumbnail',
@@ -12,27 +13,31 @@ import {filter} from "rxjs";
 export class DocThumbnailComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() thumbnail!: DocThumbnail;
   isActive: boolean = false;
-  constructor(private store: Store,
-              private router: Router) {
-
+  subManager$: Subject<any> = new Subject();
+  deleteRequested: boolean = false;
+  constructor(private store: Store) {
   }
-
-
+  switchDelete(): void {
+    this.deleteRequested = !this.deleteRequested
+  }
+  delete(): void {
+    this.store.dispatch(docActions.doc_delete({id: this.thumbnail.id}));
+  }
   ngOnInit(): void {
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(e => {
-        const url = (e as NavigationEnd).url.split('/')[2];
-        this.isActive = this.thumbnail.id.toString() == url;
+    this.store.select(docSelectors.selectUrlIdState)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(id => {
+        if (id){
+          this.isActive = this.thumbnail.id === id;
+        } else {
+          this.isActive = false;
+        }
       })
   }
-
-
   ngAfterViewInit(): void {
-
   }
 
-
   ngOnDestroy(): void {
+    this.subManager$.next('destroyed');
   }
 }

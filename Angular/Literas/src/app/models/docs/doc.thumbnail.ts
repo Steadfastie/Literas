@@ -1,6 +1,4 @@
-import {Guid} from "guid-typescript";
-
 export interface DocThumbnail {
-  id: Guid,
+  id: string,
   title: string
 }

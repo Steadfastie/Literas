@@ -38,7 +38,10 @@ export class DocService {
     return this.apiService.patch(`docs/${doc.id}`, doc).pipe();
   }
 
-  delete(docId: Guid): Observable<DocResponseModel>{
-    return this.apiService.delete(`doc/${docId}`).pipe();
+  delete(docId: Guid | string): Observable<DocResponseModel>{
+    if (docId instanceof Guid) {
+      docId = docId.toString();
+    }
+    return this.apiService.delete(`docs/${docId}`).pipe();
   }
 }

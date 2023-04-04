@@ -6,5 +6,6 @@ export interface DocsState {
   docThumbnails: DocThumbnail[]
   currentDocLastSave?: DocResponseModel,
   errors: ErrorModel[],
+  urlId?: string,
   saving: boolean,
 }
