@@ -30,7 +30,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
               private docService: DocService,
               private el: ElementRef,
               private store: Store){
-    this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
       .pipe(takeUntil(this.subManager$))
       .subscribe(status => {
         this.linkInputOpenState = status;
@@ -56,7 +56,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
       this.store.dispatch(docCrudActions.doc_create(doc));
     }
   }
-  adaptToolBar(selectionChange: SelectionChange){
+/*  adaptToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpenState && selectionChange.oldRange){
       selectionChange.editor.formatText(
         selectionChange.oldRange.index,
@@ -84,13 +84,13 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
         bounds: {left: rangeRect.x, top: rangeRect.y},
         text: selectedText,
         formats: selectedTextFormats,
-        linkInputOpenState: false
+        linkInputOpened: false
       }));
     }
     else {
       this.store.dispatch(quillSelectionActions.quill_focusOff());
     }
-  }
+  }*/
   ngOnInit(): void {
     this.creationForm.controls.content.setValue(
       `This content was auto generated.

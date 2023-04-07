@@ -3,11 +3,12 @@ import {createReducer, on} from "@ngrx/store";
 import * as quillSelectionActions from "../actions/quill.selection.actions";
 
 export const quillInitialSelectionState: QuillState = {
+  toolbarOpened: false,
   range: null,
   bounds: null,
   text: null,
   formats: {},
-  linkInputOpenState: false
+  linkInputOpened: false
 }
 
 export const quillSelectionReducer = createReducer(
@@ -15,11 +16,12 @@ export const quillSelectionReducer = createReducer(
   on(quillSelectionActions.quill_newSelection,
     (state, selection: QuillState) => (
       {...state,
+        toolbarOpened: selection.toolbarOpened,
         range: selection.range,
         bounds: selection.bounds,
         text: selection.text,
         formats: selection.formats,
-        linkInputOpenState: false
+        linkInputOpened: false
       })
   ),
   on(quillSelectionActions.quill_formatChange,
@@ -38,7 +40,7 @@ export const quillSelectionReducer = createReducer(
     }
   ),
   on(quillSelectionActions.quill_switchLinkInput,
-    (state) => ({...state, linkInputOpenState: !state.linkInputOpenState})
+    (state) => ({...state, linkInputOpened: !state.linkInputOpened})
   ),
   on(quillSelectionActions.quill_focusOff,
     () => (quillInitialSelectionState)

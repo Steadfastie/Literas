@@ -18,7 +18,12 @@ export const selectCurrentSelectionFormats = createSelector(
   (state) => state.formats
 )
 
-export const selectLinkInputOpenState = createSelector(
+export const selectLinkInputOpened = createSelector(
   selectQuillState,
-  (state) => state.linkInputOpenState
+  (state) => state.linkInputOpened
+)
+
+export const selectToolbarOpened = createSelector(
+  selectQuillState,
+  (state) => state.toolbarOpened
 )

@@ -4,6 +4,7 @@ import {QuillEditorComponent} from "ngx-quill";
 import {debounceTime, distinctUntilChanged, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
+import * as quillSelectionSelectors from 'src/app/state/selectors/quill.selection.selectors';
 import * as docSelectors from 'src/app/state/selectors/docs.crud.selectors';
 import * as docCrudActions from "../../../state/actions/docs.crud.actions";
 import {Store} from "@ngrx/store";
@@ -26,11 +27,16 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   });
   @ViewChild('titleQuill', {static: true}) title!: QuillEditorComponent;
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
-  linkInputOpenState: boolean = false;
+  toolbarOpened: boolean = false;
+  linkInputOpened: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private fb: FormBuilder,
               private store: Store,
-              private activatedRoute: ActivatedRoute){}
+              private activatedRoute: ActivatedRoute){
+    this.store.select(quillSelectionSelectors.selectToolbarOpened)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(toolbarOpened => this.toolbarOpened = toolbarOpened);
+  }
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
       const guid = params['id'];
@@ -116,8 +122,8 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
       this.store.dispatch(docCrudActions.doc_patch(docFromForm));
     }
   }
-  adaptToolBar(selectionChange: SelectionChange){
-    if (this.linkInputOpenState && selectionChange.oldRange){
+  showToolBar(selectionChange: SelectionChange){
+    if (this.linkInputOpened && selectionChange.oldRange){
       selectionChange.editor.formatText(
         selectionChange.oldRange.index,
         selectionChange.oldRange.length,
@@ -131,20 +137,21 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
       return;
     }
 
-    let range = selectionChange.range!;
-    if (range.length !==0 ){
-      let selectedText = selectionChange.editor.getText(range.index, range.length);
-      let selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
+    let range = selectionChange.range;
+    if (range !== null && range.length !==0 ){
+      const selectedText = selectionChange.editor.getText(range.index, range.length);
+      const selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
 
       const selection = window.getSelection()!;
       const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
 
       this.store.dispatch(quillSelectionActions.quill_newSelection({
+        toolbarOpened: true,
         range: range,
         bounds: {left: rangeRect.x, top: rangeRect.y},
         text: selectedText,
         formats: selectedTextFormats,
-        linkInputOpenState: false
+        linkInputOpened: false
       }));
     }
     else {

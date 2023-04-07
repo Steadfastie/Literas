@@ -42,7 +42,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
         }
       });
 
-    this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
       .pipe(takeUntil(this.subManager$))
       .subscribe(status => {
         this.linkInputOpen = status;
