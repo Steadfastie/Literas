@@ -8,7 +8,6 @@
   <div class="form-group">
     <quill-editor #contentQuill
       formControlName="content" placeholder="Content..."
-      (onSelectionChanged)="adaptToolBar($event)"
       [modules]="{toolbar: false}">
     </quill-editor>
     <toolbar [editor]="content"></toolbar>

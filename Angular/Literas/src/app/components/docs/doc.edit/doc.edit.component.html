@@ -8,10 +8,10 @@
   <div class="form-group">
     <quill-editor #contentQuill
                   formControlName="content" placeholder="Content..."
-                  (onSelectionChanged)="adaptToolBar($event)"
+                  (onSelectionChanged)="showToolBar($event)"
                   (onEditorCreated)="loadForm()"
                   [modules]="{toolbar: false}">
     </quill-editor>
-    <toolbar [editor]="content"></toolbar>
+    <toolbar *ngIf="toolbarOpened" [editor]="content"></toolbar>
   </div>
 </form>

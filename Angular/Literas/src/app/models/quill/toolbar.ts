@@ -7,5 +7,5 @@ export const ToolBarConfig: IToolbarModel = {
   italic: false,
   size: false,
   'code-block': false,
-  list: false,
+  list: false
 }

@@ -30,7 +30,7 @@ export class LinkComponent implements OnInit, AfterViewInit, OnDestroy{
         if (this.hasValidUrl) this.url = formats['link'];
       });
 
-    this.store.select(quillSelectionsSelectors.selectLinkInputOpenState)
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
       .pipe(takeUntil(this.subManager$))
       .subscribe(status => {
         this.inputOpened = status;
