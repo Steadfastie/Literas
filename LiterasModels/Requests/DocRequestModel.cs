@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
+using LiterasModels.ValidationAttributes;
 
 namespace LiterasModels.Requests;
 
@@ -10,6 +12,12 @@ public class DocRequestModel
     [StringLength(100, MinimumLength = 3)]
     public string Title { get; set; }
 
+    [DeltasCount(1, MaxDeltasAmount = 1)]
+    public JsonDocument? TitleDelta { get; set; }
+
     [StringLength(10000, MinimumLength = 3)]
     public string Content { get; set; }
+
+    [DeltasCount(1)]
+    public JsonDocument? ContentDeltas { get; set; }
 }

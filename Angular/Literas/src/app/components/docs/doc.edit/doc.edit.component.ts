@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
-import {debounceTime, distinctUntilChanged, Subject, takeUntil} from "rxjs";
+import {debounceTime, distinctUntilChanged, skip, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as quillSelectionSelectors from 'src/app/state/selectors/quill.selection.selectors';
@@ -11,6 +11,8 @@ import {Store} from "@ngrx/store";
 import {DocResponseModel} from "../../../models/docs/docs.response.model";
 import {ActivatedRoute} from "@angular/router";
 import {Guid} from "guid-typescript";
+import {Delta} from "quill";
+import {isEqual} from 'lodash'
 
 @Component({
   selector: 'doc-edit',
@@ -20,11 +22,6 @@ import {Guid} from "guid-typescript";
 export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   urlGuid?: Guid;
   fetchedDoc?: DocResponseModel;
-  value!: any;
-  editForm = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(3)]],
-    content: ['', [Validators.required, Validators.minLength(3)]]
-  });
   @ViewChild('titleQuill', {static: true}) title!: QuillEditorComponent;
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
   toolbarOpened: boolean = false;
@@ -58,26 +55,23 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         }
         let prevId = this.fetchedDoc?.id
         this.fetchedDoc = doc;
-        if ((this.editForm.pristine || prevId !== this.fetchedDoc?.id) && this.content.quillEditor){
+        if (this.content.quillEditor && prevId !== this.fetchedDoc?.id){
           this.loadForm();
         }
       });
 
-    this.editForm.valueChanges.pipe(
+    this.content.onContentChanged
+      .pipe(
+        skip(1),
         takeUntil(this.subManager$),
         debounceTime(1000),
         distinctUntilChanged()
-      ).subscribe(value => {
-        if (this.fetchedDoc?.title != value.title ||
-          this.fetchedDoc?.content != value.content){
-          this.submit();
-        }
-      })
+      )
+      .subscribe(() => {
+        this.submit();
+      });
   }
   ngAfterViewInit(): void {
-    this.title.styles = {'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '2.5rem'};
-    this.content.styles = {'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '1rem'};
-
     this.content.elementRef.nativeElement.addEventListener('click', (event: Event) => {
       const target = event.target as HTMLElement;
 
@@ -86,41 +80,39 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         window.open(target.getAttribute('href')!, '_blank');
       }
     });
-
-    /*
-    this.content.onContentChanged
-      .pipe(
-        takeUntil(this.subManager$),
-        debounceTime(1000),
-        distinctUntilChanged()
-      )
-      .subscribe(value => {
-        this.submit();
-      });*/
   }
   loadForm(){
-    if (!this.content.quillEditor) return;
+    if (!this.content.quillEditor || !this.title.quillEditor) return;
 
-    this.editForm.patchValue({
-      title: this.fetchedDoc?.title,
-    });
-    let deltas = JSON.parse(this.fetchedDoc!.content);
-    this.content.quillEditor.setContents(deltas);
+    let titleDelta = JSON.parse(this.fetchedDoc!.title) as Delta;
+    let contentDeltas = JSON.parse(this.fetchedDoc!.content) as Delta;
+
+    this.title.quillEditor.setContents(titleDelta);
+    this.content.quillEditor.setContents(contentDeltas);
   }
   submit(){
-    let contentFromEditor = this.content.quillEditor.getContents();
-    if (this.editForm.valid){
-      let docFromForm = {
-        id: this.urlGuid!.toString(),
-        title: this.title?.quillEditor.getText()!,
-        content: JSON.stringify(contentFromEditor)
-      }
+    if (!this.content.quillEditor || !this.title.quillEditor) return;
 
-      if (docFromForm.title == this.fetchedDoc?.title && docFromForm.content == this.fetchedDoc.content) return;
+    let titleText = this.title.quillEditor.getText();
+    let contentText = this.content.quillEditor.getText();
 
-      this.store.dispatch(docCrudActions.doc_save());
-      this.store.dispatch(docCrudActions.doc_patch(docFromForm));
+    if (titleText.length < 3 || contentText.length < 3) return;
+
+    let titleDelta = this.title.quillEditor.getContents() as Delta;
+    let contentDeltas = this.content.quillEditor.getContents();
+
+    let docComposedModel = {
+      id: this.urlGuid!.toString(),
+      title: titleText,
+      titleDelta: JSON.stringify(titleDelta),
+      content: contentText,
+      contentDeltas: JSON.stringify(contentDeltas)
     }
+
+    if (!isEqual(docComposedModel, this.fetchedDoc)) return;
+
+    this.store.dispatch(docCrudActions.doc_save());
+    this.store.dispatch(docCrudActions.doc_patch(docComposedModel));
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){

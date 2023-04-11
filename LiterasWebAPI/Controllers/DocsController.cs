@@ -10,6 +10,7 @@ using Serilog;
 namespace LiterasWebAPI.Controllers;
 
 [Route("docs")]
+[ApiController]
 public class DocsController : ControllerBase
 {
     private readonly IDocsService _docsService;
