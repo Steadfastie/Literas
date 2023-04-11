@@ -1,2 +1,29 @@
 .container
   margin: 5px
+
+.link
+  background-color: #1b5e20
+  margin: 10px
+  text-decoration: none
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  align-items: center
+  flex-wrap: nowrap
+  width: calc(12ch + 20px)
+  box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px
+  border-radius: 10px
+  transition: 0.5s
+  &:hover:not(.active)
+    transform: translate(5px)
+    transition: 0.5s
+
+.linkText
+  position: relative
+  color: #ffffff
+  width: 10ch
+  max-width: calc(12ch + 20px)
+  text-overflow: clip
+  overflow: hidden
+  white-space: nowrap
+  padding: 5px 15px 5px 15px

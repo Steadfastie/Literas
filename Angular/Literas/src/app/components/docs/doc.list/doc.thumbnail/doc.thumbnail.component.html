@@ -1,6 +1,4 @@
 <div class="container">
-<!--  <button mat-raised-button routerLink="./{{thumbnail.id}}"
-          [class.activeLink]="isActive">{{thumbnail.title | titlecase}}</button>-->
   <a routerLink="./{{thumbnail.id}}" class="link {{isActive ? 'activeLink' : ''}}">
     <div class="linkContainer">
       <div class="linkText">{{thumbnail.title | titlecase}}</div>

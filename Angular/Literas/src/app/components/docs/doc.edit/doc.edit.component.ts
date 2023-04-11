@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
-import {debounceTime, distinctUntilChanged, skip, Subject, takeUntil} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, skip, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as quillSelectionSelectors from 'src/app/state/selectors/quill.selection.selectors';
@@ -27,12 +26,16 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   toolbarOpened: boolean = false;
   linkInputOpened: boolean = false;
   subManager$: Subject<any> = new Subject();
-  constructor(private fb: FormBuilder,
-              private store: Store,
+  constructor(private store: Store,
               private activatedRoute: ActivatedRoute){
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(toolbarOpened => this.toolbarOpened = toolbarOpened);
+      .pipe(
+        skip(1),
+        takeUntil(this.subManager$))
+      .subscribe(toolbarOpened => {
+        this.toolbarOpened = toolbarOpened
+        if (!toolbarOpened) this.submit();
+      });
   }
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
@@ -42,6 +45,9 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         this.store.dispatch(docCrudActions.url_id_change({id: this.urlGuid.toString()}));
         if (this.fetchedDoc && this.fetchedDoc?.id !== this.urlGuid.toString()){
           this.store.dispatch(docCrudActions.doc_fetch({id: this.urlGuid.toString()}));
+        }
+        if (this.toolbarOpened){
+          this.store.dispatch(quillSelectionActions.quill_focusOff());
         }
       }
     });
@@ -63,6 +69,19 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     this.content.onContentChanged
       .pipe(
         skip(1),
+        filter(() => !this.toolbarOpened),
+        takeUntil(this.subManager$),
+        debounceTime(1000),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.submit();
+      });
+
+    this.title.onContentChanged
+      .pipe(
+        skip(1),
+        filter(() => !this.toolbarOpened),
         takeUntil(this.subManager$),
         debounceTime(1000),
         distinctUntilChanged()
@@ -84,11 +103,8 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   loadForm(){
     if (!this.content.quillEditor || !this.title.quillEditor) return;
 
-    let titleDelta = JSON.parse(this.fetchedDoc!.title) as Delta;
-    let contentDeltas = JSON.parse(this.fetchedDoc!.content) as Delta;
-
-    this.title.quillEditor.setContents(titleDelta);
-    this.content.quillEditor.setContents(contentDeltas);
+    this.title.quillEditor.setContents(this.fetchedDoc!.titleDelta);
+    this.content.quillEditor.setContents(this.fetchedDoc!.contentDeltas);
   }
   submit(){
     if (!this.content.quillEditor || !this.title.quillEditor) return;
@@ -104,12 +120,12 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     let docComposedModel = {
       id: this.urlGuid!.toString(),
       title: titleText,
-      titleDelta: JSON.stringify(titleDelta),
+      titleDelta: JSON.parse(JSON.stringify(titleDelta)),
       content: contentText,
-      contentDeltas: JSON.stringify(contentDeltas)
+      contentDeltas: JSON.parse(JSON.stringify(contentDeltas))
     }
 
-    if (!isEqual(docComposedModel, this.fetchedDoc)) return;
+    if (isEqual(docComposedModel, this.fetchedDoc)) return;
 
     this.store.dispatch(docCrudActions.doc_save());
     this.store.dispatch(docCrudActions.doc_patch(docComposedModel));
