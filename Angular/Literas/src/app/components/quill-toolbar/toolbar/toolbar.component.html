@@ -4,6 +4,7 @@
   <mat-button-toggle-group *ngIf="!linkInputOpen" appearance="legacy" multiple>
     <mat-button-toggle
       class="boldButton {{active['bold'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+      checked="{{active['bold']}}"
       [disabled]="active['code-block']"
       (click)="setBold()">
       <mat-icon> format_bold</mat-icon>
@@ -11,6 +12,7 @@
 
     <mat-button-toggle
       class="italicButton {{active['italic'] ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+      checked="{{active['italic']}}"
       [disabled]="active['code-block']"
       (click)="setItalic()">
       <mat-icon> format_italic</mat-icon>
@@ -18,6 +20,7 @@
 
     <mat-button-toggle
       class="headerButton {{active['size'] == 'large' ? 'active' : ''}} {{active['code-block'] ? '' : 'available'}}"
+      checked="{{active['size'] == 'large'}}"
       [disabled]="active['code-block']"
       (click)="setHeader()">
       <mat-icon> title</mat-icon>
@@ -25,18 +28,21 @@
 
     <mat-button-toggle
       class="codeButton {{active['code-block'] ? 'active' : ''}}"
+      checked="{{active['code-block']}}"
       (click)="setCodeBlock()">
       <mat-icon> bubble_chart</mat-icon>
     </mat-button-toggle>
 
     <mat-button-toggle
       class="quoteButton {{active['list'] == 'ordered' ? 'active' : ''}}"
+      checked="{{active['list'] == 'ordered'}}"
       (click)="setOrderedList()">
       <mat-icon> format_list_bulleted</mat-icon>
     </mat-button-toggle>
 
     <mat-button-toggle
       class="quoteButton {{active['list'] == 'bullet' ? 'active' : ''}}"
+      checked="{{active['list'] == 'bullet'}}"
       (click)="setBulletList()">
       <mat-icon> format_list_numbered</mat-icon>
     </mat-button-toggle>

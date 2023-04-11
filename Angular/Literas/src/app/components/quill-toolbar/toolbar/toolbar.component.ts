@@ -59,8 +59,8 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       'bold',
       !this.currentSelection.formats['bold']);
 
-    const newContents = this.editor.quillEditor.getContents();
-    this.editor.quillEditor.setContents(newContents);
+/*    const newContents = this.editor.quillEditor.getContents();
+    this.editor.quillEditor.setContents(newContents);*/
 
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
