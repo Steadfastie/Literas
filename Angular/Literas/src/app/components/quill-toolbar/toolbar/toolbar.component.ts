@@ -48,7 +48,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
         this.linkInputOpened = status;
       });
   }
-
   setBold(){
     if (!this.currentSelection) return;
     if (this.active['code-block']) return;
@@ -81,13 +80,11 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   editLink(){
     if (!this.currentSelection) return;
 
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
   }
-
   setCodeBlock(){
     if (!this.currentSelection) return;
     this.editor.quillEditor.formatLine(
@@ -105,7 +102,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setHeader(){
     if (!this.currentSelection) return;
     if (this.active['code-block']) return;
@@ -126,7 +122,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setOrderedList(){
     if (!this.currentSelection) return;
 
@@ -150,7 +145,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setBulletList(){
     if (!this.currentSelection) return;
 
@@ -174,11 +168,9 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   ngOnInit(): void {
 
   }
-
   ngOnDestroy(): void {
     this.subManager$.next('unsubscribed');
   }

@@ -3,7 +3,6 @@ import {DocService} from "../../../services/docs/doc.service";
 import {QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
 import { SelectionChange} from "ngx-quill/lib/quill-editor.component";
-import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as quillSelectionsSelectors from "../../../state/selectors/quill.selection.selectors";
 import * as docCrudActions from "../../../state/actions/docs.crud.actions";
 import * as docCrudSelectors from "../../../state/selectors/docs.crud.selectors";
@@ -11,6 +10,8 @@ import {debounceTime, distinctUntilChanged, filter, Subject, takeUntil} from "rx
 import {Guid} from "guid-typescript";
 import {Delta} from "quill";
 import * as quillSelectionSelectors from "../../../state/selectors/quill.selection.selectors";
+import {SelectionService} from "../../../services/quill/selection.service";
+import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
 
 @Component({
   selector: 'doc-create',
@@ -25,6 +26,8 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   saved: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private docService: DocService,
+              private selectionService: SelectionService,
+              private selectionFraudService: SelectionFraudService,
               private el: ElementRef,
               private store: Store){
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
@@ -59,39 +62,11 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'background', '#338dfa'
-      );
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'color', 'white'
-      );
+      this.selectionFraudService.colorizeSelection(
+        selectionChange.editor, selectionChange.oldRange);
       return;
     }
-
-    let range = selectionChange.range;
-    if (range !== null && range.length !==0 ){
-      const selectedText = selectionChange.editor.getText(range.index, range.length);
-      const selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
-
-      const selection = window.getSelection()!;
-      const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
-
-      this.store.dispatch(quillSelectionActions.quill_newSelection({
-        toolbarOpened: true,
-        range: range,
-        bounds: {left: rangeRect.x, top: rangeRect.y},
-        text: selectedText,
-        formats: selectedTextFormats,
-        linkInputOpened: false
-      }));
-    }
-    else {
-      this.store.dispatch(quillSelectionActions.quill_focusOff());
-    }
+    this.selectionService.setSelection(selectionChange.editor, selectionChange.range);
   }
   ngOnInit(): void {
     this.store.select(quillSelectionsSelectors.selectLinkInputOpened)

@@ -6,6 +6,7 @@ import {Subject, takeUntil} from "rxjs";
 import {FormBuilder, Validators} from "@angular/forms";
 import {RangeStatic} from "quill";
 import {QuillEditorComponent} from "ngx-quill";
+import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
 
 @Component({
   selector: 'quill-link',
@@ -22,45 +23,16 @@ export class LinkComponent implements OnInit, AfterViewInit, OnDestroy{
   subManager$: Subject<any> = new Subject();
 
   constructor(private store: Store,
-              private fb: FormBuilder) {
-    this.store.select(quillSelectionsSelectors.selectCurrentSelectionFormats)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(formats => {
-        this.hasValidUrl = formats['link']?.length > 3;
-        if (this.hasValidUrl) this.url = formats['link'];
-      });
-
-    this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(status => {
-        this.inputOpened = status;
-      });
-
-    this.store.select(quillSelectionsSelectors.selectCurrentRange)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(range => {
-        this.currentSelectionRange = range;
-      });
+              private fb: FormBuilder,
+              private selectionFraudService: SelectionFraudService) {
   }
-
-
-
   urlForm = this.fb.group({
     url: ['', [Validators.minLength(3),Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')]]
   })
-
   switchInput(){
     this.urlForm.reset();
-    this.editor.quillEditor.formatText(
-      this.currentSelectionRange!.index,
-      this.currentSelectionRange!.length,
-      'background', ''
-    );
-    this.editor.quillEditor.formatText(
-      this.currentSelectionRange!.index,
-      this.currentSelectionRange!.length,
-      'color', ''
-    );
+    this.selectionFraudService.stripSelection(
+      this.editor.quillEditor, this.currentSelectionRange!);
 
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
     this.editor.quillEditor.setSelection(this.currentSelectionRange!.index, this.currentSelectionRange!.length);
@@ -89,6 +61,24 @@ export class LinkComponent implements OnInit, AfterViewInit, OnDestroy{
     this.switchInput();
   }
   ngOnInit(): void {
+    this.store.select(quillSelectionsSelectors.selectCurrentSelectionFormats)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(formats => {
+        this.hasValidUrl = formats['link']?.length > 3;
+        if (this.hasValidUrl) this.url = formats['link'];
+      });
+
+    this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(status => {
+        this.inputOpened = status;
+      });
+
+    this.store.select(quillSelectionsSelectors.selectCurrentRange)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(range => {
+        this.currentSelectionRange = range;
+      });
   }
   ngAfterViewInit(): void {
     this.urlForm.statusChanges

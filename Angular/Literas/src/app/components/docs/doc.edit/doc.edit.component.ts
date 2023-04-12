@@ -12,6 +12,9 @@ import {ActivatedRoute} from "@angular/router";
 import {Guid} from "guid-typescript";
 import {Delta} from "quill";
 import {isEqual} from 'lodash'
+import * as docCrudSelectors from "../../../state/selectors/docs.crud.selectors";
+import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
+import {SelectionService} from "../../../services/quill/selection.service";
 
 @Component({
   selector: 'doc-edit',
@@ -27,7 +30,9 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   linkInputOpened: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private store: Store,
-              private activatedRoute: ActivatedRoute){
+              private activatedRoute: ActivatedRoute,
+              private selectionService: SelectionService,
+              private selectionFraudService: SelectionFraudService){
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
       .pipe(
         skip(1),
@@ -51,6 +56,12 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         }
       }
     });
+
+    this.store.select(docCrudSelectors.selectSavingState)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe((saving) => {
+        if (saving) this.submit();
+      })
 
     this.store.select(docSelectors.selectCurrentDocLastSave)
       .pipe(takeUntil(this.subManager$))
@@ -132,41 +143,12 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'background', '#338dfa'
-      );
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'color', 'white'
-      );
+      this.selectionFraudService.colorizeSelection(
+        selectionChange.editor, selectionChange.oldRange);
       return;
     }
-
-    let range = selectionChange.range;
-    if (range !== null && range.length !==0 ){
-      const selectedText = selectionChange.editor.getText(range.index, range.length);
-      const selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
-
-      const selection = window.getSelection()!;
-      const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
-
-      this.store.dispatch(quillSelectionActions.quill_newSelection({
-        toolbarOpened: true,
-        range: range,
-        bounds: {left: rangeRect.x, top: rangeRect.y},
-        text: selectedText,
-        formats: selectedTextFormats,
-        linkInputOpened: false
-      }));
-    }
-    else {
-      this.store.dispatch(quillSelectionActions.quill_focusOff());
-    }
+    this.selectionService.setSelection(selectionChange.editor, selectionChange.range);
   }
-
   ngOnDestroy(): void {
     this.submit();
     this.subManager$.next('destroyed');
