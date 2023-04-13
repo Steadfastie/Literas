@@ -1,8 +1,8 @@
 import {Component, OnDestroy} from '@angular/core';
-import * as docCrudActions from "../../../state/actions/docs.crud.actions";
 import * as docSelectors from "../../../state/selectors/docs.crud.selectors";
 import {Store} from "@ngrx/store";
 import {Subject, takeUntil} from "rxjs";
+import {SaveToggleService} from "../../../services/header/save.toggle.service";
 
 @Component({
   selector: 'save-toggle',
@@ -11,8 +11,9 @@ import {Subject, takeUntil} from "rxjs";
 })
 export class SaveToggleComponent implements OnDestroy{
   isSaving: boolean = false
-  subManager$: Subject<any> = new Subject();
-  constructor(private store: Store) {
+  subManager$ = new Subject<void>();
+  constructor(private store: Store,
+              private saveToggleService: SaveToggleService) {
     this.store.select(docSelectors.selectSavingState)
       .pipe(takeUntil(this.subManager$))
       .subscribe((saving) => {
@@ -20,10 +21,11 @@ export class SaveToggleComponent implements OnDestroy{
     })
   }
   saveCurrentDoc() {
-    this.store.dispatch(docCrudActions.doc_save())
+    this.saveToggleService.activateManual();
   }
 
   ngOnDestroy(): void {
-    this.subManager$.next('destroyed')
+    this.subManager$.next();
+    this.subManager$.complete();
   }
 }

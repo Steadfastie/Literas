@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocCompareService } from './doc.compare.service';
+import { SaveToggleService } from './save.toggle.service';
 
-describe('DocCompareService', () => {
-  let service: DocCompareService;
+describe('SaveToggleService', () => {
+  let service: SaveToggleService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DocCompareService);
+    service = TestBed.inject(SaveToggleService);
   });
 
   it('should be created', () => {

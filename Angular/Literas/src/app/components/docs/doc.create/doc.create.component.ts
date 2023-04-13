@@ -1,17 +1,16 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DocService} from "../../../services/docs/doc.service";
 import {QuillEditorComponent} from "ngx-quill";
 import {Store} from "@ngrx/store";
 import { SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionsSelectors from "../../../state/selectors/quill.selection.selectors";
 import * as docCrudActions from "../../../state/actions/docs.crud.actions";
-import * as docCrudSelectors from "../../../state/selectors/docs.crud.selectors";
 import {debounceTime, distinctUntilChanged, filter, Subject, takeUntil} from "rxjs";
-import {Guid} from "guid-typescript";
-import {Delta} from "quill";
 import * as quillSelectionSelectors from "../../../state/selectors/quill.selection.selectors";
 import {SelectionService} from "../../../services/quill/selection.service";
 import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
+import {DocSubmitService} from "../../../services/docs/doc.submit.service";
+import {SaveToggleService} from "../../../services/header/save.toggle.service";
 
 @Component({
   selector: 'doc-create',
@@ -24,11 +23,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   linkInputOpened: boolean = false;
   toolbarOpened: boolean = false;
   saved: boolean = false;
-  subManager$: Subject<any> = new Subject();
+  subManager$ = new Subject<void>();
   constructor(private docService: DocService,
+              private docSubmitService: DocSubmitService,
               private selectionService: SelectionService,
               private selectionFraudService: SelectionFraudService,
-              private el: ElementRef,
+              private saveToggleService: SaveToggleService,
               private store: Store){
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
       .pipe(
@@ -41,24 +41,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   submit(){
     if (!this.content?.quillEditor || !this.title?.quillEditor) return;
 
-    let titleText = this.title.quillEditor.getText();
-    let contentText = this.content.quillEditor.getText();
-
-    if (titleText.length < 3 || contentText.length < 3) return;
-
-    let titleDelta = this.title.quillEditor.getContents() as Delta;
-    let contentDeltas = this.content.quillEditor.getContents();
-
-    let docComposedModel = {
-      id: Guid.create().toString(),
-      title: titleText,
-      titleDelta: JSON.parse(JSON.stringify(titleDelta)),
-      content: contentText,
-      contentDeltas: JSON.parse(JSON.stringify(contentDeltas))
-    }
-
-    this.saved = true;
-    this.store.dispatch(docCrudActions.doc_create(docComposedModel));
+    this.docSubmitService.submit.next({
+      title: this.title.quillEditor.getText(),
+      titleDelta: this.title.quillEditor.getContents(),
+      content: this.content.quillEditor.getText(),
+      contentDelta: this.content.quillEditor.getContents(),
+    });
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){
@@ -75,14 +63,12 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
         this.linkInputOpened = status;
       });
 
-    this.store.select(docCrudSelectors.selectSavingState)
+    this.saveToggleService.manualSave
       .pipe(takeUntil(this.subManager$))
-      .subscribe((saving) => {
-        if (saving){
-          this.saved = true;
-          this.submit();
-        }
-      })
+      .subscribe(() => {
+        this.saved = true;
+        this.submit();
+      });
 
     this.title.onContentChanged
       .pipe(
@@ -120,6 +106,7 @@ export class DocCreateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   ngOnDestroy(): void {
     if (!this.saved) this.submit();
-    this.subManager$.next('destroyed');
+    this.subManager$.next();
+    this.subManager$.complete();
   }
 }

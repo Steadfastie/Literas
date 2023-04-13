@@ -3,5 +3,5 @@ export interface DocRequestModel {
     title: string,
     titleDelta: string,
     content: string
-    contentDeltas: string
+    contentDelta: string
 }

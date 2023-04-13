@@ -49,7 +49,7 @@ public class DocsProfile : Profile
             .ForMember(dto => dto.TitleDelta,
                 opt => opt.MapFrom(mod => mod.TitleDelta))
             .ForMember(dto => dto.ContentDeltas,
-                opt => opt.MapFrom(mod => mod.ContentDeltas));
+                opt => opt.MapFrom(mod => mod.ContentDelta));
         
         CreateMap<DocDto, DocResponseModel>()
             .ForMember(mod => mod.Id,

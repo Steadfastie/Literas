@@ -10,11 +10,10 @@ import {Store} from "@ngrx/store";
 import {DocResponseModel} from "../../../models/docs/docs.response.model";
 import {ActivatedRoute} from "@angular/router";
 import {Guid} from "guid-typescript";
-import {Delta} from "quill";
-import {isEqual} from 'lodash'
-import * as docCrudSelectors from "../../../state/selectors/docs.crud.selectors";
 import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
 import {SelectionService} from "../../../services/quill/selection.service";
+import {DocSubmitService} from "../../../services/docs/doc.submit.service";
+import {SaveToggleService} from "../../../services/header/save.toggle.service";
 
 @Component({
   selector: 'doc-edit',
@@ -28,11 +27,13 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
   toolbarOpened: boolean = false;
   linkInputOpened: boolean = false;
-  subManager$: Subject<any> = new Subject();
+  subManager$ = new Subject<void>();
   constructor(private store: Store,
               private activatedRoute: ActivatedRoute,
               private selectionService: SelectionService,
-              private selectionFraudService: SelectionFraudService){
+              private selectionFraudService: SelectionFraudService,
+              private docSubmitService: DocSubmitService,
+              private saveToggleService: SaveToggleService) {
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
       .pipe(
         skip(1),
@@ -57,11 +58,11 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
       }
     });
 
-    this.store.select(docCrudSelectors.selectSavingState)
+    this.saveToggleService.manualSave
       .pipe(takeUntil(this.subManager$))
-      .subscribe((saving) => {
-        if (saving) this.submit();
-      })
+      .subscribe(() => {
+      this.submit();
+    });
 
     this.store.select(docSelectors.selectCurrentDocLastSave)
       .pipe(takeUntil(this.subManager$))
@@ -119,27 +120,15 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   }
   submit(){
     if (!this.content.quillEditor || !this.title.quillEditor) return;
+    if (this.urlGuid?.toString() != this.fetchedDoc?.id as string) return;
 
-    let titleText = this.title.quillEditor.getText();
-    let contentText = this.content.quillEditor.getText();
-
-    if (titleText.length < 3 || contentText.length < 3) return;
-
-    let titleDelta = this.title.quillEditor.getContents() as Delta;
-    let contentDeltas = this.content.quillEditor.getContents();
-
-    let docComposedModel = {
-      id: this.urlGuid!.toString(),
-      title: titleText,
-      titleDelta: JSON.parse(JSON.stringify(titleDelta)),
-      content: contentText,
-      contentDeltas: JSON.parse(JSON.stringify(contentDeltas))
-    }
-
-    if (isEqual(docComposedModel, this.fetchedDoc)) return;
-
-    this.store.dispatch(docCrudActions.doc_save());
-    this.store.dispatch(docCrudActions.doc_patch(docComposedModel));
+    this.docSubmitService.submit.next({
+      title: this.title.quillEditor.getText(),
+      titleDelta: this.title.quillEditor.getContents(),
+      content: this.content.quillEditor.getText(),
+      contentDelta: this.content.quillEditor.getContents(),
+      fetchedDoc: this.fetchedDoc!
+    });
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){
@@ -151,7 +140,8 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   }
   ngOnDestroy(): void {
     this.submit();
-    this.subManager$.next('destroyed');
+    this.subManager$.next();
+    this.subManager$.complete();
     this.store.dispatch(docCrudActions.doc_clear_last_save());
     this.store.dispatch(docCrudActions.url_id_change({id: undefined}));
   }
