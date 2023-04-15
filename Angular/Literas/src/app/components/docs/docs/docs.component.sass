@@ -1,11 +1,34 @@
 .container
-  display: flex
-  flex-flow: row nowrap
-.sidepanel
+  display: grid
+  @media (max-width: 720px)
+    grid-template-rows: [list-start] auto [list-end doc-start] auto [doc-end]
+    grid-template-columns: [doc-start] auto [doc-end]
+  @media (min-width: 720px)
+    grid-template-rows: [list-start] auto [list-end] auto [doc-end]
+    grid-template-columns: [list-start] auto [list-end] 2em [doc-start] auto [doc-end] 2em [page-end]
+
+.docList
+  align-self: center
+  @media (max-width: 720px)
+    grid-row: list-start / list-end
+    grid-column: doc-start / doc-end
+  @media (min-width: 720px)
+    grid-row: list-start / list-end
+    grid-column: list-start / list-end
+    justify-self: center
   margin-left: 1rem
   margin-right: 1rem
+
 .main
+  align-self: start
+  justify-self: center
+  @media (max-width: 720px)
+    grid-row: doc-start / doc-end
+    grid-column: doc-start / doc-end
+    margin-top: 1rem
+  @media (min-width: 720px)
+    grid-row: list-start / doc-end
+    grid-column: doc-start / doc-end
   margin-left: 1rem
   margin-right: 1rem
-  max-width: 80%
 
