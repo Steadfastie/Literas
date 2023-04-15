@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
 import {QuillEditorComponent} from "ngx-quill";
-import {debounceTime, distinctUntilChanged, skip, Subject, takeUntil} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, skip, Subject, takeUntil} from "rxjs";
 import {SelectionChange} from "ngx-quill/lib/quill-editor.component";
 import * as quillSelectionActions from 'src/app/state/actions/quill.selection.actions';
 import * as quillSelectionSelectors from 'src/app/state/selectors/quill.selection.selectors';
@@ -11,8 +10,10 @@ import {Store} from "@ngrx/store";
 import {DocResponseModel} from "../../../models/docs/docs.response.model";
 import {ActivatedRoute} from "@angular/router";
 import {Guid} from "guid-typescript";
-import {Delta} from "quill";
-import {isEqual} from 'lodash'
+import {SelectionFraudService} from "../../../services/quill/selection.fraud.service";
+import {SelectionService} from "../../../services/quill/selection.service";
+import {DocSubmitService} from "../../../services/docs/doc.submit.service";
+import {SaveToggleService} from "../../../services/header/save.toggle.service";
 
 @Component({
   selector: 'doc-edit',
@@ -26,13 +27,21 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   @ViewChild('contentQuill', {static: true}) content!: QuillEditorComponent;
   toolbarOpened: boolean = false;
   linkInputOpened: boolean = false;
-  subManager$: Subject<any> = new Subject();
-  constructor(private fb: FormBuilder,
-              private store: Store,
-              private activatedRoute: ActivatedRoute){
+  subManager$ = new Subject<void>();
+  constructor(private store: Store,
+              private activatedRoute: ActivatedRoute,
+              private selectionService: SelectionService,
+              private selectionFraudService: SelectionFraudService,
+              private docSubmitService: DocSubmitService,
+              private saveToggleService: SaveToggleService) {
     this.store.select(quillSelectionSelectors.selectToolbarOpened)
-      .pipe(takeUntil(this.subManager$))
-      .subscribe(toolbarOpened => this.toolbarOpened = toolbarOpened);
+      .pipe(
+        skip(1),
+        takeUntil(this.subManager$))
+      .subscribe(toolbarOpened => {
+        this.toolbarOpened = toolbarOpened
+        if (!toolbarOpened) this.submit();
+      });
   }
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
@@ -43,7 +52,16 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
         if (this.fetchedDoc && this.fetchedDoc?.id !== this.urlGuid.toString()){
           this.store.dispatch(docCrudActions.doc_fetch({id: this.urlGuid.toString()}));
         }
+        if (this.toolbarOpened){
+          this.store.dispatch(quillSelectionActions.quill_focusOff());
+        }
       }
+    });
+
+    this.saveToggleService.manualSave
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(() => {
+      this.submit();
     });
 
     this.store.select(docSelectors.selectCurrentDocLastSave)
@@ -63,6 +81,19 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
     this.content.onContentChanged
       .pipe(
         skip(1),
+        filter(() => !this.toolbarOpened),
+        takeUntil(this.subManager$),
+        debounceTime(1000),
+        distinctUntilChanged()
+      )
+      .subscribe(() => {
+        this.submit();
+      });
+
+    this.title.onContentChanged
+      .pipe(
+        skip(1),
+        filter(() => !this.toolbarOpened),
         takeUntil(this.subManager$),
         debounceTime(1000),
         distinctUntilChanged()
@@ -84,76 +115,33 @@ export class DocEditComponent implements OnInit, OnDestroy, AfterViewInit{
   loadForm(){
     if (!this.content.quillEditor || !this.title.quillEditor) return;
 
-    let titleDelta = JSON.parse(this.fetchedDoc!.title) as Delta;
-    let contentDeltas = JSON.parse(this.fetchedDoc!.content) as Delta;
-
-    this.title.quillEditor.setContents(titleDelta);
-    this.content.quillEditor.setContents(contentDeltas);
+    this.title.quillEditor.setContents(this.fetchedDoc!.titleDelta);
+    this.content.quillEditor.setContents(this.fetchedDoc!.contentDeltas);
   }
   submit(){
     if (!this.content.quillEditor || !this.title.quillEditor) return;
+    if (this.urlGuid?.toString() != this.fetchedDoc?.id as string) return;
 
-    let titleText = this.title.quillEditor.getText();
-    let contentText = this.content.quillEditor.getText();
-
-    if (titleText.length < 3 || contentText.length < 3) return;
-
-    let titleDelta = this.title.quillEditor.getContents() as Delta;
-    let contentDeltas = this.content.quillEditor.getContents();
-
-    let docComposedModel = {
-      id: this.urlGuid!.toString(),
-      title: titleText,
-      titleDelta: JSON.stringify(titleDelta),
-      content: contentText,
-      contentDeltas: JSON.stringify(contentDeltas)
-    }
-
-    if (!isEqual(docComposedModel, this.fetchedDoc)) return;
-
-    this.store.dispatch(docCrudActions.doc_save());
-    this.store.dispatch(docCrudActions.doc_patch(docComposedModel));
+    this.docSubmitService.submit.next({
+      title: this.title.quillEditor.getText(),
+      titleDelta: this.title.quillEditor.getContents(),
+      content: this.content.quillEditor.getText(),
+      contentDelta: this.content.quillEditor.getContents(),
+      fetchedDoc: this.fetchedDoc!
+    });
   }
   showToolBar(selectionChange: SelectionChange){
     if (this.linkInputOpened && selectionChange.oldRange){
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'background', '#338dfa'
-      );
-      selectionChange.editor.formatText(
-        selectionChange.oldRange.index,
-        selectionChange.oldRange.length,
-        'color', 'white'
-      );
+      this.selectionFraudService.colorizeSelection(
+        selectionChange.editor, selectionChange.oldRange);
       return;
     }
-
-    let range = selectionChange.range;
-    if (range !== null && range.length !==0 ){
-      const selectedText = selectionChange.editor.getText(range.index, range.length);
-      const selectedTextFormats = selectionChange.editor.getFormat(range.index, range.length);
-
-      const selection = window.getSelection()!;
-      const rangeRect = selection.getRangeAt(0).getBoundingClientRect();
-
-      this.store.dispatch(quillSelectionActions.quill_newSelection({
-        toolbarOpened: true,
-        range: range,
-        bounds: {left: rangeRect.x, top: rangeRect.y},
-        text: selectedText,
-        formats: selectedTextFormats,
-        linkInputOpened: false
-      }));
-    }
-    else {
-      this.store.dispatch(quillSelectionActions.quill_focusOff());
-    }
+    this.selectionService.setSelection(selectionChange.editor, selectionChange.range);
   }
-
   ngOnDestroy(): void {
     this.submit();
-    this.subManager$.next('destroyed');
+    this.subManager$.next();
+    this.subManager$.complete();
     this.store.dispatch(docCrudActions.doc_clear_last_save());
     this.store.dispatch(docCrudActions.url_id_change({id: undefined}));
   }

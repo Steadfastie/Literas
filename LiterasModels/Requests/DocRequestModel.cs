@@ -19,5 +19,5 @@ public class DocRequestModel
     public string Content { get; set; }
 
     [DeltasCount(1)]
-    public JsonDocument? ContentDeltas { get; set; }
+    public JsonDocument? ContentDelta { get; set; }
 }

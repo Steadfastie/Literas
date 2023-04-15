@@ -1,15 +1,16 @@
-<form [formGroup]="creationForm">
-  <div class="form-group">
-    <quill-editor #titleQuill
-      placeholder = "Title..."
-      formControlName="title" [modules]="{toolbar: false}">
-    </quill-editor>
-  </div>
-  <div class="form-group">
-    <quill-editor #contentQuill
-      formControlName="content" placeholder="Content..."
-      [modules]="{toolbar: false}">
-    </quill-editor>
-    <toolbar [editor]="content"></toolbar>
-  </div>
-</form>
+<div class="form-group">
+  <quill-editor #titleQuill
+                placeholder = "Title..."
+                [modules]="{toolbar: false}"
+                [styles]="{'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '2.5rem'}">
+  </quill-editor>
+</div>
+<div class="form-group">
+  <quill-editor #contentQuill
+                placeholder="Content..."
+                (onSelectionChanged)="showToolBar($event)"
+                [modules]="{toolbar: false}"
+                [styles]="{'min-width':'fit-content', 'font-family': 'Sanchez, serif', 'font-size': '1rem'}">
+  </quill-editor>
+  <toolbar *ngIf="toolbarOpened" [editor]="content"></toolbar>
+</div>

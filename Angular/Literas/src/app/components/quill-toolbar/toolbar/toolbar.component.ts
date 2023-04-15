@@ -16,7 +16,7 @@ export class ToolbarComponent implements OnInit, OnDestroy{
   @Input() editor!: QuillEditorComponent;
   currentSelection?: QuillState;
   active: IToolbarModel = ToolBarConfig;
-  linkInputOpen: boolean = false;
+  linkInputOpened: boolean = false;
   subManager$: Subject<any> = new Subject();
   constructor(private el: ElementRef,
               private renderer: Renderer2,
@@ -45,10 +45,9 @@ export class ToolbarComponent implements OnInit, OnDestroy{
     this.store.select(quillSelectionsSelectors.selectLinkInputOpened)
       .pipe(takeUntil(this.subManager$))
       .subscribe(status => {
-        this.linkInputOpen = status;
+        this.linkInputOpened = status;
       });
   }
-
   setBold(){
     if (!this.currentSelection) return;
     if (this.active['code-block']) return;
@@ -58,9 +57,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       this.currentSelection.range!.length,
       'bold',
       !this.currentSelection.formats['bold']);
-
-/*    const newContents = this.editor.quillEditor.getContents();
-    this.editor.quillEditor.setContents(newContents);*/
 
     this.store.dispatch(
       quillSelectionActions.quill_formatChange(
@@ -84,13 +80,11 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   editLink(){
     if (!this.currentSelection) return;
 
     this.store.dispatch(quillSelectionActions.quill_switchLinkInput());
   }
-
   setCodeBlock(){
     if (!this.currentSelection) return;
     this.editor.quillEditor.formatLine(
@@ -108,7 +102,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setHeader(){
     if (!this.currentSelection) return;
     if (this.active['code-block']) return;
@@ -129,7 +122,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setOrderedList(){
     if (!this.currentSelection) return;
 
@@ -153,7 +145,6 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   setBulletList(){
     if (!this.currentSelection) return;
 
@@ -177,11 +168,9 @@ export class ToolbarComponent implements OnInit, OnDestroy{
       )
     );
   }
-
   ngOnInit(): void {
 
   }
-
   ngOnDestroy(): void {
     this.subManager$.next('unsubscribed');
   }
