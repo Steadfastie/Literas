@@ -38,7 +38,7 @@ builder.Host.UseSerilog((ctx, lc) =>
             .WriteTo.Console(LogEventLevel.Information));
 
 builder.Services.AddDbContext<NotesDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("NotesPostgre")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DocsPostgre")));
 
 builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
 

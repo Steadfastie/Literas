@@ -1,0 +1,14 @@
+<div class="container" *ngIf="operation">
+  <div class="header">
+    Sorry, error getting in <span class="appName">Literas</span>
+  </div>
+  <div class="details" *ngIf="operation.errorMessage">
+    Details: {{operation.errorMessage}}
+  </div>
+  <div class="links" *ngIf="operation.type == 'Login'">
+    You can try <a routerLink="../">again</a> or <a routerLink="/signup">register</a>
+  </div>
+  <div class="links" *ngIf="operation.type == 'Signup'">
+    You can try <a routerLink="../">again</a> or <a routerLink="/login">login</a>
+  </div>
+</div>

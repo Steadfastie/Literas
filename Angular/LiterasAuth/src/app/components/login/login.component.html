@@ -1,0 +1,37 @@
+<div class="container">
+  <mat-card class="cardContainer" *ngIf="!formFilled">
+    <div class="header">Login with <span class="appName">Literas</span></div>
+
+    <form [formGroup]="loginForm" class="form">
+      <div class="fields">
+        <mat-form-field appearance="outline" [hideRequiredMarker]="true" class="login">
+          <mat-label>Login</mat-label>
+          <input type="email" matInput placeholder="example@email.com" formControlName="username">
+          <mat-error *ngIf="loginForm.controls['username'].errors?.['required']">Login is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" [hideRequiredMarker]="true">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput placeholder="8yQD!yya" formControlName="password">
+          <mat-error *ngIf="loginForm.controls['password'].errors?.['required']">Password is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="submit">
+        <button mat-flat-button color="primary" (click)="submit()">
+          Get in
+        </button>
+      </div>
+    </form>
+
+    <div class="footer">
+      Build w/ <a href="https://duendesoftware.com/products/identityserver">IdentityServer</a>. First time? <a routerLink="/signup">Register</a>
+    </div>
+  </mat-card>
+  <div class="success" *ngIf="formFilled">
+    <mat-card>
+      <router-outlet></router-outlet>
+    </mat-card>
+  </div>
+</div>
+
