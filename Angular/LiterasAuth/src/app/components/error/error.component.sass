@@ -1,3 +1,31 @@
+.container
+  display: grid
+  grid-template-rows: [header-start] 10fr [header-end details-start] 10fr [details-end links-start] 7fr [links-end]
+  grid-template-columns: [error-start] 1fr [error-end]
+  gap: 10px
+
+.header
+  grid-column: error-start / error-end
+  grid-row: header-start / header-end
+
+.details
+  grid-column: error-start / error-end
+  grid-row: details-start / details-end
+
+.links
+  grid-column: error-start / error-end
+  grid-row: links-start / links-end
+  color: #e0e0e0
+  font-size: 80%
+
+a
+  text-decoration: none
+  color: #c0c0c0
+  transition: 0.5s
+  &:hover
+    color: #5f5f5f
+    transition: 0.5s
+
 .appName
   color: #1b5e20
   font-size: 120%

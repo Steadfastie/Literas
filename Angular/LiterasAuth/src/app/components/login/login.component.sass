@@ -6,11 +6,22 @@
 
 .cardContainer
   display: grid
-  grid-template-columns: [form-start] 1fr [form-end]
-  grid-template-rows: [header-start] 1fr [header-end content-start] 3fr [content-end footer-start] 1fr [footer-end]
   place-items: center
   padding: 10px 40px 10px 40px
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px
+  transition: 1s
+  &.error
+    box-shadow: rgb(255, 209, 199, 0.8) 0 1px 2px 0, rgba(255, 209, 199, 0.6) 0 1px 3px 1px
+    transition: 1s
+  &.success
+    box-shadow: rgba(27, 94, 32, 0.3) 0 1px 2px 0, rgba(27, 94, 32, 0.15) 0 1px 3px 1px
+    transition: 1s
+
+.formContainer
+  display: grid
+  grid-template-columns: [form-start] 1fr [form-end]
+  grid-template-rows: [header-start] 1fr [header-end content-start] 3fr [content-end footer-start] 1fr [footer-end]
+  place-items: center
 
 .header
   grid-column: form-start / form-end
@@ -28,7 +39,6 @@
   flex-direction: column
   justify-content: center
   align-items: center
-
 
 .fields
   display: flex
