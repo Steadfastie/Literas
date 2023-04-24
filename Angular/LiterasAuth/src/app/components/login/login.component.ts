@@ -36,7 +36,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.valid) {
       let useCredentials = {
         username: this.loginForm.controls.username.value!,
-        password: this.loginForm.controls.password.value!
+        password: this.loginForm.controls.password.value!,
+        returnUrl: ''
       }
       this.authService.login(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){

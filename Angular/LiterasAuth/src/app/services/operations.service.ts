@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 import {OperationResponse} from "../models/operationResponse";
 
 @Injectable({
@@ -7,6 +7,7 @@ import {OperationResponse} from "../models/operationResponse";
 })
 export class OperationsService {
   private latestOperation = new BehaviorSubject<OperationResponse | null>(null);
+  private returnUrl = new Subject<string>();
   constructor() {
   }
   push(operation: OperationResponse){
@@ -14,5 +15,11 @@ export class OperationsService {
   }
   pick() {
    return this.latestOperation.asObservable();
+  }
+  saveReturnUrl(url: string){
+    this.returnUrl.next(url);
+  }
+  getReturnUrl(){
+    return this.returnUrl.asObservable();
   }
 }

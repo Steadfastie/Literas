@@ -1,20 +1,26 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from "./api.service";
-import {User} from "../models/user";
+import {UserCredentials} from "../models/userCredentials";
 import {Observable} from "rxjs";
 import {OperationResponse} from "../models/operationResponse";
+import {OperationsService} from "./operations.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private apiService: ApiService) { }
-
-  login(user: User): Observable<OperationResponse>{
-    return this.apiService.post('login', user)
+  returnUrl: string = 'foo'
+  constructor(private apiService: ApiService,
+              private operations: OperationsService) {
+    this.operations.getReturnUrl().subscribe(url => this.returnUrl = url);
   }
 
-  signup(user: User): Observable<OperationResponse>{
-    return this.apiService.post('signup', user)
+  login(user: UserCredentials): Observable<OperationResponse>{
+    let data = {...user, returnUrl: this.returnUrl};
+    return this.apiService.post(`auth/login`, data).pipe();
+  }
+
+  signup(user: UserCredentials): Observable<OperationResponse>{
+    return this.apiService.post('auth/signup', {...user, returnUrl: this.returnUrl})
   }
 }

@@ -1,3 +1,3 @@
 export const apiUrl = {
-  url: "https://localhost:7274/"
+  url: "https://localhost:7034/"
 }

@@ -36,7 +36,8 @@ export class SignupComponent implements OnInit, OnDestroy {
     if (this.signupForm.valid) {
       let useCredentials = {
         username: this.signupForm.controls.username.value!,
-        password: this.signupForm.controls.password.value!
+        password: this.signupForm.controls.password.value!,
+        returnUrl: ''
       }
       this.authService.signup(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){
