@@ -37,6 +37,25 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Profile,
                     "docs"
                 }
+            },
+            new Client
+            {
+                ClientId = "literas_spa",
+                AllowedGrantTypes = GrantTypes.Code,
+                RedirectUris = { "https://localhost:4200/docs" },
+                AllowOfflineAccess = true,
+                AllowAccessTokensViaBrowser = true,
+                ClientSecrets =
+                {
+                    new Secret("literas_spa_secret".Sha256())
+                },
+                AllowedScopes = new List<string>
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "docs"
+                },
+                AllowedCorsOrigins = new [] {"https://localhost:4200"}
             }
         };
 }

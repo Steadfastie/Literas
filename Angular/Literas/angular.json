@@ -72,7 +72,12 @@
               "browserTarget": "Literas:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200,
+            "sslCert": "ssl/server.crt",
+            "sslKey": "ssl/server.key"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

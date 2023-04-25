@@ -1,22 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {OperationsService} from "./services/operations.service";
-import {ActivatedRoute} from "@angular/router";
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.sass']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'LiterasAuth';
 
-  constructor(private operationsService: OperationsService,
-              private activatedRoute: ActivatedRoute) {
-  }
-
-  ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.operationsService.saveReturnUrl(params['ReturnUrl']);
-    });
+  constructor() {
   }
 }

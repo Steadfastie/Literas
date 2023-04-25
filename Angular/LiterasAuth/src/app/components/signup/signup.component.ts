@@ -42,11 +42,13 @@ export class SignupComponent implements OnInit, OnDestroy {
       this.authService.signup(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){
           this.formSent = true;
-          this.router.navigate(['~/success'], {relativeTo: this.activatedRoute})
+          this.operations.push(response);
+          this.router.navigate(['./success'], {relativeTo: this.activatedRoute})
         }
         else{
           this.formSent = true;
-          this.router.navigate(['~/error'], {relativeTo: this.activatedRoute})
+          this.operations.push(response);
+          this.router.navigate(['./error'], {relativeTo: this.activatedRoute})
         }
       })
     }

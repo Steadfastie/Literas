@@ -1,4 +1,8 @@
+using Duende.IdentityServer.Services;
+using IdentityModel;
 using LiterasAuth.Auth;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +22,7 @@ internal static class HostingExtensions
         builder.Services
             .AddIdentityServer(options =>
             {
-                options.UserInteraction.LoginUrl = "http://localhost:4800/login";
-                options.UserInteraction.LogoutUrl = "http://localhost:4800/logout";
+                options.UserInteraction.LoginUrl = "https://localhost:4800/login";
 
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
@@ -32,10 +35,15 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients);
 
-        //builder.Services.ConfigureApplicationCookie(options =>
-        //{
-        //    options.LoginPath = "localhost:4800/login";
-        //});
+        //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //    .AddCookie("Cookies", options =>
+        //    {
+        //        options.Cookie.SameSite = SameSiteMode.Lax;
+        //        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        //    });
+
+
+        builder.Services.AddTransient<IReturnUrlParser, ReturnUrlParser>();
 
         return builder.Build();
     }

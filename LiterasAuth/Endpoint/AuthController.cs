@@ -1,8 +1,9 @@
 ﻿using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Models;
+
+using Microsoft.AspNetCore.Authentication;
 using Duende.IdentityServer.Services;
 using LiterasAuth.Auth;
+using LiterasModels.Responses;
 using LiterasModels.System;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,10 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("login")]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] UserCredentialsModel credentials)
     {
         try
@@ -42,13 +47,13 @@ public class AuthController : ControllerBase
                 .PasswordSignInAsync(
                     credentials.Username,
                     credentials.Password,
-                    isPersistent: false,
+                    isPersistent: true,
                     lockoutOnFailure: false);
 
             if (!signInResult.Succeeded)
-                return BadRequest(new OperationResponse
+                return Unauthorized(new OperationResponse
                 {
-                    Type = "Username",
+                    Type = "Login",
                     Succeeded = false,
                     ErrorMessage = "Invalid login or password"
                 });
@@ -64,7 +69,13 @@ public class AuthController : ControllerBase
                     ErrorMessage = "Invalid login or password"
                 });
 
-            await HttpContext.SignInAsync(new IdentityServerUser(user.Id.ToString()));
+            await HttpContext.SignInAsync(
+                new IdentityServerUser(user.Id.ToString()), 
+                new AuthenticationProperties()
+                    {
+                        IsPersistent = true
+                    });
+
             return Ok(new OperationResponse
             {
                 Type = "Username",
@@ -79,12 +90,72 @@ public class AuthController : ControllerBase
                       $"{Environment.NewLine} {Environment.NewLine} " +
                       $"{ex.StackTrace} " +
                       $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPost("signup")]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Signup([FromBody] UserCredentialsModel credentials)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new ArgumentException("Invalid model");
+
+            var signInResult = await _signInManager
+                .PasswordSignInAsync(
+                    credentials.Username,
+                    credentials.Password,
+                    isPersistent: false,
+                    lockoutOnFailure: false);
+
+            if (signInResult.Succeeded)
+                return Conflict(new OperationResponse
+                {
+                    Type = "Signup",
+                    Succeeded = false,
+                    ErrorMessage = "User already created"
+                });
+
+            var context = await _interaction.GetAuthorizationContextAsync(credentials.ReturnUrl);
+
+            if (context == null)
+                return BadRequest(new OperationResponse
+                {
+                    Type = "Signup",
+                    Succeeded = false,
+                    ErrorMessage = "Invalid return url"
+                });
+
+            var literasUser = new LiterasUser(credentials.Username);
+            var creationResult = await _userManager.CreateAsync(literasUser, credentials.Password);
+
+            if (!creationResult.Succeeded)
             {
-                Message = "Could not find doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+                throw new InvalidOperationException("Could not create user");
+            }
+
+            var createdUser = await _userManager.FindByNameAsync(credentials.Username);
+
+            await HttpContext.SignInAsync(new IdentityServerUser(createdUser.Id.ToString()));
+            return Ok(new OperationResponse
+            {
+                Type = "Signup",
+                Succeeded = true,
+                ReturnUrl = credentials.ReturnUrl
+            });
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                      $"{Environment.NewLine} {Environment.NewLine} " +
+                      $"{ex.StackTrace} " +
+                      $"{Environment.NewLine} {Environment.NewLine}");
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 }

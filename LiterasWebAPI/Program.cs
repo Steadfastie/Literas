@@ -12,17 +12,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("https://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+
+    }); 
     options.AddPolicy(
         name: "literas",
         policy =>
         {
             policy.WithOrigins(
-                    "http://localhost:4200",
-                    "http://localhost:4200/",
-                    "https://localhost:4200",
-                    "https://localhost:4200/",
-                    "localhost:4200",
-                    "localhost:4200/")
+                    "https://localhost:4800",
+                    "https://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -65,7 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("literas");
+app.UseCors();
 
 app.UseAuthorization();
 

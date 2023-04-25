@@ -74,7 +74,9 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 4800
+            "port": 4800,
+            "sslCert": "ssl/server.crt",
+            "sslKey": "ssl/server.key"
           }
         },
         "extract-i18n": {

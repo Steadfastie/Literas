@@ -9,7 +9,7 @@ import {OperationsService} from "./operations.service";
   providedIn: 'root'
 })
 export class AuthService {
-  returnUrl: string = 'foo'
+  returnUrl: string = 'www.google.com'
   constructor(private apiService: ApiService,
               private operations: OperationsService) {
     this.operations.getReturnUrl().subscribe(url => this.returnUrl = url);

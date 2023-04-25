@@ -7,7 +7,7 @@ import {OperationResponse} from "../models/operationResponse";
 })
 export class OperationsService {
   private latestOperation = new BehaviorSubject<OperationResponse | null>(null);
-  private returnUrl = new Subject<string>();
+  private returnUrl = new BehaviorSubject<string>('www.google.com');
   constructor() {
   }
   push(operation: OperationResponse){

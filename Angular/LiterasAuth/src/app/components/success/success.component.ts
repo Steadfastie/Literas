@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {OperationsService} from "../../services/operations.service";
 import {OperationResponse} from "../../models/operationResponse";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -9,8 +9,9 @@ import {Subject, takeUntil} from "rxjs";
   templateUrl: './success.component.html',
   styleUrls: ['./success.component.sass']
 })
-export class SuccessComponent implements OnDestroy{
+export class SuccessComponent implements AfterViewInit, OnDestroy{
   operation?: OperationResponse;
+  returnUrl?: string;
   subManager$ = new Subject<void>();
   constructor(private operations: OperationsService,
               private router: Router,
@@ -30,5 +31,10 @@ export class SuccessComponent implements OnDestroy{
   ngOnDestroy(): void {
     this.subManager$.next();
     this.subManager$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    this.operations.getReturnUrl().pipe().subscribe(url => this.returnUrl = url);
+    window.location.href = this.returnUrl!;
   }
 }

@@ -30,7 +30,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.subManager$))
       .subscribe(operation => {
         this.operationResponse = operation;
-      })
+      });
+    this.operations.saveReturnUrl(this.activatedRoute.snapshot.queryParams['ReturnUrl']);
   }
   submit() {
     if (this.loginForm.valid) {
@@ -42,11 +43,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.authService.login(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){
           this.formSent = true;
-          this.router.navigate(['~/success'], {relativeTo: this.activatedRoute})
+          this.operations.push(response);
+          this.router.navigate(['./success'], {relativeTo: this.activatedRoute})
         }
         else{
           this.formSent = true;
-          this.router.navigate(['~/error'], {relativeTo: this.activatedRoute})
+          this.operations.push(response);
+          this.router.navigate(['./error'], {relativeTo: this.activatedRoute})
         }
       })
     }

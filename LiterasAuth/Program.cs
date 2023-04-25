@@ -1,4 +1,5 @@
 using LiterasAuth;
+using Microsoft.AspNetCore.CookiePolicy;
 using Serilog;
 using Serilog.Events;
 
@@ -16,12 +17,19 @@ builder.Host.UseSerilog((ctx, lc) =>
 
 builder.Services.AddCors(options =>
 {
+    options.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithOrigins("https://localhost:4200");
+        });
     options.AddPolicy(
         name: "literas",
         policy =>
         {
             policy.WithOrigins(
-                    "http://localhost:4800")
+                    "https://localhost:4800")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -34,6 +42,12 @@ builder.Services.AddSwaggerGen();
 var app = builder
     .ConfigureServices()
     .ConfigurePipeline();
+
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+    Secure = CookieSecurePolicy.Always
+});
 
 if (app.Environment.IsDevelopment())
 {
