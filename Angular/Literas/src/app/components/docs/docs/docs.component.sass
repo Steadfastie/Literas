@@ -2,22 +2,21 @@
   display: grid
   @media (max-width: 720px)
     grid-template-rows: [list-start] auto [list-end doc-start] auto [doc-end]
-    grid-template-columns: [doc-start] auto [doc-end]
+    grid-template-columns: [doc-start] minmax(40ch, auto) [doc-end]
   @media (min-width: 720px)
     grid-template-rows: [list-start] auto [list-end] auto [doc-end]
-    grid-template-columns: [list-start] auto [list-end] 2em [doc-start] auto [doc-end] 2em [page-end]
+    grid-template-columns: [list-start] minmax(calc(12ch + 20px + 2rem), 0.8fr) [list-end] minmax(2rem, 4rem) [doc-start] minmax(45ch, 70ch) [doc-end] minmax(2rem, 1fr) [page-end]
 
 .docList
   align-self: center
   @media (max-width: 720px)
     grid-row: list-start / list-end
     grid-column: doc-start / doc-end
+    padding: 0 1rem 0 1rem
   @media (min-width: 720px)
     grid-row: list-start / list-end
     grid-column: list-start / list-end
-    justify-self: center
-  margin-left: 1rem
-  margin-right: 1rem
+    justify-self: right
 
 .main
   align-self: start
@@ -25,10 +24,12 @@
   @media (max-width: 720px)
     grid-row: doc-start / doc-end
     grid-column: doc-start / doc-end
+    max-width: 70ch
     margin-top: 1rem
   @media (min-width: 720px)
     grid-row: list-start / doc-end
     grid-column: doc-start / doc-end
+    justify-self: left
   margin-left: 1rem
   margin-right: 1rem
 
