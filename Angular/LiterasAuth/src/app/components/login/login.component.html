@@ -18,6 +18,9 @@
           <mat-form-field appearance="outline" [hideRequiredMarker]="true">
             <mat-label>Password</mat-label>
             <input type="password" matInput placeholder="8yQD!yya" formControlName="password">
+            <button mat-icon-button matSuffix (click)="loginForm.patchValue({password: '8yQD!yya'})">
+              <mat-icon>security</mat-icon>
+            </button>
             <mat-error *ngIf="loginForm.controls['password'].errors?.['required']">Password is required</mat-error>
           </mat-form-field>
         </div>

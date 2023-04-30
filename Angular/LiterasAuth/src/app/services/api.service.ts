@@ -23,7 +23,7 @@ export class ApiService {
   }
 
   post(url: string, data: object): Observable<any> {
-    return this.http.post(this.getFullUrl(url), data);
+    return this.http.post(this.getFullUrl(url), data, {withCredentials: true});
   }
 
   patch(url: string, data: object): Observable<any> {
@@ -39,7 +39,7 @@ export class ApiService {
   }
 
   request(method: string, url: string, data: object, options: object): Observable<any> {
-    const req = new HttpRequest(method, this.getFullUrl(url), data, options);
+    const req = new HttpRequest(method, url, data, options);
     return this.http.request(req);
   }
 }

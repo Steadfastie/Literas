@@ -23,4 +23,8 @@ export class AuthService {
   signup(user: UserCredentials): Observable<OperationResponse>{
     return this.apiService.post('auth/signup', {...user, returnUrl: this.returnUrl})
   }
+
+  redirect(): Observable<any>{
+    return this.apiService.request('GET', this.returnUrl, {}, {});
+  }
 }

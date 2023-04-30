@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:59853",
+      "applicationUrl": "https://localhost:59853",
       "sslPort": 44340
     }
   },
@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": ".well-known/openid-configuration",
-      "applicationUrl": "https://localhost:7034;http://localhost:5139",
+      "applicationUrl": "https://localhost:7034",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

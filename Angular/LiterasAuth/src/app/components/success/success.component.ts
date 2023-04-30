@@ -3,6 +3,7 @@ import {OperationsService} from "../../services/operations.service";
 import {OperationResponse} from "../../models/operationResponse";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subject, takeUntil} from "rxjs";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-success',
@@ -14,6 +15,7 @@ export class SuccessComponent implements AfterViewInit, OnDestroy{
   returnUrl?: string;
   subManager$ = new Subject<void>();
   constructor(private operations: OperationsService,
+              private authService: AuthService,
               private router: Router,
               private activatedRoute: ActivatedRoute
   ) {
@@ -35,6 +37,9 @@ export class SuccessComponent implements AfterViewInit, OnDestroy{
 
   ngAfterViewInit(): void {
     this.operations.getReturnUrl().pipe().subscribe(url => this.returnUrl = url);
-    window.location.href = this.returnUrl!;
+    window.location.assign(this.returnUrl!);
+    /*this.authService.redirect().pipe().subscribe(redirectResponse => {
+      console.log(redirectResponse);
+    });*/
   }
 }

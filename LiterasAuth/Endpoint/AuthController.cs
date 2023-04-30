@@ -69,12 +69,13 @@ public class AuthController : ControllerBase
                     ErrorMessage = "Invalid login or password"
                 });
 
-            await HttpContext.SignInAsync(
-                new IdentityServerUser(user.Id.ToString()), 
-                new AuthenticationProperties()
-                    {
-                        IsPersistent = true
-                    });
+            //await HttpContext.SignInAsync(
+            //    new IdentityServerUser(user.Id.ToString()), 
+            //    new AuthenticationProperties()
+            //    {
+            //        AllowRefresh = true,
+            //        IsPersistent = true
+            //    });
 
             return Ok(new OperationResponse
             {
