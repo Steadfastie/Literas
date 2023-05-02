@@ -15,7 +15,7 @@ try
                 LogEventLevel.Warning,
                 rollingInterval: RollingInterval.Hour,
                 retainedFileCountLimit: 10)
-            .WriteTo.Console(LogEventLevel.Verbose));
+            .WriteTo.Console(LogEventLevel.Information));
 
     builder.Services.AddCors(options =>
     {

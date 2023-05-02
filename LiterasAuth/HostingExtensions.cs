@@ -76,6 +76,8 @@ internal static class HostingExtensions
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
                 options.EmitStaticAudienceClaim = true;
+
+                options.Authentication.CoordinateClientLifetimesWithUserSession = true;
             })
             .AddConfigurationStore(options =>
             {
@@ -88,6 +90,8 @@ internal static class HostingExtensions
                 options.ConfigureDbContext = b => b.UseNpgsql(
                     builder.Configuration.GetConnectionString("AuthOperation"),
                     sql => sql.MigrationsAssembly(migrationsAssembly));
+                options.EnableTokenCleanup = true;
+                options.RemoveConsumedTokens = true;
             })
             .AddAspNetIdentity<LiterasUser>();
 
@@ -95,11 +99,6 @@ internal static class HostingExtensions
         {
             options.Cookie.HttpOnly = false;
         });
-
-        //builder.Services.AddAuthentication().AddOpenIdConnect(options =>
-        //{
-        //    options.Authority = "https://localhost:4800";
-        //});
 
         builder.Services.AddTransient<IReturnUrlParser, ReturnUrlParser>();
 
@@ -109,13 +108,6 @@ internal static class HostingExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         //InitializeDatabase(app);
-
-        //app.UseCookiePolicy(new CookiePolicyOptions
-        //{
-        //    MinimumSameSitePolicy = SameSiteMode.None,
-        //    HttpOnly = HttpOnlyPolicy.None,
-        //    Secure = CookieSecurePolicy.Always
-        //});
 
         app.UseIdentityServer();
 
