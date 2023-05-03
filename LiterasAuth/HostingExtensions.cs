@@ -78,6 +78,7 @@ internal static class HostingExtensions
                 options.EmitStaticAudienceClaim = true;
 
                 options.Authentication.CoordinateClientLifetimesWithUserSession = true;
+                options.EmitScopesAsSpaceDelimitedStringInJwt = true;
             })
             .AddConfigurationStore(options =>
             {

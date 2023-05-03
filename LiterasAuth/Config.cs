@@ -13,8 +13,8 @@ public static class Config
         };
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>
-        { 
-            new ApiScope("docs", "Literas docs") 
+        {
+            new ApiScope("docs", "Literas docs")
         };
 
     public static IEnumerable<Client> Clients =>

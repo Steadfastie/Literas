@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication;
+using LiterasWebAPI.Auth;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +23,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
-
-    }); 
+    });
     options.AddPolicy(
         name: "literas",
         policy =>
@@ -41,10 +45,41 @@ builder.Host.UseSerilog((ctx, lc) =>
             retainedFileCountLimit: 10)
             .WriteTo.Console(LogEventLevel.Information));
 
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
+        options.Authority = "https://localhost:7034";
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateLifetime = true,
+            ValidateAudience = false,
+            ValidIssuer = "https://localhost:7034",
+            ClockSkew = TimeSpan.Zero,
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("literas", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("scope", "docs");
+    });
+});
+
 builder.Services.AddDbContext<NotesDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DocsPostgre")));
 
 builder.Services.AddAutoMapper(Assembly.Load("LiterasDataTransfer"));
+
+builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformator>();
 
 builder.Services.AddScoped<IDocsService, DocsService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
@@ -71,6 +106,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
