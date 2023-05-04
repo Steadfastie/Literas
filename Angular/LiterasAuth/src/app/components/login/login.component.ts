@@ -31,7 +31,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe(operation => {
         this.operationResponse = operation;
       });
-    this.operations.saveReturnUrl(this.activatedRoute.snapshot.queryParams['ReturnUrl']);
   }
   submit() {
     if (this.loginForm.valid) {
@@ -44,12 +43,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (response.succeeded){
           this.formSent = true;
           this.operations.push(response);
-          this.router.navigate(['./success'], {relativeTo: this.activatedRoute})
+          this.router.navigate(['./success'], {
+            relativeTo: this.activatedRoute,
+            queryParamsHandling: 'preserve',
+            preserveFragment: true
+          });
         }
         else{
           this.formSent = true;
           this.operations.push(response);
-          this.router.navigate(['./error'], {relativeTo: this.activatedRoute})
+          this.router.navigate(['./error'], {
+            relativeTo: this.activatedRoute,
+            queryParamsHandling: 'preserve',
+            preserveFragment: true
+          });
         }
       })
     }

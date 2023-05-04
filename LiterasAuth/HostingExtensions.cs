@@ -70,6 +70,7 @@ internal static class HostingExtensions
             .AddIdentityServer(options =>
             {
                 options.UserInteraction.LoginUrl = "https://localhost:4800/login";
+                options.UserInteraction.ErrorUrl = "https://localhost:4800/error";
 
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
