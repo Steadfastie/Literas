@@ -1,10 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap')
+.app
+  display: grid
+  grid-template-rows: [header-start] auto [header-end] 15px [content-start] auto [content-end]
+  grid-template-columns: [left-side-start] auto [right-side-end]
+
 .header
+  grid-row: header-start / header-end
+  grid-column: left-side-start / right-side-end
   display: flex
   flex-direction: row
   flex-wrap: nowrap
-  justify-content: space-between
   align-items: baseline
+  justify-content: space-between
+  width: auto
   margin-left: 1rem
   margin-right: 1rem
 
@@ -14,8 +22,21 @@
   font-weight: bold
   font-family: 'Lobster', cursive
 
-.subline
+.separator
+  grid-row: header-end / content-start
+  grid-column: left-side-start / right-side-end
+  align-self: center
   margin-left: 0.5rem
   margin-right: 0.5rem
   opacity: 30%
+
+.content
+  margin-top: 1em
+  grid-row: content-start / content-end
+  grid-column: left-side-start / right-side-end
+
+
+
+
+
 

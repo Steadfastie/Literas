@@ -4,6 +4,7 @@ using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.Requests;
 using LiterasModels.Responses;
 using LiterasModels.System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -11,6 +12,7 @@ namespace LiterasWebAPI.Controllers;
 
 [Route("docs")]
 [ApiController]
+[Authorize(Policy = "literas")]
 public class DocsController : ControllerBase
 {
     private readonly IDocsService _docsService;

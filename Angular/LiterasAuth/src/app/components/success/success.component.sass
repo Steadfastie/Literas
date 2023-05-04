@@ -1,0 +1,29 @@
+.container
+  display: grid
+  grid-template-rows: [header-start] 1fr [header-end message-start] 1fr [message-end]
+  grid-template-columns: [success-start] 1fr [success-end]
+  gap: 10px
+
+.header
+  grid-column: success-start / success-end
+  grid-row: header-start / header-end
+  color: #1b5e20
+  font-weight: bold
+  font-size: 120%
+
+.message
+  grid-column: success-start / success-end
+  grid-row: message-start / message-end
+
+a
+  text-decoration: none
+  color: #c0c0c0
+  transition: 0.5s
+  &:hover
+    color: #5f5f5f
+    transition: 0.5s
+
+.appName
+  color: #1b5e20
+  font-size: 120%
+  font-family: 'Lobster', cursive

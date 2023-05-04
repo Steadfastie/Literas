@@ -25,6 +25,7 @@ import { ToolbarComponent } from './components/quill-toolbar/toolbar/toolbar.com
 import {quillSelectionReducer} from "./state/reducers/quill.selection.reducer";
 import { LinkComponent } from './components/quill-toolbar/link/link.component';
 import { SaveToggleComponent } from './components/header/save.toggle/save.toggle.component';
+import { LoginComponent } from './components/auth/login/login.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SaveToggleComponent } from './components/header/save.toggle/save.toggle
     DocThumbnailComponent,
     ToolbarComponent,
     LinkComponent,
-    SaveToggleComponent
+    SaveToggleComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,7 @@
-<doc-new></doc-new>
-<div *ngFor="let thumbnail of docs">
-  <doc-thumbnail [thumbnail]="thumbnail"></doc-thumbnail>
+<div class="listContainer">
+  <doc-new></doc-new>
+  <div class="thumbnail" *ngFor="let thumbnail of docs">
+    <doc-thumbnail [thumbnail]="thumbnail"></doc-thumbnail>
+  </div>
 </div>
+
