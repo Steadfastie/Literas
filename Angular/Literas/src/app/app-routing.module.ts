@@ -5,10 +5,13 @@ import {DocsComponent} from "./components/docs/docs/docs.component";
 import {DocEditComponent} from "./components/docs/doc.edit/doc.edit.component";
 import {DocCreateComponent} from "./components/docs/doc.create/doc.create.component";
 import {LoginComponent} from "./components/auth/login/login.component";
+import {AuthGuard} from "./guards/auth.guard";
+import {FetchGuard} from "./guards/fetch.guard";
 
 const routes: Routes = [
   { path:'docs',
     component: DocsComponent,
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'create',
@@ -16,7 +19,8 @@ const routes: Routes = [
       },
       {
         path: ':id',
-        component: DocEditComponent
+        component: DocEditComponent,
+        canActivate: [FetchGuard]
       },
     ]
   },
@@ -24,7 +28,7 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
-  {path:'', redirectTo: '/docs', pathMatch: 'full'},
+  {path:'', redirectTo: '/docs/create', pathMatch: 'full'},
   {path:'**', component: PageNotFoundComponent},
 ];
 

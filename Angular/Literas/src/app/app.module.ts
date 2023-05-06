@@ -27,6 +27,7 @@ import { LinkComponent } from './components/quill-toolbar/link/link.component';
 import { SaveToggleComponent } from './components/header/save.toggle/save.toggle.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
+import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import {TokenInterceptor} from "./interceptors/token.interceptor";
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: StatusCodeInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })
