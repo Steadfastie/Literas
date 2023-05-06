@@ -42,6 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.authService.login(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){
           this.formSent = true;
+
+          /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
           this.router.navigate(['./success'], {
             relativeTo: this.activatedRoute,
@@ -51,6 +53,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
         else{
           this.formSent = true;
+
+          /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
           this.router.navigate(['./error'], {
             relativeTo: this.activatedRoute,

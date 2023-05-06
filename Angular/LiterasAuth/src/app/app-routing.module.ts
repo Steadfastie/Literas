@@ -6,6 +6,8 @@ import {SuccessComponent} from "./components/success/success.component";
 import {ErrorComponent} from "./components/error/error.component";
 import {ServerErrorComponent} from "./components/server-error/server-error.component";
 import {QueryGuard} from "./guards/query.guard";
+import {SucccessOperationGuard} from "./guards/succcess-operation-guard.service";
+import {ErrorOperationGuard} from "./guards/error-operation.guard";
 
 const routes: Routes = [
   {
@@ -15,11 +17,13 @@ const routes: Routes = [
     children: [
       {
         path:'success',
-        component: SuccessComponent
+        component: SuccessComponent,
+        canActivateChild: [SucccessOperationGuard]
       },
       {
         path:'error',
-        component: ErrorComponent
+        component: ErrorComponent,
+        canActivateChild: [ErrorOperationGuard]
       }
     ]
   },
@@ -30,11 +34,13 @@ const routes: Routes = [
     children: [
       {
         path:'success',
-        component: SuccessComponent
+        component: SuccessComponent,
+        canActivateChild: [SucccessOperationGuard]
       },
       {
         path:'error',
-        component: ErrorComponent
+        component: ErrorComponent,
+        canActivateChild: [ErrorOperationGuard]
       }
     ]
   },
