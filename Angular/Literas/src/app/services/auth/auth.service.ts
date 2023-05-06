@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {UserManager} from "oidc-client-ts";
+import {User, UserManager} from "oidc-client-ts";
 import {client} from "src/environment/oidc";
 
 @Injectable({
@@ -20,5 +20,19 @@ export class AuthService {
 
   public login(): Promise<void> {
     return this.userManager.signinRedirect();
+  }
+
+  public getToken(): Promise<string | null> {
+    return this.userManager.getUser().then(user => {
+      return user?.access_token || null;
+    });
+  }
+
+  public renewToken(): Promise<User | null> {
+    return this.userManager.signinSilent();
+  }
+
+  public logout(): Promise<void> {
+    return this.userManager.signoutRedirect();
   }
 }
