@@ -28,6 +28,7 @@ import { SaveToggleComponent } from './components/header/save.toggle/save.toggle
 import { LoginComponent } from './components/auth/login/login.component';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
 import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
+import {NotificationsEffects} from "./state/effects/notifications.effects";
 
 @NgModule({
   declarations: [
@@ -54,7 +55,7 @@ import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
       'docs_crud': docsReducer,
       'quill': quillSelectionReducer
     }, {}),
-    EffectsModule.forRoot([DocCrudEffects]),
+    EffectsModule.forRoot([DocCrudEffects, NotificationsEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     QuillModule.forRoot({
       modules: {
