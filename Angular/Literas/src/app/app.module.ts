@@ -29,6 +29,7 @@ import { LoginComponent } from './components/auth/login/login.component';
 import {TokenInterceptor} from "./interceptors/token.interceptor";
 import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
 import {NotificationsEffects} from "./state/effects/notifications.effects";
+import { NotificationsComponent } from './components/system/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import {NotificationsEffects} from "./state/effects/notifications.effects";
     ToolbarComponent,
     LinkComponent,
     SaveToggleComponent,
-    LoginComponent
+    LoginComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,
