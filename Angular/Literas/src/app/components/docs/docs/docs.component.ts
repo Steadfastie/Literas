@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'doc',
@@ -7,7 +8,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 })
 export class DocsComponent implements OnInit, OnDestroy{
 
-  constructor() {
+  constructor(private router: Router){
+/*    this.router.navigate(['./create'])*/
   }
   ngOnInit(): void {
   }

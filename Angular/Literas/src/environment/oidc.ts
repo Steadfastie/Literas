@@ -4,5 +4,4 @@ export const client = {
   response_type: "code",
   scope: "openid profile docs",
   client_secret: "literas_spa_secret",
-
 }

@@ -10,8 +10,6 @@ export class LoginComponent {
   constructor(private authService: AuthService) { }
 
   login() {
-    this.authService.login().then(() => {
-      console.log("login successful");
-    })
+    this.authService.login();
   }
 }

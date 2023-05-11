@@ -7,6 +7,7 @@ import {DocCreateComponent} from "./components/docs/doc.create/doc.create.compon
 import {LoginComponent} from "./components/auth/login/login.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {FetchGuard} from "./guards/fetch.guard";
+import {UnauthGuard} from "./guards/unauth.guard";
 
 const routes: Routes = [
   { path:'docs',
@@ -26,7 +27,8 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [UnauthGuard]
   },
   {path:'', redirectTo: '/docs/create', pathMatch: 'full'},
   {path:'**', component: PageNotFoundComponent},
