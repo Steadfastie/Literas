@@ -27,4 +27,8 @@ export class AuthService {
   redirect(): Observable<any>{
     return this.apiService.request('GET', this.returnUrl, {}, {});
   }
+
+  logout(logoutId: string): Observable<OperationResponse>{
+    return this.apiService.post(`auth/logout/${logoutId}`, {});
+  }
 }

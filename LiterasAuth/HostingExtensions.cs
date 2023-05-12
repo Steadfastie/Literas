@@ -71,6 +71,7 @@ internal static class HostingExtensions
             {
                 options.UserInteraction.LoginUrl = "https://localhost:4800/login";
                 options.UserInteraction.ErrorUrl = "https://localhost:4800/error";
+                options.UserInteraction.LogoutUrl = "https://localhost:4800/logout";
 
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
@@ -109,7 +110,7 @@ internal static class HostingExtensions
     
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        //InitializeDatabase(app);
+        InitializeDatabase(app);
 
         app.UseIdentityServer();
 

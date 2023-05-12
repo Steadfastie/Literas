@@ -1,0 +1,12 @@
+<div class="container">
+  <mat-card [ngClass]="{
+  'cardContainer': true,
+  'success': operationResponse != null && operationResponse.succeeded,
+  'error': operationResponse != null && !operationResponse.succeeded
+  }">
+    <div *ngIf="!operationResponse" class="letUserKnow">Stand by, you are being logged out from <span class="appName">Literas</span></div>
+    <div *ngIf="operationResponse" class="outlet" >
+      <router-outlet></router-outlet>
+    </div>
+  </mat-card>
+</div>

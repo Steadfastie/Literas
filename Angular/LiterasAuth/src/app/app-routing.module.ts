@@ -8,6 +8,7 @@ import {ServerErrorComponent} from "./components/server-error/server-error.compo
 import {QueryGuard} from "./guards/query.guard";
 import {SucccessOperationGuard} from "./guards/succcess-operation-guard.service";
 import {ErrorOperationGuard} from "./guards/error-operation.guard";
+import {LogoutComponent} from "./components/logout/logout.component";
 
 const routes: Routes = [
   {
@@ -30,6 +31,23 @@ const routes: Routes = [
   {
     path: 'signup',
     component: SignupComponent,
+    canActivate: [QueryGuard],
+    children: [
+      {
+        path:'success',
+        component: SuccessComponent,
+        canActivateChild: [SucccessOperationGuard]
+      },
+      {
+        path:'error',
+        component: ErrorComponent,
+        canActivateChild: [ErrorOperationGuard]
+      }
+    ]
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent,
     canActivate: [QueryGuard],
     children: [
       {

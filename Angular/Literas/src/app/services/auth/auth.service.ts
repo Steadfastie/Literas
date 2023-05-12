@@ -15,13 +15,14 @@ export class AuthService {
       client_secret: client.client_secret,
       redirect_uri: client.redirect_uri,
       response_type: client.response_type,
-      scope: client.scope
+      scope: client.scope,
+      loadUserInfo: true
     };
     this.userManager = new UserManager(settings);
-    this.userManager.signinRedirectCallback().then(user => {
+   /* this.userManager.signinRedirectCallback().then(user => {
       console.log(user);
       this.userManager.storeUser(user);
-    });
+    });*/
   }
 
   public login(): Promise<void> {

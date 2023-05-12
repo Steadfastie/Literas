@@ -31,6 +31,7 @@ import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
 import {NotificationsEffects} from "./state/effects/notifications.effects";
 import { NotificationsComponent } from './components/system/notifications/notifications.component';
 import {notificationsReducer} from "./state/reducers/notifications.reducer";
+import { AccountComponent } from './components/header/account/account.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {notificationsReducer} from "./state/reducers/notifications.reducer";
     LinkComponent,
     SaveToggleComponent,
     LoginComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,

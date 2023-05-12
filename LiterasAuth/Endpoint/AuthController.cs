@@ -159,4 +159,44 @@ public class AuthController : ControllerBase
             return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
     }
+
+    [HttpPost("logout")]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ObjectResult), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Logout(string logoutId)
+    {
+        try
+        {
+            var logoutInfo = await _interaction.GetLogoutContextAsync(logoutId);
+            if (logoutInfo == null)
+            {
+                return BadRequest(new OperationResponse
+                {
+                    Type = "Logout",
+                    Succeeded = false,
+                    ErrorMessage = "Invalid logout id"
+                });
+            }
+
+            await _signInManager.SignOutAsync();
+
+            return Ok(new OperationResponse
+            {
+                Type = "Logout",
+                Succeeded = true,
+                ReturnUrl = logoutInfo.PostLogoutRedirectUri
+            });
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"!--- {ex.Message} ---! " +
+                      $"{Environment.NewLine} {Environment.NewLine} " +
+                      $"{ex.StackTrace} " +
+                      $"{Environment.NewLine} {Environment.NewLine}");
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 }

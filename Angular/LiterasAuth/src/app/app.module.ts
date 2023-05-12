@@ -12,6 +12,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import { ErrorComponent } from './components/error/error.component';
 import { ServerErrorComponent } from './components/server-error/server-error.component';
+import { LogoutComponent } from './components/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ServerErrorComponent } from './components/server-error/server-error.com
     SignupComponent,
     SuccessComponent,
     ErrorComponent,
-    ServerErrorComponent
+    ServerErrorComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
