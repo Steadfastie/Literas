@@ -1,4 +1,4 @@
-﻿namespace LiterasAuth.Endpoint;
+﻿namespace LiterasOAuth.Endpoint;
 public class OperationResponse
 {
     public string Type { get; set; }

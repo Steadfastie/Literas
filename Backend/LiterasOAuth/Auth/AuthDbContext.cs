@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace LiterasAuth.Auth;
+namespace LiterasOAuth.Auth;
 
 public class AuthDbContext : IdentityDbContext<LiterasUser, IdentityRole<Guid>, Guid>
 {

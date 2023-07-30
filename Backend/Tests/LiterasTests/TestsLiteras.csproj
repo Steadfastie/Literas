@@ -25,11 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LiterasBusiness\LiterasBusiness.csproj" />
-    <ProjectReference Include="..\LiterasCQS\LiterasCQS.csproj" />
-    <ProjectReference Include="..\LiterasDataTransfer\LiterasDataTransfer.csproj" />
-    <ProjectReference Include="..\LiterasData\LiterasData.csproj" />
-    <ProjectReference Include="..\LiterasWebAPI\LiterasWebAPI.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasBusiness\LiterasBusiness.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasCQS\LiterasCQS.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasDataTransfer\LiterasDataTransfer.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasData\LiterasData.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasModels\LiterasModels.csproj" />
+    <ProjectReference Include="..\..\Api\LiterasWebAPI\LiterasWebAPI.csproj" />
   </ItemGroup>
 
 </Project>

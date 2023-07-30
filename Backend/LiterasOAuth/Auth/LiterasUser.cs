@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace LiterasAuth.Auth;
+namespace LiterasOAuth.Auth;
 public class LiterasUser : IdentityUser<Guid>
 {
     public LiterasUser() : base() { }
-    public LiterasUser(string userName) : base(userName){}
+    public LiterasUser(string userName) : base(userName) { }
 }

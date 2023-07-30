@@ -6,7 +6,7 @@ using Microsoft.Extensions.Primitives;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
-namespace LiterasAuth;
+namespace LiterasOAuth;
 
 public class ReturnUrlParser : IReturnUrlParser
 {
@@ -66,7 +66,7 @@ internal static class Extensions
         var query = QueryHelpers.ParseNullableQuery(url);
         return query != null ? query.AsNameValueCollection() : new NameValueCollection();
     }
-    
+
     public static bool IsLocalUrl(this string url)
     {
         if (string.IsNullOrEmpty(url))
@@ -86,21 +86,21 @@ internal static class Extensions
                 return false;
             // Allows "~/" or "~/foo" but not "~//" or "~/\".
             case '~' when url.Length > 1 && url[1] == '/':
-            {
-                // url is exactly "~/"
-                if (url.Length == 2)
                 {
-                    return true;
-                }
+                    // url is exactly "~/"
+                    if (url.Length == 2)
+                    {
+                        return true;
+                    }
 
-                // url doesn't start with "~//" or "~/\"
-                return url[2] != '/' && url[2] != '\\';
-            }
+                    // url doesn't start with "~//" or "~/\"
+                    return url[2] != '/' && url[2] != '\\';
+                }
             default:
                 return false;
         }
     }
-    
+
     internal static AuthorizationRequest ToAuthorizationRequest(this ValidatedAuthorizeRequest request)
     {
         var authRequest = new AuthorizationRequest(request);
@@ -109,7 +109,7 @@ internal static class Extensions
 
         return authRequest;
     }
-    
+
     public static NameValueCollection AsNameValueCollection(this IDictionary<string, StringValues> collection)
     {
         var nv = new NameValueCollection();

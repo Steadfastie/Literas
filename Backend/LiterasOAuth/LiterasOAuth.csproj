@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LiterasModels\LiterasModels.csproj" />
+    <ProjectReference Include="..\Api\LiterasModels\LiterasModels.csproj" />
   </ItemGroup>
 
 </Project>
