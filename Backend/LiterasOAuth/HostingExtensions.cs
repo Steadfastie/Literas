@@ -2,13 +2,13 @@ using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Services;
 using IdentityModel;
-using LiterasAuth.Auth;
+using LiterasOAuth.Auth;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace LiterasAuth;
+namespace LiterasOAuth;
 
 internal static class HostingExtensions
 {
@@ -107,7 +107,7 @@ internal static class HostingExtensions
 
         return builder.Build();
     }
-    
+
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         InitializeDatabase(app);

@@ -1,4 +1,4 @@
-using LiterasAuth;
+using LiterasOAuth;
 using Microsoft.AspNetCore.CookiePolicy;
 using Serilog;
 using Serilog.Events;

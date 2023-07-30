@@ -1,7 +1,7 @@
 ﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 
-namespace LiterasAuth;
+namespace LiterasOAuth;
 
 public static class Config
 {

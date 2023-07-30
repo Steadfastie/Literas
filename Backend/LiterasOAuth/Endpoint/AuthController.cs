@@ -2,15 +2,15 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Duende.IdentityServer.Services;
-using LiterasAuth.Auth;
 using LiterasModels.Responses;
 using LiterasModels.System;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using LiterasOAuth.Auth;
 
-namespace LiterasAuth.Endpoint;
+namespace LiterasOAuth.Endpoint;
 
 [Route("auth")]
 [EnableCors("literas")]
@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         _signInManager = signInManager;
         _interaction = interaction;
     }
-    
+
     [HttpPost("login")]
     [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(OperationResponse), StatusCodes.Status400BadRequest)]

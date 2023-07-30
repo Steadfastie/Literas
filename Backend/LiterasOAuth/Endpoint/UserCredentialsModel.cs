@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LiterasAuth.Endpoint;
+namespace LiterasOAuth.Endpoint;
 public class UserCredentialsModel
 {
     public string Username { get; set; }
