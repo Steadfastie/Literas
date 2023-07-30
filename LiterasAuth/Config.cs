@@ -43,7 +43,8 @@ public static class Config
             {
                 ClientId = "literas_spa",
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "https://localhost:4200/docs" },
+                RedirectUris = { "https://localhost:4200/docs/create" },
+                PostLogoutRedirectUris = { "https://localhost:4200/login" },
                 AllowOfflineAccess = true,
                 AllowAccessTokensViaBrowser = true,
                 ClientSecrets =

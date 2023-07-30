@@ -11,6 +11,8 @@ import {MaterialModule} from "./modules/material.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import { ErrorComponent } from './components/error/error.component';
+import { ServerErrorComponent } from './components/server-error/server-error.component';
+import { LogoutComponent } from './components/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { ErrorComponent } from './components/error/error.component';
     LoginComponent,
     SignupComponent,
     SuccessComponent,
-    ErrorComponent
+    ErrorComponent,
+    ServerErrorComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,

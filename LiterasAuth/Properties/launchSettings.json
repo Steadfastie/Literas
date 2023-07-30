@@ -12,7 +12,7 @@
     "LiterasAuth": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": ".well-known/openid-configuration",
       "applicationUrl": "https://localhost:7034",
       "environmentVariables": {

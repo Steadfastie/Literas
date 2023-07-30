@@ -14,7 +14,7 @@ import { docsReducer } from "./state/reducers/docs.reducer";
 import { EffectsModule } from '@ngrx/effects';
 import { DocEditComponent } from './components/docs/doc.edit/doc.edit.component';
 import { DocCrudEffects } from "./state/effects/doc.effects";
-import { HttpClientModule } from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { DocNewComponent } from './components/docs/doc.list/doc.new/doc.new.component';
 import { MaterialModule } from "./modules/material.module";
 import { DocThumbnailComponent } from './components/docs/doc.list/doc.thumbnail/doc.thumbnail.component';
@@ -26,6 +26,12 @@ import {quillSelectionReducer} from "./state/reducers/quill.selection.reducer";
 import { LinkComponent } from './components/quill-toolbar/link/link.component';
 import { SaveToggleComponent } from './components/header/save.toggle/save.toggle.component';
 import { LoginComponent } from './components/auth/login/login.component';
+import {TokenInterceptor} from "./interceptors/token.interceptor";
+import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
+import {NotificationsEffects} from "./state/effects/notifications.effects";
+import { NotificationsComponent } from './components/system/notifications/notifications.component';
+import {notificationsReducer} from "./state/reducers/notifications.reducer";
+import { AccountComponent } from './components/header/account/account.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +46,9 @@ import { LoginComponent } from './components/auth/login/login.component';
     ToolbarComponent,
     LinkComponent,
     SaveToggleComponent,
-    LoginComponent
+    LoginComponent,
+    NotificationsComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,
@@ -50,9 +58,10 @@ import { LoginComponent } from './components/auth/login/login.component';
     MaterialModule,
     StoreModule.forRoot({
       'docs_crud': docsReducer,
-      'quill': quillSelectionReducer
+      'quill': quillSelectionReducer,
+      'notifications': notificationsReducer,
     }, {}),
-    EffectsModule.forRoot([DocCrudEffects]),
+    EffectsModule.forRoot([DocCrudEffects, NotificationsEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     QuillModule.forRoot({
       modules: {
@@ -68,7 +77,10 @@ import { LoginComponent } from './components/auth/login/login.component';
     }),
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: StatusCodeInterceptor, multi: true},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {DocService} from "../../services/docs/doc.service";
 import * as docCrudActions from "../actions/docs.crud.actions";
+import * as notificationsActions from "../actions/notifications.actions";
 import {catchError, exhaustMap, map, of, switchMap, tap} from "rxjs";
 import {Router} from "@angular/router";
+import {Store} from "@ngrx/store";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,8 @@ export class DocCrudEffects {
 
   constructor(private actions$: Actions,
               private docService: DocService,
-              private router: Router) { }
+              private router: Router,
+              private store: Store) { }
 
 
   fetchDoc$ = createEffect(() => this.actions$.pipe(
@@ -54,9 +57,21 @@ export class DocCrudEffects {
   createDocSuccess$ = createEffect(() => this.actions$.pipe(
     ofType(docCrudActions.doc_create_success),
     tap((docResponse) => {
+      this.store.dispatch(notificationsActions.enqueue_notification({
+        message: `Doc created`,
+        invocationDateTime: new Date()
+      }));
+
       setTimeout(() => {
         this.router.navigate([`/docs/${docResponse.id}`]);
       }, 0);
+    })),
+    {dispatch: false})
+
+  createDocFailed$ = createEffect(() => this.actions$.pipe(
+    ofType(docCrudActions.doc_create_failed),
+    tap(error => {
+      this.store.dispatch(notificationsActions.enqueue_error_notification(error));
     })),
     {dispatch: false})
 

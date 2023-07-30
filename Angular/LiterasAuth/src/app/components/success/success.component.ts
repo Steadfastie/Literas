@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {OperationsService} from "../../services/operations.service";
 import {OperationResponse} from "../../models/operationResponse";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -38,8 +38,5 @@ export class SuccessComponent implements AfterViewInit, OnDestroy{
   ngAfterViewInit(): void {
     this.operations.getReturnUrl().pipe().subscribe(url => this.returnUrl = url);
     window.location.assign(this.returnUrl!);
-    /*this.authService.redirect().pipe().subscribe(redirectResponse => {
-      console.log(redirectResponse);
-    });*/
   }
 }

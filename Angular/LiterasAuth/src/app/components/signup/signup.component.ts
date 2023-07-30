@@ -42,13 +42,25 @@ export class SignupComponent implements OnInit, OnDestroy {
       this.authService.signup(useCredentials).pipe().subscribe(response => {
         if (response.succeeded){
           this.formSent = true;
+
+          /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
-          this.router.navigate(['./success'], {relativeTo: this.activatedRoute})
+          this.router.navigate(['./success'], {
+            relativeTo: this.activatedRoute,
+            queryParamsHandling: 'preserve',
+            preserveFragment: true
+          });
         }
         else{
           this.formSent = true;
+
+          /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
-          this.router.navigate(['./error'], {relativeTo: this.activatedRoute})
+          this.router.navigate(['./error'], {
+            relativeTo: this.activatedRoute,
+            queryParamsHandling: 'preserve',
+            preserveFragment: true
+          });
         }
       })
     }

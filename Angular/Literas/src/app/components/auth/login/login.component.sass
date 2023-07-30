@@ -1,12 +1,20 @@
 .container
   display: grid
   place-items: center
+  gap: calc(0.5ch + 0.5vh)
+  font-size: clamp(1rem, 0.6rem + 0.75vw, 2rem)
+  text-align: center
+  padding: 2ch 2ch 2ch 2ch
+  min-width: 10ch
 
-mat-card
-  min-width: 80px
-  min-height: 80px
-  display: grid
-  place-items: center
+.invitation
+  max-inline-size: 40ch
 
-button
-  padding: 10px
+.header
+  font-size: clamp(2.2rem, 1.5rem + 2vw, 4rem)
+
+.appName
+  color: #1b5e20
+  font-weight: bold
+  font-family: 'Lobster', cursive
+

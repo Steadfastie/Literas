@@ -1,48 +1,44 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Subject, takeUntil} from "rxjs";
-import {OperationResponse} from "../../models/operationResponse";
+import {Subject, take, takeUntil} from "rxjs";
 import {OperationsService} from "../../services/operations.service";
+import {OperationResponse} from "../../models/operationResponse";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-  selector: 'login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.sass']
+  selector: 'logout',
+  templateUrl: './logout.component.html',
+  styleUrls: ['./logout.component.sass']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-  formSent = false;
+export class LogoutComponent  implements OnInit, AfterViewInit, OnDestroy {
   operationResponse: OperationResponse | null = null;
+  logoutId: string = '';
   subManager$ = new Subject<void>();
-  constructor(private fb: FormBuilder,
-              private authService: AuthService,
-              private router: Router,
+
+  constructor(private authService: AuthService,
+              private operations: OperationsService,
               private activatedRoute: ActivatedRoute,
-              private operations: OperationsService) {
+              private router: Router){
   }
-  loginForm = this.fb.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]]
-  });
+
   ngOnInit(): void {
     this.operations.pick()
       .pipe(takeUntil(this.subManager$))
       .subscribe(operation => {
         this.operationResponse = operation;
       });
+    const logoutId = this.activatedRoute.snapshot.queryParamMap.get('logoutId');
+    if (!logoutId){
+      this.router.navigate(['./error'])
+    }
+    this.logoutId = logoutId!;
   }
-  submit() {
-    if (this.loginForm.valid) {
-      let useCredentials = {
-        username: this.loginForm.controls.username.value!,
-        password: this.loginForm.controls.password.value!,
-        returnUrl: ''
-      }
-      this.authService.login(useCredentials).pipe().subscribe(response => {
-        if (response.succeeded){
-          this.formSent = true;
 
+  ngAfterViewInit(): void {
+    this.authService.logout(this.logoutId!)
+      .pipe(takeUntil(this.subManager$))
+      .subscribe(response => {
+        if (response.succeeded){
           /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
           this.router.navigate(['./success'], {
@@ -50,10 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             queryParamsHandling: 'preserve',
             preserveFragment: true
           });
-        }
-        else{
-          this.formSent = true;
-
+        } else {
           /*It is vital to first push a response to service and then redirect due to guard setup*/
           this.operations.push(response);
           this.router.navigate(['./error'], {
@@ -61,12 +54,12 @@ export class LoginComponent implements OnInit, OnDestroy {
             queryParamsHandling: 'preserve',
             preserveFragment: true
           });
-        }
-      })
-    }
+        }});
   }
+
   ngOnDestroy(): void {
     this.subManager$.next();
     this.subManager$.complete();
   }
+
 }
