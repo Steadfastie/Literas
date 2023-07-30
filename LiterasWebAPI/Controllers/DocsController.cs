@@ -43,11 +43,11 @@ public class DocsController : ControllerBase
             return Ok(responseModel);
         }
         catch (Exception ex)
-        {
-            Log.Error($"!--- {ex.Message} ---! " +
-                      $"{Environment.NewLine} {Environment.NewLine} " +
-                      $"{ex.StackTrace} " +
-                      $"{Environment.NewLine} {Environment.NewLine}");
+        { 
+            Log.Error($"!--- {ex.Message} ---! " + 
+                $"{Environment.NewLine} {Environment.NewLine}" +
+                $"{ex.StackTrace} " +
+                $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
                 Message = "Could not find doc",
@@ -117,9 +117,9 @@ public class DocsController : ControllerBase
         catch (Exception ex)
         {
             Log.Error($"!--- {ex.Message} ---! " +
-                      $"{Environment.NewLine} {Environment.NewLine} " +
-                      $"{ex.StackTrace} " +
-                      $"{Environment.NewLine} {Environment.NewLine}");
+                $"{Environment.NewLine} {Environment.NewLine} " +
+                $"{ex.StackTrace} " +
+                $"{Environment.NewLine} {Environment.NewLine}");
             ErrorModel errorModel = new()
             {
                 Message = "Could not find editors for this doc",
