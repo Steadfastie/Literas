@@ -8,9 +8,4 @@ import {map} from "rxjs";
 })
 export class AppComponent {
   title = 'Literas';
-  userToken: string | null = null;
-
-  constructor(private authService: AuthService) {
-    authService.getToken().subscribe(token => this.userToken = token);
-  }
 }
