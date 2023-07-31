@@ -26,12 +26,13 @@ import {quillSelectionReducer} from "./state/reducers/quill.selection.reducer";
 import { LinkComponent } from './components/quill-toolbar/link/link.component';
 import { SaveToggleComponent } from './components/header/save.toggle/save.toggle.component';
 import { LoginComponent } from './components/auth/login/login.component';
-import {TokenInterceptor} from "./interceptors/token.interceptor";
+// import {TokenInterceptor} from "./interceptors/token.interceptor";
 import {StatusCodeInterceptor} from "./interceptors/status-code.interceptor";
 import {NotificationsEffects} from "./state/effects/notifications.effects";
 import { NotificationsComponent } from './components/system/notifications/notifications.component';
 import {notificationsReducer} from "./state/reducers/notifications.reducer";
 import { AccountComponent } from './components/header/account/account.component';
+import { SigninCallbackComponent } from './components/auth/signin-callback/signin-callback.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { AccountComponent } from './components/header/account/account.component'
     SaveToggleComponent,
     LoginComponent,
     NotificationsComponent,
-    AccountComponent
+    AccountComponent,
+    SigninCallbackComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +80,7 @@ import { AccountComponent } from './components/header/account/account.component'
     ReactiveFormsModule,
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+    //{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: StatusCodeInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]

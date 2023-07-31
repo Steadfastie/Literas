@@ -8,6 +8,7 @@ import {LoginComponent} from "./components/auth/login/login.component";
 import {AuthGuard} from "./guards/auth.guard";
 import {FetchGuard} from "./guards/fetch.guard";
 import {UnauthGuard} from "./guards/unauth.guard";
+import {SigninCallbackComponent} from "./components/auth/signin-callback/signin-callback.component";
 
 const routes: Routes = [
   { path:'docs',
@@ -23,6 +24,11 @@ const routes: Routes = [
         component: DocEditComponent,
         canActivate: [FetchGuard]
       },
+      {
+        path: '',
+        redirectTo: 'create',
+        pathMatch: 'full'
+      }
     ]
   },
   {
@@ -30,6 +36,7 @@ const routes: Routes = [
     component: LoginComponent,
     canActivate: [UnauthGuard]
   },
+  {path:'signin-callback', component: SigninCallbackComponent, pathMatch: 'full'},
   {path:'', redirectTo: '/docs/create', pathMatch: 'full'},
   {path:'**', component: PageNotFoundComponent},
 ];

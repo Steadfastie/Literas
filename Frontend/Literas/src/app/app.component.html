@@ -1,7 +1,7 @@
 <div class="app">
   <div class="header">
     <div class="appName">Literas</div>
-    <div class="buttons">
+    <div *ngIf="userToken != null" class="buttons">
       <save-toggle></save-toggle>
       <account></account>
     </div>

@@ -7,20 +7,19 @@ import {AuthService} from "../services/auth/auth.service";
   providedIn: 'root'
 })
 export class UnauthGuard implements CanActivate {
+  token: string | null = null;
   constructor(private authService: AuthService,
               private router: Router) {}
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.authService.getToken().pipe(
-      map(token => {
-      if (token === null){
-        return true;
+    return this.authService.getUser().then(user => {
+      if (user) {
+        this.router.navigate(['/docs']);
+        return false;
       }
-      this.router.navigate(['/']);
-      return false;
-      })
-    );
+      return true;
+    })
   }
 
 }
