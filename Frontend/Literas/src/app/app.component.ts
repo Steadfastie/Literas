@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {AuthService} from "./services/auth/auth.service";
+import {map} from "rxjs";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -6,5 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Literas';
+  userToken: string | null = null;
 
+  constructor(private authService: AuthService) {
+    authService.getToken().subscribe(token => this.userToken = token);
+  }
 }
