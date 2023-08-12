@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LiterasDataTransfer.Dto;
-using LiterasDataTransfer.ServiceAbstractions;
-using LiterasModels.Responses;
+using LiterasCore.Abstractions;
+using LiterasData.DTO;
 using LiterasWebAPI.Controllers;
+using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 

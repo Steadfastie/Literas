@@ -1,9 +1,5 @@
 ﻿using Duende.IdentityServer;
-
-using Microsoft.AspNetCore.Authentication;
 using Duende.IdentityServer.Services;
-using LiterasModels.Responses;
-using LiterasModels.System;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

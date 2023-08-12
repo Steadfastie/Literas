@@ -1,7 +1,6 @@
-﻿using LiterasBusiness;
-using LiterasDataTransfer.Dto;
-using LiterasModels.Abstractions;
-using System.Reflection;
+﻿using System.Reflection;
+using LiterasCore;
+using LiterasData.DTO;
 
 namespace TestsLiteras.Static;
 

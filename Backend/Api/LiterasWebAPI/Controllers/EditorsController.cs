@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using LiterasDataTransfer.Dto;
-using LiterasDataTransfer.ServiceAbstractions;
-using LiterasModels.Requests;
-using LiterasModels.Responses;
-using LiterasModels.System;
+using LiterasCore.Abstractions;
+using LiterasCore.System;
+using LiterasData.DTO;
+using LiterasWebAPI.Models.Requests;
+using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
