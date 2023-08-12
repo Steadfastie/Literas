@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {User, UserManager} from "oidc-client-ts";
 import {client} from "src/environment/oidc";
-import {BehaviorSubject, from, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +24,9 @@ export class AuthService {
     return this.userManager.signinRedirect();
   }
 
-  public getToken(): Observable<string | null> {
-    return from(this.userManager.getUser().then(user => {
-      return user?.access_token || null;
-    }));
+  public async getUserToken(): Promise<string | null> {
+    const user = await this.userManager.getUser();
+    return user?.access_token ?? null;
   }
 
   public async getUser(): Promise<User | null> {

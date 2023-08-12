@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using LiterasDataTransfer.Dto;
 using LiterasDataTransfer.ServiceAbstractions;
 using LiterasModels.Requests;
@@ -139,15 +140,10 @@ public class DocsController : ControllerBase
         {
             var docDto = _mapper.Map<DocDto>(docModel);
 
-            if (docDto.Id == Guid.Empty)
-            {
-                docDto.Id = Guid.NewGuid();
-            }
-
             if (docDto.CreatorId == Guid.Empty)
             {
-                // TODO: Update when authentication is configured
-                docDto.CreatorId = Guid.NewGuid();
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                docDto.CreatorId = Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty;
             }
 
             var creationResult = await _docsService.CreateDocAsync(docDto);
