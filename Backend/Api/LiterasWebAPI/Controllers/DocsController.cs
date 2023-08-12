@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
-using LiterasDataTransfer.Dto;
-using LiterasDataTransfer.ServiceAbstractions;
-using LiterasModels.Requests;
-using LiterasModels.Responses;
-using LiterasModels.System;
+using LiterasCore.Abstractions;
+using LiterasCore.System;
+using LiterasData.DTO;
+using LiterasWebAPI.Models.Requests;
+using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -61,114 +61,63 @@ public class DocsController : ControllerBase
     [HttpGet("{docId}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Details(Guid docId)
     {
-        try
+        if (docId == Guid.Empty)
         {
-            if (docId == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var docDto = await _docsService.GetDocByIdAsync(docId);
-
-            if (docDto.Result == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
-
-            var responseModel = _mapper.Map<DocResponseModel>(docDto.Result);
-
-            return Ok(responseModel);
+            return BadRequest();
         }
-        catch (Exception ex)
-        {
-            Log.Error($"!--- {ex.Message} ---! " +
-                $"{Environment.NewLine} {Environment.NewLine} " +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not find doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
-        }
+
+        var docDto = await _docsService.GetDocByIdAsync(docId);
+
+        if (docDto.Result == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
+
+        var responseModel = _mapper.Map<DocResponseModel>(docDto.Result);
+
+        return Ok(responseModel);
     }
 
     [HttpGet("{id}/editors")]
     [ProducesResponseType(typeof(List<DocResponseModel>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllEditors(Guid docId)
     {
-        try
+        if (docId == Guid.Empty)
         {
-            if (docId == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
-
-            if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
-
-            var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
-
-            return Ok(responseModels);
+            return BadRequest();
         }
-        catch (Exception ex)
-        {
-            Log.Error($"!--- {ex.Message} ---! " +
-                $"{Environment.NewLine} {Environment.NewLine} " +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not find editors for this doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
-        }
+
+        var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
+
+        if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
+
+        var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
+
+        return Ok(responseModels);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromBody] DocRequestModel docModel)
     {
-        try
+        var docDto = _mapper.Map<DocDto>(docModel);
+
+        if (docDto.CreatorId == Guid.Empty)
         {
-            var docDto = _mapper.Map<DocDto>(docModel);
-
-            if (docDto.CreatorId == Guid.Empty)
-            {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                docDto.CreatorId = Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty;
-            }
-
-            var creationResult = await _docsService.CreateDocAsync(docDto);
-
-            if (creationResult.ResultStatus == OperationResult.Failure)
-            {
-                return BadRequest("Could not save your doc");
-            }
-
-            var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
-            return Ok(responseModel);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            docDto.CreatorId = Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty;
         }
-        catch (Exception ex)
+
+        var creationResult = await _docsService.CreateDocAsync(docDto);
+
+        if (creationResult.ResultStatus == OperationResult.Failure)
         {
-            Log.Error($"!--- {ex.Message} ---! " +
-                $"{Environment.NewLine} {Environment.NewLine} " +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not create new doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
+            return BadRequest("Could not save your doc");
         }
+
+        var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
+        return Ok(responseModel);
     }
 
     [HttpPatch("{docId}")]
@@ -178,35 +127,19 @@ public class DocsController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel)
     {
-        try
+        if (docId == Guid.Empty || docId != docModel.Id) return BadRequest();
+
+        var docDto = _mapper.Map<DocDto>(docModel);
+
+        var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
+
+        if (patchedResult.ResultStatus != OperationResult.Success)
         {
-            if (docId == Guid.Empty || docId != docModel.Id) return BadRequest();
-
-            var docDto = _mapper.Map<DocDto>(docModel);
-
-            var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
-
-            if (patchedResult.ResultStatus != OperationResult.Success)
-            {
-                return StatusCode(StatusCodes.Status304NotModified, docModel);
-            }
-
-            var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
-            return Ok(responseModel);
+            return StatusCode(StatusCodes.Status304NotModified, docModel);
         }
-        catch (Exception ex)
-        {
-            Log.Error($"!--- {ex.Message} ---! " +
-                $"{Environment.NewLine} {Environment.NewLine} " +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not register new doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
-        }
+
+        var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
+        return Ok(responseModel);
     }
 
     [HttpDelete("{docId}")]
@@ -215,32 +148,16 @@ public class DocsController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid docId)
     {
-        try
+        if (docId == Guid.Empty) return BadRequest();
+
+        var deleteResult = await _docsService.DeleteDocAsync(docId);
+
+        if (deleteResult.ResultStatus == OperationResult.Failure)
         {
-            if (docId == Guid.Empty) return BadRequest();
-
-            var deleteResult = await _docsService.DeleteDocAsync(docId);
-
-            if (deleteResult.ResultStatus == OperationResult.Failure)
-            {
-                return BadRequest("Operation unsuccessful");
-            }
-
-            var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
-            return Ok(responseModel);
+            return BadRequest("Operation unsuccessful");
         }
-        catch (Exception ex)
-        {
-            Log.Error($"!--- {ex.Message} ---! " +
-                $"{Environment.NewLine} {Environment.NewLine} " +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not delete doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
-        }
+
+        var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
+        return Ok(responseModel);
     }
 }

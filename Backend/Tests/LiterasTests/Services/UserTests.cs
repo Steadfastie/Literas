@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using LiterasBusiness.Services;
-using LiterasCQS.Commands.Users;
-using LiterasCQS.Queries.Users;
-using LiterasDataTransfer.Dto;
-using LiterasModels.System;
+using LiterasCore.Services;
+using LiterasCore.System;
+using LiterasData.CQS.Commands;
+using LiterasData.CQS.Queries;
+using LiterasData.DTO;
 using MediatR;
 using Moq;
 
