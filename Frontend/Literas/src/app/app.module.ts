@@ -33,6 +33,7 @@ import { NotificationsComponent } from './components/system/notifications/notifi
 import {notificationsReducer} from "./state/reducers/notifications.reducer";
 import { AccountComponent } from './components/header/account/account.component';
 import { SigninCallbackComponent } from './components/auth/signin-callback/signin-callback.component';
+import {TokenInterceptor} from "./interceptors/token.interceptor";
 
 @NgModule({
   declarations: [
@@ -80,7 +81,7 @@ import { SigninCallbackComponent } from './components/auth/signin-callback/signi
     ReactiveFormsModule,
   ],
   providers: [
-    //{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: StatusCodeInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
