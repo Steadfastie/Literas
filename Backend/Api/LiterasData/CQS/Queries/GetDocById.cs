@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LiterasData.CQS.Queries;
 
-public class GetDocByIdQuery : IRequest<DocDto>
+[RetryPolicy]
+public class GetDocByIdQuery : IRequest<DocDto?>
 {
     public Guid Id { get; set; }
 }
 
-public class GetDocById : IRequestHandler<GetDocByIdQuery, DocDto>
+public class GetDocById : IRequestHandler<GetDocByIdQuery, DocDto?>
 {
     private readonly IMapper _mapper;
     private readonly NotesDBContext _dbContext;
@@ -21,7 +22,7 @@ public class GetDocById : IRequestHandler<GetDocByIdQuery, DocDto>
         _mapper = mapper;
     }
 
-    public async Task<DocDto> Handle(GetDocByIdQuery request, CancellationToken cancellationToken)
+    public async Task<DocDto?> Handle(GetDocByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await _dbContext.Docs
             .AsNoTracking()

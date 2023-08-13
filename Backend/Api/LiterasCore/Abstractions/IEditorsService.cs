@@ -12,6 +12,4 @@ public interface IEditorsService
     Task<CrudResult<EditorDto>> GetEditorByIdAsync(Guid editorId);
 
     Task<CrudResults<IEnumerable<DocDto>>> GetDocsByUserIdAsync(Guid userId);
-
-    Task<CrudResults<IEnumerable<UserDto>>> GetUsersByDocIdAsync(Guid documentId);
 }

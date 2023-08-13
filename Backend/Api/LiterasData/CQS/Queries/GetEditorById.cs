@@ -25,7 +25,6 @@ public class GetEditorByTitleQueryHandler : IRequestHandler<GetEditorByIdQuery, 
         var entity = await _dbContext.Editors
             .AsNoTracking()
             .Include(ent => ent.Doc)
-            .Include(ent => ent.User)
             .FirstOrDefaultAsync(con => con.Id == request.Id, cancellationToken: cancellationToken);
         return _mapper.Map<EditorDto>(entity);
     }

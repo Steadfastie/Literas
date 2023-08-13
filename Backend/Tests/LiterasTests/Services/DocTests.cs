@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LiterasCore.Services;
 using LiterasCore.System;
+using LiterasData.CQS;
 using LiterasData.CQS.Commands;
 using LiterasData.CQS.Queries;
 using LiterasData.DTO;
@@ -32,7 +33,7 @@ public class DocTests
             It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(null as DocDto);
 
-        var service = new DocsService(_mapper, _mediatrMock.Object);
+        var service = new DocsService(_mediatrMock.Object);
         var result = await service.CreateDocAsync(docDto);
 
         Assert.IsType<CrudResult<DocDto>>(result);
@@ -89,7 +90,7 @@ public class DocTests
             .ReturnsAsync(docDto);
 
         _mediatrMock.Setup(mediator => mediator.Send(
-            It.IsAny<PatchDocCommand>(), It.IsAny<CancellationToken>()))
+            It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -110,7 +111,7 @@ public class DocTests
             .ReturnsAsync(null as DocDto);
 
         _mediatrMock.Setup(mediator => mediator.Send(
-            It.IsAny<PatchDocCommand>(), It.IsAny<CancellationToken>()))
+            It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -127,7 +128,7 @@ public class DocTests
             .ReturnsAsync(sourceDto);
 
         _mediatrMock.Setup(mediator => mediator.Send(
-            It.IsAny<DeleteDocCommand>(), It.IsAny<CancellationToken>()))
+            It.IsAny<FindAndDeleteDocCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -147,7 +148,7 @@ public class DocTests
             .ReturnsAsync(null as DocDto);
 
         _mediatrMock.Setup(mediator => mediator.Send(
-            It.IsAny<PatchDocCommand>(), It.IsAny<CancellationToken>()))
+            It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
 
         var service = new DocsService(_mapper, _mediatrMock.Object);

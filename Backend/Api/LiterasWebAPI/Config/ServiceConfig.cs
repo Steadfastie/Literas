@@ -1,4 +1,5 @@
-﻿using LiterasData;
+﻿using System.Net.NetworkInformation;
+using LiterasData;
 using LiterasWebAPI.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
@@ -6,8 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using LiterasCore.Abstractions;
 using LiterasCore.Services;
+using LiterasData.CQS;
 using LiterasData.DTO;
 using LiterasWebAPI.Config.MappingProfiles;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiterasWebAPI.Config;
@@ -61,7 +64,9 @@ public static class ServiceConfig
         services.AddAutoMapper(typeof(DocDto).Assembly);
         services.AddAutoMapper(typeof(DocsService).Assembly);
         services.AddAutoMapper(typeof(DocsProfile).Assembly);
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IDocsService>());
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyBehavior<,>));
 
         services.AddServices();
         
@@ -94,7 +99,6 @@ public static class ServiceConfig
     {
         services.AddTransient<IClaimsTransformation, ClaimsTransformator>();
         services.AddScoped<IDocsService, DocsService>();
-        services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IEditorsService, EditorsService>();
     }
 }

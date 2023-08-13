@@ -1,22 +1,24 @@
 ﻿using AutoMapper;
 using LiterasCore.Abstractions;
 using LiterasCore.System;
+using LiterasData;
 using LiterasData.CQS;
 using LiterasData.CQS.Commands;
 using LiterasData.CQS.Queries;
 using LiterasData.DTO;
+using LiterasData.Entities;
+using LiterasData.Exceptions;
 using MediatR;
+using Polly;
 
 namespace LiterasCore.Services;
 
 public class DocsService : IDocsService
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public DocsService(IMapper mapper, IMediator mediator)
+    public DocsService(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 
@@ -79,88 +81,64 @@ public class DocsService : IDocsService
             : new CrudResult<DocDto>();
     }
 
-    public async Task<CrudResult<DocDto>> CreateDocAsync(DocDto docDto)
+    public async Task<Guid> CreateDocAsync(DocDto docDto, Guid userId)
     {
-        if (docDto.Id == Guid.Empty)
+        if (userId == Guid.Empty)
         {
-            docDto.Id = Guid.NewGuid();
+            throw new GeneralException("Service could not recognize user");
         }
 
-        if (docDto.CreatorId == Guid.Empty)
+        docDto.CreatorId = userId;
+        var saveChangesResult = await _mediator.Send(new CreateDocCommand() { Doc = docDto });
+
+        if (saveChangesResult != 1)
         {
-            throw new ArgumentException("Creator ID can't be empty");
+            throw new GeneralException("Doc creation went wrong");
         }
-
-        var presenceCheck = await _mediator.Send(new GetDocByIdQuery() { Id = docDto.Id });
-        if (presenceCheck is not null)
-        {
-            return new CrudResult<DocDto>();
-        }
-
-        var saveChangesResult = await _mediator.Send(new CreateDocCommand()
-        {
-            Doc = docDto
-        });
-
-        return saveChangesResult == 1
-            ? new CrudResult<DocDto>(docDto)
-            : new CrudResult<DocDto>();
+        return docDto.Id;
     }
 
-    public async Task<CrudResult<DocDto>> PatchDocAsync(Guid docId, DocDto docDto)
+    public async Task PatchDocAsync(DocDto docDto, Guid userId)
     {
-        var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-        if (sourceDto == null)
+        if (userId == Guid.Empty)
         {
-            throw new ArgumentException(
-                $"Found no doc with provided ID (..{docId.ToString()[^5..]})");
+            throw new GeneralException("Service could not recognize user");
         }
 
-        var ignoreFields = new[]
-        {
-            docDto.GetType().GetProperty("Id")!,
-            docDto.GetType().GetProperty("CreatorId")!,
-        };
+        // TODO: Check userId against editors list
 
-        var patchList = PatchModelCreator<DocDto>.Generate(sourceDto, docDto, ignoreFields);
-
-        if (!Enumerable.Any<PatchModel>(patchList))
+        var saveChangesResult = await _mediator.Send(new FindAndPatchDocCommand()
         {
-            return new CrudResult<DocDto>();
-        }
-
-        var saveChangesResult = await _mediator.Send(new PatchDocCommand()
-        {
-            Doc = sourceDto,
-            PatchList = patchList
+            Doc = docDto,
+            UserId = userId
         });
 
-        if (saveChangesResult == 0)
+        // TODO: Send event to RabbitMQ about document being modified
+
+        if (saveChangesResult != 1)
         {
-            return new CrudResult<DocDto>();
+            throw new GeneralException("Doc update went wrong");
         }
-
-        var updatedDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-
-        return new CrudResult<DocDto>(updatedDto);
     }
 
-    public async Task<CrudResult<DocDto>> DeleteDocAsync(Guid docId)
+    public async Task DeleteDocAsync(Guid docId, Guid userId)
     {
-        var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-        if (sourceDto == null)
+        if (userId == Guid.Empty)
         {
-            throw new ArgumentException(
-                $"Found no doc with provided ID (..{docId.ToString()[^5..]})", nameof(docId));
+            throw new GeneralException("Service could not recognize user");
         }
 
-        var saveChangesResult = await _mediator.Send(new DeleteDocCommand()
+        var saveChangesResult = await _mediator.Send(new FindAndDeleteDocCommand()
         {
-            Doc = sourceDto
+            DocId = docId,
+            UserId = userId
         });
 
-        return saveChangesResult == 1
-            ? new CrudResult<DocDto>(sourceDto)
-            : new CrudResult<DocDto>();
+        // TODO: Send event to RabbitMQ about document being deleted
+
+        if (saveChangesResult != 1)
+        {
+            throw new GeneralException("Doc update went wrong");
+        }
     }
 }

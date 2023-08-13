@@ -3,6 +3,7 @@ using AutoMapper;
 using LiterasCore.Abstractions;
 using LiterasCore.System;
 using LiterasData.DTO;
+using LiterasData.Exceptions;
 using LiterasWebAPI.Models.Requests;
 using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -82,18 +83,19 @@ public class DocsController : ControllerBase
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllEditors(Guid docId)
     {
-        if (docId == Guid.Empty)
-        {
-            return BadRequest();
-        }
+        //if (docId == Guid.Empty)
+        //{
+        //    return BadRequest();
+        //}
 
-        var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
+        //var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
 
-        if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
+        //if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
 
-        var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
+        //var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
 
-        return Ok(responseModels);
+        //return Ok(responseModels);
+        return Ok();
     }
 
     [HttpPost]
@@ -103,61 +105,37 @@ public class DocsController : ControllerBase
     {
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        if (docDto.CreatorId == Guid.Empty)
-        {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            docDto.CreatorId = Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty;
-        }
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        var creationResult = await _docsService.CreateDocAsync(docDto);
-
-        if (creationResult.ResultStatus == OperationResult.Failure)
-        {
-            return BadRequest("Could not save your doc");
-        }
-
-        var responseModel = _mapper.Map<DocResponseModel>(creationResult.Result);
-        return Ok(responseModel);
+        var docId = await _docsService.CreateDocAsync(docDto, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
+        
+        return Created(docId.ToString(), null);
     }
 
     [HttpPatch("{docId}")]
     [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(DocRequestModel), StatusCodes.Status304NotModified)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel)
     {
-        if (docId == Guid.Empty || docId != docModel.Id) return BadRequest();
+        if (docId != docModel.Id) throw new GeneralException();
 
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        var patchedResult = await _docsService.PatchDocAsync(docId, docDto);
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (patchedResult.ResultStatus != OperationResult.Success)
-        {
-            return StatusCode(StatusCodes.Status304NotModified, docModel);
-        }
+        await _docsService.PatchDocAsync(docDto, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
 
-        var responseModel = _mapper.Map<DocResponseModel>(patchedResult.Result);
-        return Ok(responseModel);
+        return Ok();
     }
 
     [HttpDelete("{docId}")]
-    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(Guid docId)
     {
-        if (docId == Guid.Empty) return BadRequest();
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        var deleteResult = await _docsService.DeleteDocAsync(docId);
+        await _docsService.DeleteDocAsync(docId, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
 
-        if (deleteResult.ResultStatus == OperationResult.Failure)
-        {
-            return BadRequest("Operation unsuccessful");
-        }
-
-        var responseModel = _mapper.Map<DocResponseModel>(deleteResult.Result);
-        return Ok(responseModel);
+        return Ok();
     }
 }

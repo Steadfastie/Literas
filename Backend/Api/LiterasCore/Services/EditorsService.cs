@@ -52,34 +52,9 @@ public class EditorsService : IEditorsService
             : new CrudResults<IEnumerable<DocDto>>();
     }
 
-    public async Task<CrudResults<IEnumerable<UserDto>>> GetUsersByDocIdAsync(Guid docId)
-    {
-        if (docId != Guid.Empty)
-        {
-            throw new ArgumentException(
-                $"Doc ID (..{docId.ToString()[^5..]}) is empty");
-        }
-
-        var usersDtos = await _mediator.Send(new GetUsersByDocIdQuery()
-        {
-            DocId = docId
-        });
-
-        return usersDtos.Any()
-            ? new CrudResults<IEnumerable<UserDto>>(usersDtos)
-            : new CrudResults<IEnumerable<UserDto>>();
-    }
-
     public async Task<CrudResult<EditorDto>> CreateEditorAsync(EditorDto editorDto)
     {
-        var userDto = await _mediator.Send(new GetUserByIdQuery() { Id = editorDto.UserId });
         var docDto = await _mediator.Send(new GetDocByIdQuery() { Id = editorDto.DocId });
-
-        if (userDto == null)
-        {
-            throw new ArgumentException(
-            $"User's ID (..{editorDto.UserId.ToString()[^5..]}) is invalid");
-        }
 
         if (docDto == null)
         {
