@@ -175,7 +175,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiResourceClaims_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -196,7 +196,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiResourceProperties_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -216,7 +216,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiResourceScopes_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -240,7 +240,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiResourceSecrets_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -260,7 +260,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiScopeClaims_ApiScopes_ScopeId",
                         column: x => x.ScopeId,
                         principalTable: "ApiScopes",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -281,7 +281,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ApiScopeProperties_ApiScopes_ScopeId",
                         column: x => x.ScopeId,
                         principalTable: "ApiScopes",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -302,7 +302,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientClaims_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -322,7 +322,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientCorsOrigins_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -342,7 +342,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientGrantTypes_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -362,7 +362,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientIdPRestrictions_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -382,7 +382,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientPostLogoutRedirectUris_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -403,7 +403,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientProperties_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -423,7 +423,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientRedirectUris_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -443,7 +443,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientScopes_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -467,7 +467,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_ClientSecrets_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -487,7 +487,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_IdentityResourceClaims_IdentityResources_IdentityResourceId",
                         column: x => x.IdentityResourceId,
                         principalTable: "IdentityResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -508,7 +508,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         name: "FK_IdentityResourceProperties_IdentityResources_IdentityResour~",
                         column: x => x.IdentityResourceId,
                         principalTable: "IdentityResources",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

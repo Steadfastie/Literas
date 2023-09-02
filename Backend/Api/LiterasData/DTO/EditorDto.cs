@@ -1,12 +1,16 @@
-﻿namespace LiterasData.DTO;
+﻿using LiterasData.Entities;
+
+namespace LiterasData.DTO;
 
 public class EditorDto : IBaseDto
 {
     public Guid Id { get; set; }
-
     public Guid UserId { get; set; }
-    public UserDto User { get; set; }
 
     public Guid DocId { get; set; }
-    public DocDto Doc { get; set; }
+    public DateTime LastContributed { get; set; }
+
+    public EditorStatus Status { get; init; }
+
+    public List<EditorScope> Scopes { get; set; }
 }

@@ -24,7 +24,7 @@ namespace LiterasAuth.Migrations
 
             modelBuilder.Entity("LiterasAuth.Auth.LiterasUser", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -75,7 +75,7 @@ namespace LiterasAuth.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -89,7 +89,7 @@ namespace LiterasAuth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -105,7 +105,7 @@ namespace LiterasAuth.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -116,11 +116,11 @@ namespace LiterasAuth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -131,7 +131,7 @@ namespace LiterasAuth.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("RoleId");
 
@@ -140,11 +140,11 @@ namespace LiterasAuth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -155,7 +155,7 @@ namespace LiterasAuth.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("UserId");
 

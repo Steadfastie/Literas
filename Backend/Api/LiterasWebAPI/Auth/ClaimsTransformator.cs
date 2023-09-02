@@ -9,7 +9,7 @@ public class ClaimsTransformator : IClaimsTransformation
     {
         return Task.FromResult(NormalizeScopeClaims(principal));
     }
-    
+
     private static ClaimsPrincipal NormalizeScopeClaims(ClaimsPrincipal principal)
     {
         var identities = new List<ClaimsIdentity>();

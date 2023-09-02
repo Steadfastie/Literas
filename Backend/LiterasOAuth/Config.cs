@@ -1,5 +1,6 @@
 ﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
+using LiterasOAuth.Auth;
 
 namespace LiterasOAuth;
 
@@ -14,7 +15,9 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>
         {
-            new ApiScope("docs", "Literas docs")
+            new ApiScope(LiterasScopes.Read, "Read docs in Literas"),
+            new ApiScope(LiterasScopes.Write, "Create or change docs in Literas"),
+            new ApiScope(LiterasScopes.Delete, "Delete docs in Literas")
         };
 
     public static IEnumerable<Client> Clients =>
@@ -36,7 +39,9 @@ public static class Config
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
-                    "docs"
+                    LiterasScopes.Read,
+                    LiterasScopes.Write,
+                    LiterasScopes.Delete
                 }
             },
             new Client
@@ -56,7 +61,9 @@ public static class Config
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
-                    "docs"
+                    LiterasScopes.Read,
+                    LiterasScopes.Write,
+                    LiterasScopes.Delete
                 },
                 AllowedCorsOrigins = new [] {"https://localhost:4200"}
             }

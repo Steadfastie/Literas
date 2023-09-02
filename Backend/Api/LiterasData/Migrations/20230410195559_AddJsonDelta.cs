@@ -12,7 +12,7 @@ namespace LiterasData.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<JsonDocument>(
-                name: "ContentDeltas",
+                name: "ContentDelta",
                 table: "Docs",
                 type: "jsonb",
                 nullable: true);
@@ -28,7 +28,7 @@ namespace LiterasData.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ContentDeltas",
+                name: "ContentDelta",
                 table: "Docs");
 
             migrationBuilder.DropColumn(

@@ -1,21 +1,19 @@
-﻿using LiterasCore.System;
-using LiterasData.DTO;
+﻿using LiterasData.DTO;
+using LiterasData.Entities;
 
 namespace LiterasCore.Abstractions;
 
 public interface IDocsService
 {
-    Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId);
+    Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocThumbnailsAsync(
+        CancellationToken cancellationToken = default);
 
-    Task<CrudResults<IEnumerable<DocDto>>> GetDocThumbnailsAsync();
+    Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocByIdAsync(Guid docId,
+        CancellationToken cancellationToken = default);
 
-    Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId);
+    Task<Guid> CreateDocAsync(DocDto newDoc, CancellationToken cancellationToken = default);
 
-    Task<CrudResult<DocDto>> GetDocByTitleAsync(string title);
+    Task PatchDocAsync(DocDto changedDocDto, CancellationToken cancellationToken = default);
 
-    Task<CrudResult<DocDto>> CreateDocAsync(DocDto docDto);
-
-    Task<CrudResult<DocDto>> PatchDocAsync(Guid docId, DocDto docDto);
-
-    Task<CrudResult<DocDto>> DeleteDocAsync(Guid docId);
+    Task DeleteDocAsync(Guid docId, CancellationToken cancellationToken = default);
 }

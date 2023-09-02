@@ -24,11 +24,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiResource", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<string>("AllowedAccessTokenSigningAlgorithms")
                         .HasMaxLength(100)
@@ -68,7 +68,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -78,11 +78,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiResourceClaim", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
@@ -92,7 +92,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ApiResourceId", "Type")
                         .IsUnique();
@@ -102,11 +102,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiResourceProperty", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
@@ -121,7 +121,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ApiResourceId", "Key")
                         .IsUnique();
@@ -131,11 +131,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiResourceScope", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
@@ -145,7 +145,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ApiResourceId", "Scope")
                         .IsUnique();
@@ -155,11 +155,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiResourceSecret", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
@@ -184,7 +184,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ApiResourceId");
 
@@ -193,11 +193,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiScope", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -236,7 +236,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -246,11 +246,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiScopeClaim", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ScopeId")
                         .HasColumnType("integer");
@@ -260,7 +260,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ScopeId", "Type")
                         .IsUnique();
@@ -270,11 +270,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ApiScopeProperty", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<string>("Key")
                         .IsRequired()
@@ -289,7 +289,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ScopeId", "Key")
                         .IsUnique();
@@ -299,11 +299,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Client", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("AbsoluteRefreshTokenLifetime")
                         .HasColumnType("integer");
@@ -457,7 +457,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                     b.Property<int?>("UserSsoLifetime")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId")
                         .IsUnique();
@@ -467,11 +467,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientClaim", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -486,7 +486,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "Type", "Value")
                         .IsUnique();
@@ -496,11 +496,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientCorsOrigin", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -510,7 +510,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "Origin")
                         .IsUnique();
@@ -520,11 +520,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientGrantType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -534,7 +534,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "GrantType")
                         .IsUnique();
@@ -544,11 +544,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientIdPRestriction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -558,7 +558,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "Provider")
                         .IsUnique();
@@ -568,11 +568,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -582,7 +582,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "PostLogoutRedirectUri")
                         .IsUnique();
@@ -592,11 +592,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientProperty", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -611,7 +611,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "Key")
                         .IsUnique();
@@ -621,11 +621,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientRedirectUri", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -635,7 +635,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "RedirectUri")
                         .IsUnique();
@@ -645,11 +645,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientScope", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -659,7 +659,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId", "Scope")
                         .IsUnique();
@@ -669,11 +669,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ClientSecret", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -698,7 +698,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ClientId");
 
@@ -707,11 +707,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.IdentityProvider", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -745,7 +745,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("Scheme")
                         .IsUnique();
@@ -755,11 +755,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.IdentityResource", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -795,7 +795,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -805,11 +805,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.IdentityResourceClaim", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("IdentityResourceId")
                         .HasColumnType("integer");
@@ -819,7 +819,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("IdentityResourceId", "Type")
                         .IsUnique();
@@ -829,11 +829,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.IdentityResourceProperty", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<int>("IdentityResourceId")
                         .HasColumnType("integer");
@@ -848,7 +848,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.ConfigurationDb
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("IdentityResourceId", "Key")
                         .IsUnique();

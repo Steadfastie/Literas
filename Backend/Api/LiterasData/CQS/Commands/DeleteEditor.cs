@@ -9,6 +9,7 @@ public class DeleteEditorCommand : IRequest<int>
 {
     public EditorDto Editor { get; set; }
 }
+
 public class DeleteEditor : IRequestHandler<DeleteEditorCommand, int>
 {
     private readonly NotesDBContext _context;
@@ -29,9 +30,7 @@ public class DeleteEditor : IRequestHandler<DeleteEditorCommand, int>
             _context.Editors.Remove(entity);
             return await _context.SaveChangesAsync(cancellationToken);
         }
-        else
-        {
-            throw new ArgumentException($"Request contains {request.Editor} user");
-        }
+
+        throw new ArgumentException($"Request contains {request.Editor} user");
     }
 }

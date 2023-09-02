@@ -6,20 +6,27 @@ namespace LiterasCore.ValidationAttributes;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class DeltasCountAttribute : ValidationAttribute
 {
-    public int MinDeltasAmount { get; }
-    public int MaxDeltasAmount { get; set; } = int.MaxValue;
     public DeltasCountAttribute(int minDeltasAmount)
     {
         MinDeltasAmount = minDeltasAmount;
     }
+
+    public int MinDeltasAmount { get; }
+    public int MaxDeltasAmount { get; set; } = int.MaxValue;
+
     public override bool IsValid(object? value)
     {
-        if (value == null) return true;
+        if (value == null)
+        {
+            return true;
+        }
+
         if (value is not JsonDocument deltas)
         {
             ErrorMessage = "Quill deltas wrong type";
             return false;
         }
+
         return CheckDeltasAmount(deltas.RootElement.Clone());
     }
 
@@ -51,4 +58,3 @@ public class DeltasCountAttribute : ValidationAttribute
         }
     }
 }
-

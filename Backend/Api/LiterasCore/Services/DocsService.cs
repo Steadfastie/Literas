@@ -1,166 +1,125 @@
 ﻿using AutoMapper;
 using LiterasCore.Abstractions;
-using LiterasCore.System;
 using LiterasData.CQS;
-using LiterasData.CQS.Commands;
-using LiterasData.CQS.Queries;
 using LiterasData.DTO;
+using LiterasData.Entities;
+using LiterasData.Exceptions;
 using MediatR;
 
 namespace LiterasCore.Services;
 
 public class DocsService : IDocsService
 {
+    private readonly IEditorsService _editorsService;
+    private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly IEventBus _notificationService;
 
-    public DocsService(IMapper mapper, IMediator mediator)
+    public DocsService(IMediator mediator,
+        IMapper mapper,
+        IIdentityService identityService,
+        IEditorsService editorsService,
+        IEventBus notificationService)
     {
-        _mapper = mapper;
         _mediator = mediator;
+        _mapper = mapper;
+        _identityService = identityService;
+        _editorsService = editorsService;
+        _notificationService = notificationService;
     }
 
-    public async Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId)
+    public async Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocThumbnailsAsync(
+        CancellationToken cancellationToken = default)
     {
-        if (docId == Guid.Empty)
-        {
-            throw new ArgumentException(
-                $"Provided ID (..{docId.ToString()[^5..]}) is empty");
-        }
+        var docsFound = await _mediator.Send(new GetDocThumbnails { UserId = _identityService.UserId },
+            cancellationToken);
 
-        var docFromDb = await _mediator.Send(new GetDocByIdQuery()
-        {
-            Id = docId
-        });
-
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
+        return docsFound.Select(d =>
+            {
+                var dto = _mapper.Map<DocDto>(d);
+                var scopes = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Scopes;
+                var status = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Status;
+                return (dto, scopes, status);
+            })
+            .ToList();
     }
 
-    public async Task<CrudResults<IEnumerable<DocDto>>> GetDocThumbnailsAsync()
+    public async Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocByIdAsync(Guid docId,
+        CancellationToken cancellationToken = default)
     {
-        var docThumbnails = await _mediator.Send(new GetDocThumbnailsQuery());
+        var docFound = await _mediator.Send(new GetDocById { DocId = docId, UserId = _identityService.UserId },
+                           cancellationToken) ??
+                       throw new NotFoundException("Could not find such document");
 
-        return docThumbnails != null
-            ? new CrudResults<IEnumerable<DocDto>>(docThumbnails)
-            : new CrudResults<IEnumerable<DocDto>>();
+        var dto = _mapper.Map<DocDto>(docFound);
+        var scopes = docFound.Editors.Single(ed => ed.UserId == _identityService.UserId).Scopes;
+        var status = docFound.Editors.Single(ed => ed.UserId == _identityService.UserId).Status;
+        return (dto, scopes, status);
     }
 
-    public async Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId)
+    public async Task<Guid> CreateDocAsync(DocDto newDoc, CancellationToken cancellationToken = default)
     {
-        if (creatorId != Guid.Empty)
+        var doc = new Doc(newDoc.Id,
+            (newDoc.Title, newDoc.TitleDelta),
+            (newDoc.Content, newDoc.ContentDelta));
+
+        var creator = new Editor(_identityService.UserId, newDoc.Id, EditorStatus.Creator,
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
+
+        var saveChangesResult =
+            await _mediator.Send(new CreateDocCommand { Doc = doc, Creator = creator }, cancellationToken);
+
+        if (saveChangesResult != 1)
         {
-            throw new ArgumentException(
-                $"Provided ID (..{creatorId.ToString()[^5..]}) is empty");
+            throw new GeneralException("Doc creation went wrong");
         }
 
-        var docFromDb = await _mediator.Send(new GetDocByCreatorIdQuery()
-        {
-            CreatorId = creatorId
-        });
-
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
+        return doc.Id;
     }
 
-    public async Task<CrudResult<DocDto>> GetDocByTitleAsync(string title)
+    public async Task PatchDocAsync(DocDto changedDocDto, CancellationToken cancellationToken = default)
     {
-        if (title != string.Empty) throw new ArgumentException("Title is empty");
+        var canUserEdit = await _editorsService.CanUserDo(changedDocDto.Id,
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite });
 
-        var docFromDb = await _mediator.Send(new GetDocByTitleQuery()
+        if (!canUserEdit)
         {
-            Title = title
-        });
+            throw new ForbiddenException("User don't have enough rights to do that");
+        }
 
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
+        var changedDoc = new Doc(changedDocDto.Id,
+            (changedDocDto.Title, changedDocDto.TitleDelta),
+            (changedDocDto.Content, changedDocDto.ContentDelta));
+
+        var docAfter =
+            await _mediator.Send(new GetAndPatchDocCommand { Doc = changedDoc, UserId = _identityService.UserId },
+                cancellationToken);
+
+        var docToTransfer = _mapper.Map<DocDto>(docAfter);
+
+        await _notificationService.Notify(docToTransfer);
     }
 
-    public async Task<CrudResult<DocDto>> CreateDocAsync(DocDto docDto)
+    public async Task DeleteDocAsync(Guid docId, CancellationToken cancellationToken = default)
     {
-        if (docDto.Id == Guid.Empty)
+        var canUserEdit = await _editorsService.CanUserDo(docId,
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
+
+        if (!canUserEdit)
         {
-            docDto.Id = Guid.NewGuid();
+            throw new ForbiddenException("User don't have enough rights to do that");
         }
 
-        if (docDto.CreatorId == Guid.Empty)
+        var saveChangesResult =
+            await _mediator.Send(new GetAndDeleteDocCommand { DocId = docId, UserId = _identityService.UserId },
+                cancellationToken);
+
+        if (saveChangesResult != 1)
         {
-            throw new ArgumentException("Creator ID can't be empty");
+            throw new GeneralException("Could not remove doc");
         }
 
-        var presenceCheck = await _mediator.Send(new GetDocByIdQuery() { Id = docDto.Id });
-        if (presenceCheck is not null)
-        {
-            return new CrudResult<DocDto>();
-        }
-
-        var saveChangesResult = await _mediator.Send(new CreateDocCommand()
-        {
-            Doc = docDto
-        });
-
-        return saveChangesResult == 1
-            ? new CrudResult<DocDto>(docDto)
-            : new CrudResult<DocDto>();
-    }
-
-    public async Task<CrudResult<DocDto>> PatchDocAsync(Guid docId, DocDto docDto)
-    {
-        var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-        if (sourceDto == null)
-        {
-            throw new ArgumentException(
-                $"Found no doc with provided ID (..{docId.ToString()[^5..]})");
-        }
-
-        var ignoreFields = new[]
-        {
-            docDto.GetType().GetProperty("Id")!,
-            docDto.GetType().GetProperty("CreatorId")!,
-        };
-
-        var patchList = PatchModelCreator<DocDto>.Generate(sourceDto, docDto, ignoreFields);
-
-        if (!Enumerable.Any<PatchModel>(patchList))
-        {
-            return new CrudResult<DocDto>();
-        }
-
-        var saveChangesResult = await _mediator.Send(new PatchDocCommand()
-        {
-            Doc = sourceDto,
-            PatchList = patchList
-        });
-
-        if (saveChangesResult == 0)
-        {
-            return new CrudResult<DocDto>();
-        }
-
-        var updatedDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-
-        return new CrudResult<DocDto>(updatedDto);
-    }
-
-    public async Task<CrudResult<DocDto>> DeleteDocAsync(Guid docId)
-    {
-        var sourceDto = await _mediator.Send(new GetDocByIdQuery() { Id = docId });
-        if (sourceDto == null)
-        {
-            throw new ArgumentException(
-                $"Found no doc with provided ID (..{docId.ToString()[^5..]})", nameof(docId));
-        }
-
-        var saveChangesResult = await _mediator.Send(new DeleteDocCommand()
-        {
-            Doc = sourceDto
-        });
-
-        return saveChangesResult == 1
-            ? new CrudResult<DocDto>(sourceDto)
-            : new CrudResult<DocDto>();
+        await _notificationService.NotifyDeleted(docId);
     }
 }

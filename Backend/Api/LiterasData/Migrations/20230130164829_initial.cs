@@ -53,13 +53,13 @@ namespace LiterasData.Migrations
                         name: "FK_Editors_Docs_DocId",
                         column: x => x.DocId,
                         principalTable: "Docs",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Editors_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "DocId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

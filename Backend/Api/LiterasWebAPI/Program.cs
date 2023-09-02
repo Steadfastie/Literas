@@ -14,15 +14,15 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((context, services, configuration) =>
-            configuration
-                .ReadFrom.Configuration(context.Configuration)
-                .ReadFrom.Services(services)
-                .Enrich.FromLogContext()
-                .WriteTo.File(
-                    builder.Configuration["Serilog"],
-                    LogEventLevel.Warning,
-                    rollingInterval: RollingInterval.Hour,
-                    retainedFileCountLimit: 10));
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext()
+            .WriteTo.File(
+                builder.Configuration["Serilog"],
+                LogEventLevel.Warning,
+                rollingInterval: RollingInterval.Hour,
+                retainedFileCountLimit: 10));
 
     builder.Services.ConfigureServices(builder.Configuration);
 

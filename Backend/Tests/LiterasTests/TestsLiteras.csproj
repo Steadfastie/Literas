@@ -27,7 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Api\LiterasCore\LiterasCore.csproj" />
     <ProjectReference Include="..\..\Api\LiterasData\LiterasData.csproj" />
-    <ProjectReference Include="..\..\Api\LiterasModels\LiterasCore.csproj" />
     <ProjectReference Include="..\..\Api\LiterasWebAPI\LiterasWebAPI.csproj" />
   </ItemGroup>
 

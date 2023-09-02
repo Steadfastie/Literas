@@ -1,16 +1,17 @@
-﻿using LiterasData;
-using LiterasWebAPI.Auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
-using LiterasCore.Abstractions;
+﻿using LiterasCore.Abstractions;
 using LiterasCore.Services;
+using LiterasData;
+using LiterasData.CQS;
 using LiterasData.DTO;
+using LiterasWebAPI.Auth;
 using LiterasWebAPI.Config.MappingProfiles;
+using LiterasWebAPI.Middleware;
+using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiterasWebAPI.Config;
+
 public static class ServiceConfig
 {
     public static void ConfigureServices(this IServiceCollection services, IConfiguration config)
@@ -26,34 +27,7 @@ public static class ServiceConfig
             });
         });
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
-                options.Authority = "https://localhost:7034";
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateLifetime = true,
-                    ValidateAudience = false,
-                    ValidIssuer = "https://localhost:7034",
-                    ClockSkew = TimeSpan.Zero,
-                };
-            });
-
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("literas", policy =>
-            {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", "docs");
-            });
-        });
+        services.AddAuth(config);
 
         services.AddDbContext<NotesDBContext>(options =>
             options.UseNpgsql(config.GetConnectionString("DocsPostgre")));
@@ -61,10 +35,12 @@ public static class ServiceConfig
         services.AddAutoMapper(typeof(DocDto).Assembly);
         services.AddAutoMapper(typeof(DocsService).Assembly);
         services.AddAutoMapper(typeof(DocsProfile).Assembly);
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IDocsService>());
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyBehavior<,>));
 
         services.AddServices();
-        
+
         services.AddControllers(opt =>
         {
             opt.Filters.Add<GlobalExceptionFilter>();
@@ -86,6 +62,7 @@ public static class ServiceConfig
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseMiddleware<UserInfoExtractorMiddleware>();
         app.UseMiddleware<LoggerEnricherMiddleware>();
         app.MapControllers();
     }
@@ -94,7 +71,8 @@ public static class ServiceConfig
     {
         services.AddTransient<IClaimsTransformation, ClaimsTransformator>();
         services.AddScoped<IDocsService, DocsService>();
-        services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IEditorsService, EditorsService>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddSingleton<IEventBus, RabbitMQService>();
     }
 }
