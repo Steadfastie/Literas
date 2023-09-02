@@ -31,14 +31,14 @@ public class GetTests
 
         var docsContoller = new DocsController(_docsServiceMock.Object, _mapper, _contributorsServiceMock.Object);
         var response = await docsContoller.Details(docId);
-        var responseModel = _mapper.Map<DocResponseModel>(crudResult.Result);
+        var responseModel = _mapper.Map<DocResponse>(crudResult.Result);
 
         Assert.NotNull(response);
         Assert.IsType<OkObjectResult>(response);
 
         var responseValue = ((OkObjectResult)response).Value;
         Assert.NotNull(responseValue);
-        Assert.IsType<DocResponseModel>(responseValue);
+        Assert.IsType<DocResponse>(responseValue);
         Assert.Equivalent(responseModel, responseValue);
     }
 

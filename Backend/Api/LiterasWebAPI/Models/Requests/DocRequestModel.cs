@@ -16,7 +16,7 @@ public class DocRequestModel
 
     [Required]
     [DeltasCount(1, MaxDeltasAmount = 1)]
-    public JsonDocument? TitleDelta { get; set; }
+    public JsonDocument TitleDelta { get; set; }
 
     [Required]
     [StringLength(10000, MinimumLength = 3)]
@@ -24,5 +24,5 @@ public class DocRequestModel
 
     [Required]
     [DeltasCount(1)]
-    public JsonDocument? ContentDelta { get; set; }
+    public JsonDocument ContentDelta { get; set; }
 }

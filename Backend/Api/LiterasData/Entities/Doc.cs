@@ -18,7 +18,7 @@ public class Doc : IBaseEntity
     /// <see cref="JsonDocument"/> is chosen for its versatility,
     /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
-    public JsonDocument? TitleDelta { get; private set; }
+    public JsonDocument TitleDelta { get; private set; }
 
     public string Content { get; private set; }
 
@@ -26,7 +26,7 @@ public class Doc : IBaseEntity
     /// <see cref="JsonDocument"/> is chosen for its versatility,
     /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
-    public JsonDocument? ContentDelta { get; private set; }
+    public JsonDocument ContentDelta { get; private set; }
 
     public ICollection<Editor> Editors { get; set; }
 

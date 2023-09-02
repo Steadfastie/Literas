@@ -33,14 +33,14 @@ public class GetThumbnailsTests
 
         var docsContoller = new DocsController(_docsServiceMock.Object, _mapper, _contributorsServiceMock.Object);
         var response = await docsContoller.GetDocTumbnails();
-        var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponseModel>>(crudResults.Results);
+        var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponse>>(crudResults.Results);
 
         Assert.NotNull(response);
         Assert.IsType<OkObjectResult>(response);
 
         var responseValue = ((OkObjectResult)response).Value;
         Assert.NotNull(responseValue);
-        Assert.IsAssignableFrom<IEnumerable<DocThumbnailResponseModel>>(responseValue);
+        Assert.IsAssignableFrom<IEnumerable<DocThumbnailResponse>>(responseValue);
         Assert.Equivalent(responseModel, responseValue);
     }
 

@@ -22,7 +22,7 @@ public class EditorsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(EditorResponseModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(EditorResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Details(Guid editorId)
@@ -38,7 +38,7 @@ public class EditorsController : ControllerBase
 
             if (editorDto.Result == null || editorDto.ResultStatus == OperationResult.Failure) return NotFound();
 
-            var responseModel = _mapper.Map<EditorResponseModel>(editorDto);
+            var responseModel = _mapper.Map<EditorResponse>(editorDto);
 
             return Ok(responseModel);
         }
@@ -58,7 +58,7 @@ public class EditorsController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(EditorResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(EditorResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromBody] EditorRequestModel editorModel)
@@ -79,7 +79,7 @@ public class EditorsController : ControllerBase
                 return BadRequest("Could not create new editor");
             }
 
-            var responseModel = _mapper.Map<EditorResponseModel>(creationResult.Result);
+            var responseModel = _mapper.Map<EditorResponse>(creationResult.Result);
             return Ok(responseModel);
         }
         catch (Exception ex)
@@ -98,7 +98,7 @@ public class EditorsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(EditorResponseModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(EditorResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Nullable), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(Guid editorId)
@@ -114,7 +114,7 @@ public class EditorsController : ControllerBase
                 return BadRequest("Operation unsuccessful");
             }
 
-            var responseModel = _mapper.Map<EditorResponseModel>(deleteResult.Result);
+            var responseModel = _mapper.Map<EditorResponse>(deleteResult.Result);
             return Ok(responseModel);
         }
         catch (Exception ex)

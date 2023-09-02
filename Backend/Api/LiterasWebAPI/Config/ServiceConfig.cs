@@ -28,34 +28,7 @@ public static class ServiceConfig
             });
         });
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
-                options.Authority = "https://localhost:7034";
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateLifetime = true,
-                    ValidateAudience = false,
-                    ValidIssuer = "https://localhost:7034",
-                    ClockSkew = TimeSpan.Zero,
-                };
-            });
-
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("literas", policy =>
-            {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", "docs");
-            });
-        });
+        services.AddAuth(config);
 
         services.AddDbContext<NotesDBContext>(options =>
             options.UseNpgsql(config.GetConnectionString("DocsPostgre")));

@@ -31,66 +31,40 @@ public class DocsService : IDocsService
         _notificationService = notificationService;
     }
 
-    public async Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId)
+    public async Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocThumbnailsAsync(
+        CancellationToken cancellationToken = default)
     {
-        if (docId == Guid.Empty)
-        {
-            throw new ArgumentException(
-                $"Provided ID (..{docId.ToString()[^5..]}) is empty");
-        }
+        var docsFound = await _mediator.Send(new GetDocThumbnails() { UserId = _identityService.UserId },
+            cancellationToken);
 
-        var docFromDb = await _mediator.Send(new GetEditorScopes()
-        {
-            DocId = docId
-        });
-
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
+        return docsFound.Select(d =>
+            {
+                var dto = _mapper.Map<DocDto>(d);
+                var scopes = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Scopes;
+                var status = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Status;
+                return (dto, scopes, status);
+            })
+            .ToList();
     }
 
-    public async Task<CrudResults<IEnumerable<DocDto>>> GetDocThumbnailsAsync()
+    public async Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocByIdAsync(Guid docId,
+        CancellationToken cancellationToken = default)
     {
-        var docThumbnails = await _mediator.Send(new GetDocThumbnailsQuery());
+        var docFound = await _mediator.Send(new GetDocById()
+                           {
+                               DocId = docId,
+                               UserId = _identityService.UserId
+                           },
+                           cancellationToken) ??
+                       throw new NotFoundException("Could not find such document");
 
-        return docThumbnails != null
-            ? new CrudResults<IEnumerable<DocDto>>(docThumbnails)
-            : new CrudResults<IEnumerable<DocDto>>();
+        var dto = _mapper.Map<DocDto>(docFound);
+        var scopes = docFound.Editors.Single(ed => ed.UserId == _identityService.UserId).Scopes;
+        var status = docFound.Editors.Single(ed => ed.UserId == _identityService.UserId).Status;
+        return (dto, scopes, status);
     }
 
-    public async Task<CrudResult<DocDto>> GetDocByCreatorIdAsync(Guid creatorId)
-    {
-        if (creatorId != Guid.Empty)
-        {
-            throw new ArgumentException(
-                $"Provided ID (..{creatorId.ToString()[^5..]}) is empty");
-        }
-
-        var docFromDb = await _mediator.Send(new GetDocByCreatorIdQuery()
-        {
-            CreatorId = creatorId
-        });
-
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
-    }
-
-    public async Task<CrudResult<DocDto>> GetDocByTitleAsync(string title)
-    {
-        if (title != string.Empty) throw new ArgumentException("Title is empty");
-
-        var docFromDb = await _mediator.Send(new GetDocByTitleQuery()
-        {
-            Title = title
-        });
-
-        return docFromDb != null
-            ? new CrudResult<DocDto>(docFromDb)
-            : new CrudResult<DocDto>();
-    }
-
-    public async Task<Guid> CreateDocAsync(DocDto newDoc)
+    public async Task<Guid> CreateDocAsync(DocDto newDoc, CancellationToken cancellationToken = default)
     {
         var doc = new Doc(newDoc.Id,
             (newDoc.Title, newDoc.TitleDelta),
@@ -103,7 +77,7 @@ public class DocsService : IDocsService
         {
             Doc = doc,
             Creator = creator
-        });
+        }, cancellationToken);
 
         if (saveChangesResult != 1)
         {
@@ -113,7 +87,7 @@ public class DocsService : IDocsService
         return doc.Id;
     }
 
-    public async Task PatchDocAsync(DocDto changedDocDto)
+    public async Task PatchDocAsync(DocDto changedDocDto, CancellationToken cancellationToken = default)
     {
         var canUserEdit = await _editorsService.CanUserDo(changedDocDto.Id,
             new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite });
@@ -131,14 +105,14 @@ public class DocsService : IDocsService
         {
             Doc = changedDoc,
             UserId = _identityService.UserId
-        });
+        }, cancellationToken);
 
         var docToTransfer = _mapper.Map<DocDto>(docAfter);
 
         await _notificationService.Notify(docToTransfer);
     }
 
-    public async Task DeleteDocAsync(Guid docId, Guid userId)
+    public async Task DeleteDocAsync(Guid docId, CancellationToken cancellationToken = default)
     {
         var canUserEdit = await _editorsService.CanUserDo(docId,
             new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
@@ -151,8 +125,8 @@ public class DocsService : IDocsService
         var saveChangesResult = await _mediator.Send(new GetAndDeleteDocCommand()
         {
             DocId = docId,
-            UserId = userId
-        });
+            UserId = _identityService.UserId
+        }, cancellationToken);
 
         if (saveChangesResult != 1)
         {

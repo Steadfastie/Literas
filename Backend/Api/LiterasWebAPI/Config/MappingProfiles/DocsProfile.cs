@@ -12,7 +12,6 @@ public class DocsProfile : Profile
     {
         CreateMap<DocRequestModel, DocDto>();
 
-        CreateMap<Doc, DocResponseModel>();
-        CreateMap<Doc, DocThumbnailResponseModel>();
+        CreateMap<Doc, DocDto>();
     }
 }

@@ -5,6 +5,7 @@ using LiterasCore.System;
 using LiterasData.DTO;
 using LiterasData.Entities;
 using LiterasData.Exceptions;
+using LiterasWebAPI.Auth;
 using LiterasWebAPI.Models.Requests;
 using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -15,105 +16,92 @@ namespace LiterasWebAPI.Controllers;
 
 [Route("docs")]
 [ApiController]
-[Authorize(Policy = "literas")]
+[Authorize]
 public class DocsController : ControllerBase
 {
     private readonly IDocsService _docsService;
-    private readonly IEditorsService _editorsService;
     private readonly IMapper _mapper;
 
-    public DocsController(IDocsService docsService, IMapper mapper, IEditorsService editorsService)
+    public DocsController(IDocsService docsService, IMapper mapper)
     {
         _docsService = docsService;
         _mapper = mapper;
-        _editorsService = editorsService;
     }
 
     [HttpGet("thumbnails")]
-    [ProducesResponseType(typeof(DocThumbnailResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetDocTumbnails()
+    [Authorize(Policy = Policies.LiterasRead)]
+    [ProducesResponseType(typeof(DocThumbnailResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDocThumbnails(CancellationToken cancellationToken = default)
     {
-        var docDto = await _docsService.GetDocThumbnailsAsync();
+        var docData = await _docsService.GetDocThumbnailsAsync(cancellationToken);
 
-        var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponseModel>>(docDto.Results);
+        var response = docData.ConvertAll(dataFound => new DocThumbnailResponse()
+        {
+            Id = dataFound.doc.Id,
+            Title = dataFound.doc.Title,
+            Permissions = dataFound.scopes,
+            Status = dataFound.status
+        });
 
-        return Ok(responseModel);
+        return Ok(response);
     }
 
     [HttpGet("{docId}")]
-    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Details(Guid docId)
+    [Authorize(Policy = Policies.LiterasRead)]
+    [ProducesResponseType(typeof(DocResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Details([FromRoute] Guid docId, CancellationToken cancellationToken = default)
     {
         if (docId == Guid.Empty)
         {
             return BadRequest();
         }
 
-        var docDto = await _docsService.GetDocByIdAsync(docId);
+        var (doc, scopes, status) = await _docsService.GetDocByIdAsync(docId, cancellationToken);
 
-        if (docDto.Result == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
+        var response = new DocThumbnailResponse()
+        {
+            Id = doc.Id, Title = doc.Title, Permissions = scopes, Status = status
+        };
 
-        var responseModel = _mapper.Map<DocResponseModel>(docDto.Result);
-
-        return Ok(responseModel);
-    }
-
-    [HttpGet("{id}/editors")]
-    [ProducesResponseType(typeof(List<DocResponseModel>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllEditors(Guid docId)
-    {
-        //if (docId == Guid.Empty)
-        //{
-        //    return BadRequest();
-        //}
-
-        //var docDtos = await _editorsService.GetUsersByDocIdAsync(docId);
-
-        //if (docDtos.Results == null || docDtos.ResultStatus == OperationResult.Failure) return NotFound();
-
-        //var responseModels = _mapper.Map<List<UserResponseModel>>(docDtos.Results.ToList());
-
-        //return Ok(responseModels);
-        return Ok();
+        return Ok(response);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] DocRequestModel docModel)
+    [Authorize(Policy = Policies.LiterasWrite)]
+    [ProducesResponseType(typeof(DocResponse), StatusCodes.Status201Created)]
+    public async Task<IActionResult> Create([FromBody] DocRequestModel docModel,
+        CancellationToken cancellationToken = default)
     {
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        var docId = await _docsService.CreateDocAsync(docDto);
-        
+        var docId = await _docsService.CreateDocAsync(docDto, cancellationToken);
+
         return Created(docId.ToString(), null);
     }
 
     [HttpPatch("{docId}")]
-    [ProducesResponseType(typeof(DocResponseModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(DocRequestModel), StatusCodes.Status304NotModified)]
-    public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel)
+    [Authorize(Policy = Policies.LiterasWrite)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status304NotModified)]
+    public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel,
+        CancellationToken cancellationToken = default)
     {
         if (docId != docModel.Id) throw new GeneralException();
 
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        await _docsService.PatchDocAsync(docDto);
+        await _docsService.PatchDocAsync(docDto, cancellationToken);
 
         return Ok();
     }
 
     [HttpDelete("{docId}")]
+    [Authorize(Policy = Policies.LiterasDelete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Delete(Guid docId)
+    public async Task<IActionResult> Delete(Guid docId, CancellationToken cancellationToken = default)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        await _docsService.DeleteDocAsync(docId, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
+        await _docsService.DeleteDocAsync(docId, cancellationToken);
 
         return Ok();
     }

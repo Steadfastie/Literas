@@ -2,7 +2,7 @@
 
 namespace LiterasWebAPI.Models.Responses;
 
-public class DocResponseModel
+public class DocResponse
 {
     public Guid Id { get; set; }
     public Guid CreatorId { get; set; }
