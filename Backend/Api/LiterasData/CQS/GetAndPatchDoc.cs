@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper;
-using LiterasData.DTO;
 using LiterasData.Entities;
 using LiterasData.Exceptions;
 using MediatR;
@@ -10,62 +9,58 @@ using Microsoft.EntityFrameworkCore;
 namespace LiterasData.CQS;
 
 [RetryPolicy]
-public class FindAndPatchDocCommand : IRequest<int>
+public class GetAndPatchDocCommand : IRequest<Doc>
 {
-    public DocDto Doc { get; set; }
+    public Doc Doc { get; set; }
     public Guid UserId { get; set; }
 }
 
-public class FindAndPatchDocHandler : IRequestHandler<FindAndPatchDocCommand, int>
+public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
 {
     private readonly NotesDBContext _context;
     private readonly IMapper _mapper;
 
-    public FindAndPatchDocHandler(NotesDBContext context, IMapper mapper)
+    public GetAndPatchDocHandler(NotesDBContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<int> Handle(FindAndPatchDocCommand request, CancellationToken cancellationToken)
+    public async Task<Doc> Handle(GetAndPatchDocCommand request, CancellationToken cancellationToken)
     {
         var sourceDoc = await _context.Docs
-            .AsNoTracking()
             .SingleOrDefaultAsync(
                 doc => doc.Id == request.Doc.Id, 
                 cancellationToken: cancellationToken) ?? 
                             throw new NotFoundException("Looks like doc is already here");
 
-        if (sourceDoc.CreatorId != request.UserId)
-        {
-            throw new ForbiddenException("Only creator can remove doc");
-        }
-
         var (changedDoc, updates) = CalculateChanges(
-            sourceDoc, _mapper.Map<Doc>(request.Doc));
+            sourceDoc, request.Doc);
 
         var dbEntityEntry = _context.Entry(changedDoc);
 
-        if (dbEntityEntry.Entity.Version != sourceDoc.Version)
-        {
-            throw new RaceException("Doc has been updated while patching");
-        }
-
+        dbEntityEntry.Entity.UpdateVersion();
         dbEntityEntry.CurrentValues.SetValues(updates);
         dbEntityEntry.State = EntityState.Modified;
 
-        return await _context.SaveChangesAsync(cancellationToken);
+        var result = await _context.SaveChangesAsync(cancellationToken);
+
+        if (result != 1)
+        {
+            throw new NotModifiedException("Doc update went wrong");
+        }
+
+        return await _context.Docs
+            .AsNoTracking()
+            .SingleAsync(doc => doc.Id == request.Doc.Id, cancellationToken: cancellationToken);
     }
 
-    private (Doc, Dictionary<string, object>) CalculateChanges(Doc souce, Doc changed)
+    private static (Doc, Dictionary<string, object>) CalculateChanges(Doc source, Doc changed)
     {
-        changed.Version += 1;
-
-        var patchList = PatchModelCreator<Doc>.Generate(souce, changed,
+        var patchList = PatchModelCreator<Doc>.Generate(source, changed,
             new[]
             {
                 GetPropertyInfo(() => changed.Id),
-                GetPropertyInfo(() => changed.CreatorId),
                 GetPropertyInfo(() => changed.CreatedAt),
             });
 

@@ -10,18 +10,9 @@ public class DocsProfile : Profile
 {
     public DocsProfile()
     {
-        CreateMap<Doc, DocDto>();
-        CreateMap<DocDto, Doc>();
+        CreateMap<DocRequestModel, DocDto>();
 
-        CreateMap<DocRequestModel, DocDto>()
-            .ForMember(dto => dto.Id, 
-                opt => 
-                    opt.MapFrom(src => Guid.NewGuid()))
-            .ForMember(dest => dest.CreatorId, 
-                opt => 
-                    opt.MapFrom(src => src.UserId));
-        
-        CreateMap<DocDto, DocResponseModel>();
-        CreateMap<DocDto, DocThumbnailResponseModel>();
+        CreateMap<Doc, DocResponseModel>();
+        CreateMap<Doc, DocThumbnailResponseModel>();
     }
 }

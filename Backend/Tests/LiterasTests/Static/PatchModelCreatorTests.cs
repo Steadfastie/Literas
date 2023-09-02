@@ -47,32 +47,32 @@ public class PatchModelCreatorTests
             //// 1. UserDtos with different values
             //new object[]
             //{
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Different name" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Different name" },
             //    1
             //},
 
             //// 2. UserDtos with same values
             //new object[]
             //{
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
             //    0
             //},
 
             //// 3. UserDtos with source null values
             //new object[]
             //{
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name" },
             //    1
             //},
 
             //// 4. UserDtos with null values in changed
             //new object[]
             //{
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name"},
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password", Fullname = "Name"},
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password" },
             //    0
             //},
 
@@ -87,8 +87,8 @@ public class PatchModelCreatorTests
             //// 6. DocDtos with UserDtos
             //new object[]
             //{
-            //    new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
-            //    new UserDto() { Id = Guid.Empty, Login = "Login", Password = "Password" },
+            //    new DocDto() { DocId = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+            //    new UserDto() { DocId = Guid.Empty, Login = "Login", Password = "Password" },
             //},
 
             // 7. DocDtos with list of ignored properties
@@ -98,7 +98,7 @@ public class PatchModelCreatorTests
                 new DocDto() { Id = Guid.NewGuid(), CreatorId = Guid.NewGuid(), Title = "New title", Content = "New content" },
                 new PropertyInfo[]
                 {
-                    typeof(DocDto).GetProperty("Id")!,
+                    typeof(DocDto).GetProperty("DocId")!,
                     typeof(DocDto).GetProperty("CreatorId")!
                 },
                 2
@@ -107,11 +107,11 @@ public class PatchModelCreatorTests
             //// 8. DocDtos with spoiled list of ignored properties
             //new object[]
             //{
-            //    new DocDto() { Id = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
-            //    new DocDto() { Id = Guid.NewGuid(), CreatorId = Guid.NewGuid(), Title = "New title", Content = "New content" },
+            //    new DocDto() { DocId = Guid.Empty, CreatorId = Guid.Empty, Title = "Title", Content = "Content" },
+            //    new DocDto() { DocId = Guid.NewGuid(), CreatorId = Guid.NewGuid(), Title = "New title", Content = "New content" },
             //    new PropertyInfo[]
             //    {
-            //        typeof(DocDto).GetProperty("Id")!,
+            //        typeof(DocDto).GetProperty("DocId")!,
             //        typeof(DocDto).GetProperty("CreatorId")!,
             //        typeof(UserDto).GetProperty("Fullname")!
             //    },

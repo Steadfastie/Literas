@@ -1,7 +1,7 @@
-﻿using Serilog.Context;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Serilog.Context;
 
-namespace LiterasWebAPI.Config;
+namespace LiterasWebAPI.Middleware;
 
 public class LoggerEnricherMiddleware : IMiddleware
 {

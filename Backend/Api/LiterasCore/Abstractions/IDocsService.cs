@@ -13,9 +13,9 @@ public interface IDocsService
 
     Task<CrudResult<DocDto>> GetDocByTitleAsync(string title);
 
-    Task<Guid> CreateDocAsync(DocDto docDto, Guid userId);
+    Task<Guid> CreateDocAsync(DocDto newDoc);
 
-    Task PatchDocAsync(DocDto docDto, Guid userId);
+    Task PatchDocAsync(DocDto docDto);
 
     Task DeleteDocAsync(Guid docId, Guid userId);
 }

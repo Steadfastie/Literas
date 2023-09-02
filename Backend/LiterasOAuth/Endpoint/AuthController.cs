@@ -66,7 +66,7 @@ public class AuthController : ControllerBase
                 });
 
             //await HttpContext.SignInAsync(
-            //    new IdentityServerUser(user.Id.ToString()), 
+            //    new IdentityServerUser(user.DocId.ToString()), 
             //    new AuthenticationProperties()
             //    {
             //        AllowRefresh = true,

@@ -1,25 +1,34 @@
 ﻿using AutoMapper;
 using LiterasCore.Abstractions;
 using LiterasCore.System;
-using LiterasData;
 using LiterasData.CQS;
-using LiterasData.CQS.Commands;
 using LiterasData.CQS.Queries;
 using LiterasData.DTO;
 using LiterasData.Entities;
 using LiterasData.Exceptions;
 using MediatR;
-using Polly;
 
 namespace LiterasCore.Services;
 
 public class DocsService : IDocsService
 {
     private readonly IMediator _mediator;
+    private readonly IIdentityService _identityService;
+    private readonly IEditorsService _editorsService;
+    private readonly IEventBus _notificationService;
+    private readonly IMapper _mapper;
 
-    public DocsService(IMediator mediator)
+    public DocsService(IMediator mediator, 
+        IMapper mapper, 
+        IIdentityService identityService, 
+        IEditorsService editorsService, 
+        IEventBus notificationService)
     {
         _mediator = mediator;
+        _mapper = mapper;
+        _identityService = identityService;
+        _editorsService = editorsService;
+        _notificationService = notificationService;
     }
 
     public async Task<CrudResult<DocDto>> GetDocByIdAsync(Guid docId)
@@ -30,9 +39,9 @@ public class DocsService : IDocsService
                 $"Provided ID (..{docId.ToString()[^5..]}) is empty");
         }
 
-        var docFromDb = await _mediator.Send(new GetDocByIdQuery()
+        var docFromDb = await _mediator.Send(new GetEditorScopes()
         {
-            Id = docId
+            DocId = docId
         });
 
         return docFromDb != null
@@ -81,64 +90,75 @@ public class DocsService : IDocsService
             : new CrudResult<DocDto>();
     }
 
-    public async Task<Guid> CreateDocAsync(DocDto docDto, Guid userId)
+    public async Task<Guid> CreateDocAsync(DocDto newDoc)
     {
-        if (userId == Guid.Empty)
-        {
-            throw new GeneralException("Service could not recognize user");
-        }
+        var doc = new Doc(newDoc.Id,
+            (newDoc.Title, newDoc.TitleDelta),
+            (newDoc.Content, newDoc.ContentDelta));
 
-        docDto.CreatorId = userId;
-        var saveChangesResult = await _mediator.Send(new CreateDocCommand() { Doc = docDto });
+        var creator = new Editor(_identityService.UserId, newDoc.Id, EditorStatus.Creator,
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
+
+        var saveChangesResult = await _mediator.Send(new CreateDocCommand()
+        {
+            Doc = doc,
+            Creator = creator
+        });
 
         if (saveChangesResult != 1)
         {
             throw new GeneralException("Doc creation went wrong");
         }
-        return docDto.Id;
+
+        return doc.Id;
     }
 
-    public async Task PatchDocAsync(DocDto docDto, Guid userId)
+    public async Task PatchDocAsync(DocDto changedDocDto)
     {
-        if (userId == Guid.Empty)
+        var canUserEdit = await _editorsService.CanUserDo(changedDocDto.Id,
+            new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite });
+
+        if (!canUserEdit)
         {
-            throw new GeneralException("Service could not recognize user");
+            throw new ForbiddenException("User don't have enough rights to do that");
         }
 
-        // TODO: Check userId against editors list
+        var changedDoc = new Doc(changedDocDto.Id,
+            (changedDocDto.Title, changedDocDto.TitleDelta),
+            (changedDocDto.Content, changedDocDto.ContentDelta));
 
-        var saveChangesResult = await _mediator.Send(new FindAndPatchDocCommand()
+        var docAfter = await _mediator.Send(new GetAndPatchDocCommand()
         {
-            Doc = docDto,
-            UserId = userId
+            Doc = changedDoc,
+            UserId = _identityService.UserId
         });
 
-        // TODO: Send event to RabbitMQ about document being modified
+        var docToTransfer = _mapper.Map<DocDto>(docAfter);
 
-        if (saveChangesResult != 1)
-        {
-            throw new GeneralException("Doc update went wrong");
-        }
+        await _notificationService.Notify(docToTransfer);
     }
 
     public async Task DeleteDocAsync(Guid docId, Guid userId)
     {
-        if (userId == Guid.Empty)
+        var canUserEdit = await _editorsService.CanUserDo(docId,
+            new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
+
+        if (!canUserEdit)
         {
-            throw new GeneralException("Service could not recognize user");
+            throw new ForbiddenException("User don't have enough rights to do that");
         }
 
-        var saveChangesResult = await _mediator.Send(new FindAndDeleteDocCommand()
+        var saveChangesResult = await _mediator.Send(new GetAndDeleteDocCommand()
         {
             DocId = docId,
             UserId = userId
         });
 
-        // TODO: Send event to RabbitMQ about document being deleted
-
         if (saveChangesResult != 1)
         {
-            throw new GeneralException("Doc update went wrong");
+            throw new GeneralException("Could not remove doc");
         }
+
+        await _notificationService.NotifyDeleted(docId);
     }
 }

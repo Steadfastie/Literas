@@ -25,7 +25,7 @@ namespace LiterasData.Migrations
 
             modelBuilder.Entity("LiterasData.Entities.Doc", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -33,7 +33,7 @@ namespace LiterasData.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<JsonDocument>("ContentDeltas")
+                    b.Property<JsonDocument>("ContentDelta")
                         .HasColumnType("jsonb");
 
                     b.Property<Guid>("CreatorId")
@@ -46,14 +46,14 @@ namespace LiterasData.Migrations
                     b.Property<JsonDocument>("TitleDelta")
                         .HasColumnType("jsonb");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.ToTable("Docs");
                 });
 
             modelBuilder.Entity("LiterasData.Entities.Editor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -63,7 +63,7 @@ namespace LiterasData.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("DocId");
 
@@ -74,7 +74,7 @@ namespace LiterasData.Migrations
 
             modelBuilder.Entity("LiterasData.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -89,7 +89,7 @@ namespace LiterasData.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.ToTable("Users");
                 });

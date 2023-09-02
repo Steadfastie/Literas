@@ -74,7 +74,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("DocId")
                         .HasColumnType("text");
 
                     b.Property<string>("Algorithm")
@@ -101,7 +101,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("Use");
 
@@ -110,11 +110,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<long>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("DocId"));
 
                     b.Property<string>("ClientId")
                         .IsRequired()
@@ -156,7 +156,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("ConsumedTime");
 
@@ -174,11 +174,11 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ServerSideSession", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DocId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DocId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -216,7 +216,7 @@ namespace LiterasAuth.Data.Migrations.IdentityServer.PersistedGrantDb
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocId");
 
                     b.HasIndex("DisplayName");
 

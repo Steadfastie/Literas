@@ -30,7 +30,7 @@ public class DocTests
     //        .ReturnsAsync(1);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(null as DocDto);
 
     //    var service = new DocsService(_mediatrMock.Object);
@@ -39,7 +39,7 @@ public class DocTests
     //    Assert.IsType<CrudResult<DocDto>>(result);
     //    Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
     //    Assert.Equal(docDto, result.Result);
-    //    Assert.Equal(docDto.Id, result.Result!.Id);
+    //    Assert.Equal(docDto.DocId, result.Result!.DocId);
     //}
 
     //[Theory]
@@ -51,7 +51,7 @@ public class DocTests
     //        .ReturnsAsync(1);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(null as DocDto);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -60,7 +60,7 @@ public class DocTests
     //    Assert.IsType<CrudResult<DocDto>>(result);
     //    Assert.Equal((int)OperationResult.Success, (int)result.ResultStatus);
     //    Assert.Equal(docDto, result.Result);
-    //    Assert.NotEqual(Guid.Empty, result.Result!.Id);
+    //    Assert.NotEqual(Guid.Empty, result.Result!.DocId);
     //}
 
     //[Theory]
@@ -72,7 +72,7 @@ public class DocTests
     //        .ReturnsAsync(1);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(docDto);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -85,12 +85,12 @@ public class DocTests
     //public async Task PatchDoc_WhenDocExists(Guid docId, DocDto sourceDto, DocDto docDto)
     //{
     //    _mediatrMock.SetupSequence(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(sourceDto)
     //        .ReturnsAsync(docDto);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(1);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -107,11 +107,11 @@ public class DocTests
     //public void PatchDoc_WhenDocDoesNotExist(Guid docId, DocDto docDto)
     //{
     //    _mediatrMock.SetupSequence(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))!
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))!
     //        .ReturnsAsync(null as DocDto);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(1);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -124,11 +124,11 @@ public class DocTests
     //public async Task DeleteDoc_WhenDocExists(Guid docId, DocDto sourceDto)
     //{
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(sourceDto);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<FindAndDeleteDocCommand>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetAndDeleteDocCommand>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(1);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);
@@ -144,11 +144,11 @@ public class DocTests
     //public void DeleteDoc_WhenDocDoesNotExist(Guid docId)
     //{
     //    _mediatrMock.SetupSequence(mediator => mediator.Send(
-    //        It.IsAny<GetDocByIdQuery>(), It.IsAny<CancellationToken>()))!
+    //        It.IsAny<GetEditorScopes>(), It.IsAny<CancellationToken>()))!
     //        .ReturnsAsync(null as DocDto);
 
     //    _mediatrMock.Setup(mediator => mediator.Send(
-    //        It.IsAny<FindAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
+    //        It.IsAny<GetAndPatchDocCommand>(), It.IsAny<CancellationToken>()))
     //        .ReturnsAsync(1);
 
     //    var service = new DocsService(_mapper, _mediatrMock.Object);

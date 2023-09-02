@@ -8,7 +8,7 @@ public class DocDto : IBaseDto
     public Guid CreatorId { get; set; }
     public DateTime CreatedAt { get; set; }
     public string Title { get; set; }
-    public JsonDocument? TitleDelta { get; set; }
+    public JsonDocument TitleDelta { get; set; }
     public string Content { get; set; }
-    public JsonDocument? ContentDeltas { get; set; }
+    public JsonDocument ContentDelta { get; set; }
 }

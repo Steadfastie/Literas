@@ -1,15 +1,14 @@
-﻿using System.Net.NetworkInformation;
-using LiterasData;
+﻿using LiterasData;
 using LiterasWebAPI.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
 using LiterasCore.Abstractions;
 using LiterasCore.Services;
 using LiterasData.CQS;
 using LiterasData.DTO;
 using LiterasWebAPI.Config.MappingProfiles;
+using LiterasWebAPI.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -91,6 +90,7 @@ public static class ServiceConfig
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseMiddleware<UserInfoExtractorMiddleware>();
         app.UseMiddleware<LoggerEnricherMiddleware>();
         app.MapControllers();
     }
@@ -100,5 +100,7 @@ public static class ServiceConfig
         services.AddTransient<IClaimsTransformation, ClaimsTransformator>();
         services.AddScoped<IDocsService, DocsService>();
         services.AddScoped<IEditorsService, EditorsService>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddSingleton<IEventBus, RabbitMQService>();
     }
 }

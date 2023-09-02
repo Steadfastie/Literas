@@ -3,6 +3,7 @@ using AutoMapper;
 using LiterasCore.Abstractions;
 using LiterasCore.System;
 using LiterasData.DTO;
+using LiterasData.Entities;
 using LiterasData.Exceptions;
 using LiterasWebAPI.Models.Requests;
 using LiterasWebAPI.Models.Responses;
@@ -34,29 +35,11 @@ public class DocsController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetDocTumbnails()
     {
-        try
-        {
-            var docDto = await _docsService.GetDocThumbnailsAsync();
+        var docDto = await _docsService.GetDocThumbnailsAsync();
 
-            if (docDto.Results == null || docDto.ResultStatus == OperationResult.Failure) return NotFound();
+        var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponseModel>>(docDto.Results);
 
-            var responseModel = _mapper.Map<IEnumerable<DocThumbnailResponseModel>>(docDto.Results);
-
-            return Ok(responseModel);
-        }
-        catch (Exception ex)
-        { 
-            Log.Error($"!--- {ex.Message} ---! " + 
-                $"{Environment.NewLine} {Environment.NewLine}" +
-                $"{ex.StackTrace} " +
-                $"{Environment.NewLine} {Environment.NewLine}");
-            ErrorModel errorModel = new()
-            {
-                Message = "Could not find doc",
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
-            return Problem(detail: errorModel.Message, statusCode: errorModel.StatusCode);
-        }
+        return Ok(responseModel);
     }
 
     [HttpGet("{docId}")]
@@ -105,9 +88,7 @@ public class DocsController : ControllerBase
     {
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        var docId = await _docsService.CreateDocAsync(docDto, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
+        var docId = await _docsService.CreateDocAsync(docDto);
         
         return Created(docId.ToString(), null);
     }
@@ -121,9 +102,7 @@ public class DocsController : ControllerBase
 
         var docDto = _mapper.Map<DocDto>(docModel);
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        await _docsService.PatchDocAsync(docDto, Guid.TryParse(userId, out var creatorId) ? creatorId : Guid.Empty);
+        await _docsService.PatchDocAsync(docDto);
 
         return Ok();
     }
