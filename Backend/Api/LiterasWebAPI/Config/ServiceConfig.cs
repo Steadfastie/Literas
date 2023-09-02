@@ -1,18 +1,17 @@
-﻿using LiterasData;
-using LiterasWebAPI.Auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using LiterasCore.Abstractions;
+﻿using LiterasCore.Abstractions;
 using LiterasCore.Services;
+using LiterasData;
 using LiterasData.CQS;
 using LiterasData.DTO;
+using LiterasWebAPI.Auth;
 using LiterasWebAPI.Config.MappingProfiles;
 using LiterasWebAPI.Middleware;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiterasWebAPI.Config;
+
 public static class ServiceConfig
 {
     public static void ConfigureServices(this IServiceCollection services, IConfiguration config)
@@ -41,7 +40,7 @@ public static class ServiceConfig
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyBehavior<,>));
 
         services.AddServices();
-        
+
         services.AddControllers(opt =>
         {
             opt.Filters.Add<GlobalExceptionFilter>();

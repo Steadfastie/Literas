@@ -24,8 +24,7 @@ public static class PatchModelCreator<T> where T : IBaseEntity
             })
             .Select(property => new PatchModel
             {
-                PropertyName = property.Name,
-                PropertyValue = property.GetValue(changed)!
+                PropertyName = property.Name, PropertyValue = property.GetValue(changed)!
             })
             .ToList();
 
@@ -52,8 +51,7 @@ public static class PatchModelCreatorDto<T> where T : IBaseDto
             })
             .Select(property => new PatchModel
             {
-                PropertyName = property.Name,
-                PropertyValue = property.GetValue(changed)!
+                PropertyName = property.Name, PropertyValue = property.GetValue(changed)!
             })
             .ToList();
 

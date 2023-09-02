@@ -1,16 +1,12 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using LiterasCore.Abstractions;
-using LiterasCore.System;
 using LiterasData.DTO;
-using LiterasData.Entities;
 using LiterasData.Exceptions;
 using LiterasWebAPI.Auth;
 using LiterasWebAPI.Models.Requests;
 using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace LiterasWebAPI.Controllers;
 
@@ -35,7 +31,7 @@ public class DocsController : ControllerBase
     {
         var docData = await _docsService.GetDocThumbnailsAsync(cancellationToken);
 
-        var response = docData.ConvertAll(dataFound => new DocThumbnailResponse()
+        var response = docData.ConvertAll(dataFound => new DocThumbnailResponse
         {
             Id = dataFound.doc.Id,
             Title = dataFound.doc.Title,
@@ -59,7 +55,7 @@ public class DocsController : ControllerBase
 
         var (doc, scopes, status) = await _docsService.GetDocByIdAsync(docId, cancellationToken);
 
-        var response = new DocThumbnailResponse()
+        var response = new DocThumbnailResponse
         {
             Id = doc.Id, Title = doc.Title, Permissions = scopes, Status = status
         };
@@ -87,7 +83,10 @@ public class DocsController : ControllerBase
     public async Task<IActionResult> Patch(Guid docId, [FromBody] DocRequestModel docModel,
         CancellationToken cancellationToken = default)
     {
-        if (docId != docModel.Id) throw new GeneralException();
+        if (docId != docModel.Id)
+        {
+            throw new GeneralException();
+        }
 
         var docDto = _mapper.Map<DocDto>(docModel);
 

@@ -1,15 +1,15 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
+﻿using System.Reflection;
 using LiterasData.Exceptions;
-using Polly;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace LiterasData.CQS;
 
 /// <summary>
-/// Wraps request handler execution of requests decorated with the <see cref="RetryPolicyAttribute"/>
-/// inside a policy to handle transient failures and retry the execution.
+///     Wraps request handler execution of requests decorated with the <see cref="RetryPolicyAttribute" />
+///     inside a policy to handle transient failures and retry the execution.
 /// </summary>
 public class RetryPolicyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 {
@@ -20,7 +20,8 @@ public class RetryPolicyBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         _logger = logger;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         var retryAttr = typeof(TRequest).GetCustomAttribute<RetryPolicyAttribute>();
         if (retryAttr == null)
@@ -33,7 +34,7 @@ public class RetryPolicyBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
             .Or<DbUpdateConcurrencyException>()
             .WaitAndRetryAsync(3,
                 retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                (ex, _, _) => 
+                (ex, _, _) =>
                     _logger.LogWarning(ex, "Race condition appeared"))
             .ExecuteAsync(async () => await next());
     }

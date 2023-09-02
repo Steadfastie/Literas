@@ -2,7 +2,7 @@
 
 namespace LiterasCore.ValidationAttributes;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
 public class NotEmptyGuidAttribute : ValidationAttribute
 {
     public override bool IsValid(object value)

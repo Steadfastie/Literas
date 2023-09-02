@@ -25,10 +25,10 @@ public class GetAndDeleteDocHandler : IRequestHandler<GetAndDeleteDocCommand, in
     public async Task<int> Handle(GetAndDeleteDocCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.Docs
-                            .SingleOrDefaultAsync(
-                                doc => doc.Id == request.DocId,
-                                cancellationToken: cancellationToken) ??
-                        throw new NotFoundException("Looks like doc is already gone");
+                         .SingleOrDefaultAsync(
+                             doc => doc.Id == request.DocId,
+                             cancellationToken) ??
+                     throw new NotFoundException("Looks like doc is already gone");
 
         _context.Docs.Remove(entity);
         return await _context.SaveChangesAsync(cancellationToken);

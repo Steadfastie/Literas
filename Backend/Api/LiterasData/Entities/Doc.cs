@@ -7,7 +7,7 @@ public class Doc : IBaseEntity
 {
     public Guid Id { get; init; }
 
-    [ConcurrencyCheck]
+    [ConcurrencyCheck] 
     public int Version { get; private set; }
 
     public DateTime CreatedAt { get; init; }
@@ -15,23 +15,23 @@ public class Doc : IBaseEntity
     public string Title { get; private set; }
 
     /// <remarks>
-    /// <see cref="JsonDocument"/> is chosen for its versatility,
-    /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
+    ///     <see cref="JsonDocument" /> is chosen for its versatility,
+    ///     enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
     public JsonDocument TitleDelta { get; private set; }
 
     public string Content { get; private set; }
 
     /// <remarks>
-    /// <see cref="JsonDocument"/> is chosen for its versatility,
-    /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
+    ///     <see cref="JsonDocument" /> is chosen for its versatility,
+    ///     enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
     public JsonDocument ContentDelta { get; private set; }
 
     public ICollection<Editor> Editors { get; set; }
 
     public Doc(Guid? id,
-        (string titleCoy, JsonDocument titleDelta) title, 
+        (string titleCoy, JsonDocument titleDelta) title,
         (string contentCoy, JsonDocument contentDelta) content)
     {
         Id = id ?? Guid.NewGuid();

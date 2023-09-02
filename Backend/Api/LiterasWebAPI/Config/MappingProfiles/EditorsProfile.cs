@@ -12,8 +12,5 @@ public class EditorsProfile : Profile
     {
         CreateMap<Editor, EditorDto>();
         CreateMap<EditorDto, Editor>();
-
-        CreateMap<EditorRequestModel, EditorDto>();
-        CreateMap<EditorDto, EditorResponse>();
     }
 }

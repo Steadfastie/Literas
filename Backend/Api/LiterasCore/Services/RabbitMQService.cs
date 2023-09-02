@@ -3,7 +3,7 @@ using LiterasData.DTO;
 
 namespace LiterasCore.Services;
 
-public class RabbitMQService: IEventBus
+public class RabbitMQService : IEventBus
 {
     public Task Notify(IBaseDto objectToSend)
     {

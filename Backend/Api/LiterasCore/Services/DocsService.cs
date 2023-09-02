@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using LiterasCore.Abstractions;
-using LiterasCore.System;
 using LiterasData.CQS;
-using LiterasData.CQS.Queries;
 using LiterasData.DTO;
 using LiterasData.Entities;
 using LiterasData.Exceptions;
@@ -12,16 +10,16 @@ namespace LiterasCore.Services;
 
 public class DocsService : IDocsService
 {
-    private readonly IMediator _mediator;
-    private readonly IIdentityService _identityService;
     private readonly IEditorsService _editorsService;
-    private readonly IEventBus _notificationService;
+    private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
+    private readonly IEventBus _notificationService;
 
-    public DocsService(IMediator mediator, 
-        IMapper mapper, 
-        IIdentityService identityService, 
-        IEditorsService editorsService, 
+    public DocsService(IMediator mediator,
+        IMapper mapper,
+        IIdentityService identityService,
+        IEditorsService editorsService,
         IEventBus notificationService)
     {
         _mediator = mediator;
@@ -34,7 +32,7 @@ public class DocsService : IDocsService
     public async Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocThumbnailsAsync(
         CancellationToken cancellationToken = default)
     {
-        var docsFound = await _mediator.Send(new GetDocThumbnails() { UserId = _identityService.UserId },
+        var docsFound = await _mediator.Send(new GetDocThumbnails { UserId = _identityService.UserId },
             cancellationToken);
 
         return docsFound.Select(d =>
@@ -50,11 +48,7 @@ public class DocsService : IDocsService
     public async Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocByIdAsync(Guid docId,
         CancellationToken cancellationToken = default)
     {
-        var docFound = await _mediator.Send(new GetDocById()
-                           {
-                               DocId = docId,
-                               UserId = _identityService.UserId
-                           },
+        var docFound = await _mediator.Send(new GetDocById { DocId = docId, UserId = _identityService.UserId },
                            cancellationToken) ??
                        throw new NotFoundException("Could not find such document");
 
@@ -73,11 +67,8 @@ public class DocsService : IDocsService
         var creator = new Editor(_identityService.UserId, newDoc.Id, EditorStatus.Creator,
             new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
 
-        var saveChangesResult = await _mediator.Send(new CreateDocCommand()
-        {
-            Doc = doc,
-            Creator = creator
-        }, cancellationToken);
+        var saveChangesResult =
+            await _mediator.Send(new CreateDocCommand { Doc = doc, Creator = creator }, cancellationToken);
 
         if (saveChangesResult != 1)
         {
@@ -90,7 +81,7 @@ public class DocsService : IDocsService
     public async Task PatchDocAsync(DocDto changedDocDto, CancellationToken cancellationToken = default)
     {
         var canUserEdit = await _editorsService.CanUserDo(changedDocDto.Id,
-            new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite });
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite });
 
         if (!canUserEdit)
         {
@@ -101,11 +92,9 @@ public class DocsService : IDocsService
             (changedDocDto.Title, changedDocDto.TitleDelta),
             (changedDocDto.Content, changedDocDto.ContentDelta));
 
-        var docAfter = await _mediator.Send(new GetAndPatchDocCommand()
-        {
-            Doc = changedDoc,
-            UserId = _identityService.UserId
-        }, cancellationToken);
+        var docAfter =
+            await _mediator.Send(new GetAndPatchDocCommand { Doc = changedDoc, UserId = _identityService.UserId },
+                cancellationToken);
 
         var docToTransfer = _mapper.Map<DocDto>(docAfter);
 
@@ -115,18 +104,16 @@ public class DocsService : IDocsService
     public async Task DeleteDocAsync(Guid docId, CancellationToken cancellationToken = default)
     {
         var canUserEdit = await _editorsService.CanUserDo(docId,
-            new List<EditorScope>() { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
+            new List<EditorScope> { EditorScope.CanRead, EditorScope.CanWrite, EditorScope.CanDelete });
 
         if (!canUserEdit)
         {
             throw new ForbiddenException("User don't have enough rights to do that");
         }
 
-        var saveChangesResult = await _mediator.Send(new GetAndDeleteDocCommand()
-        {
-            DocId = docId,
-            UserId = _identityService.UserId
-        }, cancellationToken);
+        var saveChangesResult =
+            await _mediator.Send(new GetAndDeleteDocCommand { DocId = docId, UserId = _identityService.UserId },
+                cancellationToken);
 
         if (saveChangesResult != 1)
         {

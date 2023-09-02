@@ -4,7 +4,7 @@ using LiterasData.Exceptions;
 
 namespace LiterasWebAPI.Middleware;
 
-public class UserInfoExtractorMiddleware: IMiddleware
+public class UserInfoExtractorMiddleware : IMiddleware
 {
     private readonly IIdentityService _identityService;
 

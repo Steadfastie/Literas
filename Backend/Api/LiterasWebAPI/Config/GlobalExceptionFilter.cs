@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace LiterasWebAPI.Config;
+
 public class GlobalExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
@@ -16,8 +17,7 @@ public class GlobalExceptionFilter : IExceptionFilter
         context.ExceptionHandled = true;
         context.Result = new ContentResult
         {
-            StatusCode = GetExceptionStatusCode(context.Exception),
-            Content = context.Exception.Message
+            StatusCode = GetExceptionStatusCode(context.Exception), Content = context.Exception.Message
         };
     }
 
@@ -30,7 +30,7 @@ public class GlobalExceptionFilter : IExceptionFilter
             ForbiddenException => StatusCodes.Status403Forbidden,
             RaceException or DbUpdateConcurrencyException => StatusCodes.Status409Conflict,
             GeneralException => StatusCodes.Status400BadRequest,
-            _ => StatusCodes.Status500InternalServerError,
+            _ => StatusCodes.Status500InternalServerError
         };
     }
 }

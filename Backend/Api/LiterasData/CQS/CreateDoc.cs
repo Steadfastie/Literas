@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using LiterasData.Entities;
+﻿using LiterasData.Entities;
 using LiterasData.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ public class CreateDocHandler : IRequestHandler<CreateDocCommand, int>
     public async Task<int> Handle(CreateDocCommand request, CancellationToken cancellationToken)
     {
         var presentEntity = await _context.Docs
-            .SingleOrDefaultAsync(doc => doc.Id == request.Doc.Id, cancellationToken: cancellationToken);
+            .SingleOrDefaultAsync(doc => doc.Id == request.Doc.Id, cancellationToken);
 
         if (presentEntity != null)
         {

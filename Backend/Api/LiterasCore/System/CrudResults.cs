@@ -4,9 +4,6 @@ namespace LiterasCore.System;
 
 public class CrudResults<T> where T : IEnumerable<IBaseDto>
 {
-    public T? Results { get; set; }
-    public OperationResult ResultStatus { get; set; }
-
     public CrudResults()
     {
         ResultStatus = OperationResult.Failure;
@@ -17,4 +14,7 @@ public class CrudResults<T> where T : IEnumerable<IBaseDto>
         Results = results;
         ResultStatus = OperationResult.Success;
     }
+
+    public T? Results { get; set; }
+    public OperationResult ResultStatus { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using LiterasData.Entities;
+﻿using LiterasData.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +9,7 @@ public class GetDocById : IRequest<Doc?>
     public Guid DocId { get; set; }
     public Guid UserId { get; set; }
 }
+
 public class GetDocByIdHandler : IRequestHandler<GetDocById, Doc?>
 {
     private readonly NotesDBContext _dbContext;

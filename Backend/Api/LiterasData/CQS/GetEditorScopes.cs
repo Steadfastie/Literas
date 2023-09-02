@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using LiterasData.DTO;
-using LiterasData.Entities;
+﻿using LiterasData.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

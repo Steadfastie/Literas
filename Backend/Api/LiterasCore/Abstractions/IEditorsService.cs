@@ -1,6 +1,4 @@
-﻿using LiterasCore.System;
-using LiterasData.DTO;
-using LiterasData.Entities;
+﻿using LiterasData.Entities;
 
 namespace LiterasCore.Abstractions;
 

@@ -29,10 +29,10 @@ public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
     public async Task<Doc> Handle(GetAndPatchDocCommand request, CancellationToken cancellationToken)
     {
         var sourceDoc = await _context.Docs
-            .SingleOrDefaultAsync(
-                doc => doc.Id == request.Doc.Id, 
-                cancellationToken: cancellationToken) ?? 
-                            throw new NotFoundException("Looks like doc is already here");
+                            .SingleOrDefaultAsync(
+                                doc => doc.Id == request.Doc.Id,
+                                cancellationToken) ??
+                        throw new NotFoundException("Looks like doc is already here");
 
         var (changedDoc, updates) = CalculateChanges(
             sourceDoc, request.Doc);
@@ -52,17 +52,13 @@ public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
 
         return await _context.Docs
             .AsNoTracking()
-            .SingleAsync(doc => doc.Id == request.Doc.Id, cancellationToken: cancellationToken);
+            .SingleAsync(doc => doc.Id == request.Doc.Id, cancellationToken);
     }
 
     private static (Doc, Dictionary<string, object>) CalculateChanges(Doc source, Doc changed)
     {
         var patchList = PatchModelCreator<Doc>.Generate(source, changed,
-            new[]
-            {
-                GetPropertyInfo(() => changed.Id),
-                GetPropertyInfo(() => changed.CreatedAt),
-            });
+            new[] { GetPropertyInfo(() => changed.Id), GetPropertyInfo(() => changed.CreatedAt) });
 
         if (!patchList.Any())
         {
@@ -79,7 +75,7 @@ public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
 
     private static PropertyInfo GetPropertyInfo<TSource>(Expression<Func<TSource>> propertyExpression)
     {
-        MemberExpression memberExpression = (MemberExpression)propertyExpression.Body;
+        var memberExpression = (MemberExpression)propertyExpression.Body;
         return (PropertyInfo)memberExpression.Member;
     }
 }

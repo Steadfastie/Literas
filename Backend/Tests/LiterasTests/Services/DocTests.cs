@@ -1,9 +1,4 @@
 ﻿using AutoMapper;
-using LiterasCore.Services;
-using LiterasCore.System;
-using LiterasData.CQS;
-using LiterasData.CQS.Commands;
-using LiterasData.CQS.Queries;
 using LiterasData.DTO;
 using MediatR;
 using Moq;
@@ -158,95 +153,35 @@ public class DocTests
 
     public static IEnumerable<object[]> GetData(int index, int count = 1)
     {
-        var allSeeds = new List<object[]>()
+        var allSeeds = new List<object[]>
         {
             // 1. Create correct doc
-            new object[]
-            {
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.NewGuid(),
-                    Title = "Title",
-                    Content = "Content"
-                },
-            },
+            new object[] { new DocDto { Id = Guid.NewGuid(), Title = "Title", Content = "Content" } },
 
             // 2. Create doc with empty id
-            new object[]
-            {
-                new DocDto()
-                {
-                    Id = Guid.Empty,
-                    CreatorId = Guid.NewGuid(),
-                    Title = "Title",
-                    Content = "Content"
-                },
-            },
+            new object[] { new DocDto { Id = Guid.Empty, Title = "Title", Content = "Content" } },
 
             // 3. Create doc with empty creator id
-            new object[]
-            {
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.Empty,
-                    Title = "Title",
-                    Content = "Content"
-                },
-            },
+            new object[] { new DocDto { Id = Guid.NewGuid(), Title = "Title", Content = "Content" } },
 
             // 4. Patch doc with source
             new object[]
             {
-                Guid.NewGuid(),
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.NewGuid(),
-                    Title = "Title",
-                    Content = "Content"
-                },
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.NewGuid(),
-                    Title = "New title",
-                    Content = "New content"
-                },
+                Guid.NewGuid(), new DocDto { Id = Guid.NewGuid(), Title = "Title", Content = "Content" },
+                new DocDto { Id = Guid.NewGuid(), Title = "New title", Content = "New content" }
             },
 
             // 5. Patch doc without source
             new object[]
             {
-                Guid.NewGuid(),
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.NewGuid(),
-                    Title = "New title",
-                    Content = "New content"
-                },
+                Guid.NewGuid(), new DocDto { Id = Guid.NewGuid(), Title = "New title", Content = "New content" }
             },
 
             // 6. Delete doc with source
-            new object[]
-            {
-                Guid.NewGuid(),
-                new DocDto()
-                {
-                    Id = Guid.NewGuid(),
-                    CreatorId = Guid.NewGuid(),
-                    Title = "Title",
-                    Content = "Content"
-                },
-            },
+            new object[] { Guid.NewGuid(), new DocDto { Id = Guid.NewGuid(), Title = "Title", Content = "Content" } },
 
             // 7. Delete doc without source
-            new object[]
-            {
-                Guid.NewGuid()
-            },
+            new object[] { Guid.NewGuid() }
         };
 
         return allSeeds.Skip(index).Take(count);

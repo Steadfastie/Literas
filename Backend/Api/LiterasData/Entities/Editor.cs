@@ -2,19 +2,19 @@
 
 namespace LiterasData.Entities;
 
-public class Editor: IBaseEntity
+public class Editor : IBaseEntity
 {
     public Guid Id { get; init; }
 
-    [ConcurrencyCheck]
-    public int Version { get; private set; }
+    [ConcurrencyCheck] 
+    public int Version { get; }
 
     public Guid UserId { get; init; }
 
     public DateTime LastContributed { get; private set; }
 
     public EditorStatus Status { get; init; }
-    
+
     public List<EditorScope> Scopes { get; private set; }
 
     public Guid DocId { get; init; }

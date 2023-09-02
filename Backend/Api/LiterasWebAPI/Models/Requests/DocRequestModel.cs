@@ -22,7 +22,5 @@ public class DocRequestModel
     [StringLength(10000, MinimumLength = 3)]
     public string Content { get; set; }
 
-    [Required]
-    [DeltasCount(1)]
-    public JsonDocument ContentDelta { get; set; }
+    [Required] [DeltasCount(1)] public JsonDocument ContentDelta { get; set; }
 }

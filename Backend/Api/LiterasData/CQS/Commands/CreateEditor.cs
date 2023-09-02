@@ -9,6 +9,7 @@ public class CreateEditorCommand : IRequest<int>
 {
     public EditorDto Editor { get; set; }
 }
+
 public class CreateEditor : IRequestHandler<CreateEditorCommand, int>
 {
     private readonly NotesDBContext _context;
@@ -29,9 +30,7 @@ public class CreateEditor : IRequestHandler<CreateEditorCommand, int>
             await _context.Editors.AddAsync(entity, cancellationToken);
             return await _context.SaveChangesAsync(cancellationToken);
         }
-        else
-        {
-            throw new ArgumentException($"Request contains {request.Editor} user");
-        }
+
+        throw new ArgumentException($"Request contains {request.Editor} user");
     }
 }

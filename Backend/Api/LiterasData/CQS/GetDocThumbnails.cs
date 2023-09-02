@@ -8,6 +8,7 @@ public class GetDocThumbnails : IRequest<List<Doc>>
 {
     public Guid UserId { get; set; }
 }
+
 public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Doc>>
 {
     private readonly NotesDBContext _dbContext;
