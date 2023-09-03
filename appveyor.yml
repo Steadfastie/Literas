@@ -2,6 +2,7 @@ version: 1.0.{build}
 skip_tags: true
 image: Visual Studio 2022
 build:
+  project: .\Backend\Api\LiterasWebAPI\LiterasWebAPI.csproj
   verbosity: minimal
 notifications:
 - provider: GitHubPullRequest
