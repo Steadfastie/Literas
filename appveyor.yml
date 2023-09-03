@@ -1,0 +1,10 @@
+version: 1.0.{build}
+skip_tags: true
+image: Visual Studio 2022
+build:
+  verbosity: minimal
+notifications:
+- provider: GitHubPullRequest
+  on_build_success: false
+  on_build_failure: false
+  on_build_status_changed: true
