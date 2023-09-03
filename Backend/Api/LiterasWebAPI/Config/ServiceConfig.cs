@@ -16,11 +16,12 @@ public static class ServiceConfig
 {
     public static void ConfigureServices(this IServiceCollection services, IConfiguration config)
     {
+        var cors = config.GetSection(nameof(Cors)).Get<Cors>();
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins("https://localhost:4800", "https://localhost:4200")
+                policy.WithOrigins(cors.Origins)
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
