@@ -12,10 +12,10 @@ public class CreateEditorCommand : IRequest<int>
 
 public class CreateEditor : IRequestHandler<CreateEditorCommand, int>
 {
-    private readonly NotesDBContext _context;
+    private readonly NotesDbContext _context;
     private readonly IMapper _mapper;
 
-    public CreateEditor(NotesDBContext context, IMapper mapper)
+    public CreateEditor(NotesDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;

@@ -17,10 +17,10 @@ public class GetAndPatchDocCommand : IRequest<Doc>
 
 public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
 {
-    private readonly NotesDBContext _context;
+    private readonly NotesDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetAndPatchDocHandler(NotesDBContext context, IMapper mapper)
+    public GetAndPatchDocHandler(NotesDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
