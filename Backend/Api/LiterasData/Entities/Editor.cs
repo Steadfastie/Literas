@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace LiterasData.Entities;
 
+[Index(nameof(UserId), nameof(DocId), IsUnique = true)]
 public class Editor : IBaseEntity
 {
     public Guid Id { get; init; }

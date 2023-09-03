@@ -23,8 +23,9 @@ public class GetDocByIdHandler : IRequestHandler<GetDocById, Doc?>
     {
         return await _dbContext.Docs
             .AsNoTracking()
-            .Where(doc => doc.Id == request.DocId &&
-                          doc.Editors.SingleOrDefault(ed => ed.UserId == request.UserId) != null)
+            .Where(doc => doc.Editors.SingleOrDefault(ed => 
+                              ed.UserId == request.UserId &&
+                              ed.DocId == request.DocId) != null)
             .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))
             .ThenInclude(editor => editor.Scopes)
             .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))

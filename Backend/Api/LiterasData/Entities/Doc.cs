@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace LiterasData.Entities;
 
+
 public class Doc : IBaseEntity
 {
     public Guid Id { get; init; }
@@ -15,16 +16,16 @@ public class Doc : IBaseEntity
     public string Title { get; private set; }
 
     /// <remarks>
-    ///     <see cref="JsonDocument" /> is chosen for its versatility,
-    ///     enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
+    /// <see cref="JsonDocument" /> is chosen for its versatility,
+    /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
     public JsonDocument TitleDelta { get; private set; }
 
     public string Content { get; private set; }
 
     /// <remarks>
-    ///     <see cref="JsonDocument" /> is chosen for its versatility,
-    ///     enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
+    /// <see cref="JsonDocument" /> is chosen for its versatility,
+    /// enabling <see href="https://quilljs.com/">Quill JS</see> usage in designated SPAs
     /// </remarks>
     public JsonDocument ContentDelta { get; private set; }
 
