@@ -12,9 +12,9 @@ public class GetDocById : IRequest<Doc?>
 
 public class GetDocByIdHandler : IRequestHandler<GetDocById, Doc?>
 {
-    private readonly NotesDBContext _dbContext;
+    private readonly NotesDbContext _dbContext;
 
-    public GetDocByIdHandler(NotesDBContext context)
+    public GetDocByIdHandler(NotesDbContext context)
     {
         _dbContext = context;
     }

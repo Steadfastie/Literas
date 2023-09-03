@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LiterasData.Migrations
 {
-    [DbContext(typeof(NotesDBContext))]
+    [DbContext(typeof(NotesDbContext))]
     [Migration("20230130164829_initial")]
     partial class initial
     {

@@ -13,10 +13,10 @@ public class GetAndDeleteDocCommand : IRequest<int>
 
 public class GetAndDeleteDocHandler : IRequestHandler<GetAndDeleteDocCommand, int>
 {
-    private readonly NotesDBContext _context;
+    private readonly NotesDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetAndDeleteDocHandler(NotesDBContext context, IMapper mapper)
+    public GetAndDeleteDocHandler(NotesDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;

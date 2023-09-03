@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LiterasData.Migrations
 {
-    [DbContext(typeof(NotesDBContext))]
+    [DbContext(typeof(NotesDbContext))]
     [Migration("20230212134758_Renaming")]
     partial class Renaming
     {

@@ -30,8 +30,8 @@ public static class ServiceConfig
 
         services.AddAuth(config);
 
-        services.AddDbContext<NotesDBContext>(options =>
-            options.UseNpgsql(config.GetConnectionString("DocsPostgre")));
+        services.AddDbContext<NotesDbContext>(options =>
+            options.UseNpgsql(config.GetConnectionString("DocsPostgres")));
 
         services.AddAutoMapper(typeof(DocDto).Assembly);
         services.AddAutoMapper(typeof(DocsService).Assembly);

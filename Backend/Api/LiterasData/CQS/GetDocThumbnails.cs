@@ -11,9 +11,9 @@ public class GetDocThumbnails : IRequest<List<Doc>>
 
 public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Doc>>
 {
-    private readonly NotesDBContext _dbContext;
+    private readonly NotesDbContext _dbContext;
 
-    public GetDocThumbnailsHandler(NotesDBContext context)
+    public GetDocThumbnailsHandler(NotesDbContext context)
     {
         _dbContext = context;
     }

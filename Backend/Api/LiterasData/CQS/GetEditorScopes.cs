@@ -13,9 +13,9 @@ public class GetEditorScopes : IRequest<List<EditorScope>>
 
 public class GetEditorScopesHandler : IRequestHandler<GetEditorScopes, List<EditorScope>>
 {
-    private readonly NotesDBContext _dbContext;
+    private readonly NotesDbContext _dbContext;
 
-    public GetEditorScopesHandler(NotesDBContext context)
+    public GetEditorScopesHandler(NotesDbContext context)
     {
         _dbContext = context;
     }

@@ -43,6 +43,18 @@ public class Doc : IBaseEntity
         ContentDelta = content.contentDelta;
     }
 
+    public Doc(Guid id,
+        string title, JsonDocument titleDelta,
+        string content, JsonDocument contentDelta)
+    {
+        Id = id;
+        CreatedAt = DateTime.UtcNow;
+        Title = title;
+        TitleDelta = titleDelta;
+        Content = content;
+        ContentDelta = contentDelta;
+    }
+
     public void ChangeTitle((string titleCoy, JsonDocument titleDelta) title)
     {
         Title = title.titleCoy;

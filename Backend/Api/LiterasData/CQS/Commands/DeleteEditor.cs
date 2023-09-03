@@ -12,10 +12,10 @@ public class DeleteEditorCommand : IRequest<int>
 
 public class DeleteEditor : IRequestHandler<DeleteEditorCommand, int>
 {
-    private readonly NotesDBContext _context;
+    private readonly NotesDbContext _context;
     private readonly IMapper _mapper;
 
-    public DeleteEditor(NotesDBContext context, IMapper mapper)
+    public DeleteEditor(NotesDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;

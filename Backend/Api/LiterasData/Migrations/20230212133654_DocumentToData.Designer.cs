@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LiterasData.Migrations
 {
-    [DbContext(typeof(NotesDBContext))]
+    [DbContext(typeof(NotesDbContext))]
     [Migration("20230212133654_DocumentToData")]
     partial class DocumentToData
     {

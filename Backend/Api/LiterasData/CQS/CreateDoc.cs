@@ -14,9 +14,9 @@ public class CreateDocCommand : IRequest<int>
 
 public class CreateDocHandler : IRequestHandler<CreateDocCommand, int>
 {
-    private readonly NotesDBContext _context;
+    private readonly NotesDbContext _context;
 
-    public CreateDocHandler(NotesDBContext context)
+    public CreateDocHandler(NotesDbContext context)
     {
         _context = context;
     }
