@@ -112,7 +112,7 @@ public class DocsService : IDocsService
         }
 
         var saveChangesResult =
-            await _mediator.Send(new GetAndDeleteDocCommand { DocId = docId, UserId = _identityService.UserId },
+            await _mediator.Send(new GetAndDeleteDocCommand { DocId = docId },
                 cancellationToken);
 
         if (saveChangesResult != 1)

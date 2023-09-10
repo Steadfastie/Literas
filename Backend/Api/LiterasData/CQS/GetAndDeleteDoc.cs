@@ -8,18 +8,15 @@ namespace LiterasData.CQS;
 public class GetAndDeleteDocCommand : IRequest<int>
 {
     public Guid DocId { get; set; }
-    public Guid UserId { get; set; }
 }
 
 public class GetAndDeleteDocHandler : IRequestHandler<GetAndDeleteDocCommand, int>
 {
     private readonly NotesDbContext _context;
-    private readonly IMapper _mapper;
 
     public GetAndDeleteDocHandler(NotesDbContext context, IMapper mapper)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<int> Handle(GetAndDeleteDocCommand request, CancellationToken cancellationToken)

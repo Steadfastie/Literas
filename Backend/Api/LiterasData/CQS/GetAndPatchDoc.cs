@@ -12,7 +12,7 @@ namespace LiterasData.CQS;
 public class GetAndPatchDocCommand : IRequest<Doc>
 {
     public Doc Doc { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }
 
 public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>

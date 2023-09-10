@@ -8,7 +8,7 @@ namespace LiterasData.CQS;
 public class GetEditorScopes : IRequest<List<EditorScope>>
 {
     public Guid DocId { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }
 
 public class GetEditorScopesHandler : IRequestHandler<GetEditorScopes, List<EditorScope>>
@@ -26,7 +26,7 @@ public class GetEditorScopesHandler : IRequestHandler<GetEditorScopes, List<Edit
             .AsNoTracking()
             .Where(editor =>
                 editor.DocId == request.DocId &&
-                editor.UserId == request.UserId)
+                editor.UserId.Equals(request.UserId, StringComparison.Ordinal))
             .SelectMany(editor => editor.Scopes)
             .ToListAsync(cancellationToken);
     }

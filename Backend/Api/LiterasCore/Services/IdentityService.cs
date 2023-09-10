@@ -4,5 +4,5 @@ namespace LiterasCore.Services;
 
 public class IdentityService : IIdentityService
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }
