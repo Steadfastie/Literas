@@ -3,7 +3,7 @@ using LiterasData.Entities;
 
 namespace LiterasWebAPI.Models.Responses;
 
-public class DocThumbnailResponse
+public class DocsResponse
 {
     public Guid Id { get; set; }
 

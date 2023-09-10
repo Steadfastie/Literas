@@ -7,7 +7,7 @@ namespace LiterasData.CQS;
 public class GetDocById : IRequest<Doc?>
 {
     public Guid DocId { get; set; }
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }
 
 public class GetDocByIdHandler : IRequestHandler<GetDocById, Doc?>
@@ -23,12 +23,12 @@ public class GetDocByIdHandler : IRequestHandler<GetDocById, Doc?>
     {
         return await _dbContext.Docs
             .AsNoTracking()
-            .Where(doc => doc.Editors.SingleOrDefault(ed => 
-                              ed.UserId == request.UserId &&
-                              ed.DocId == request.DocId) != null)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))
+            .Where(doc => doc.Editors.SingleOrDefault(ed =>
+                ed.UserId.Equals(request.UserId, StringComparison.Ordinal) &&
+                ed.DocId == request.DocId) != null)
+            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
             .ThenInclude(editor => editor.Scopes)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))
+            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
             .ThenInclude(editor => editor.Status)
             .SingleOrDefaultAsync(cancellationToken);
     }

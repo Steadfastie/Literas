@@ -31,7 +31,12 @@ public class NotesDbContext : DbContext
             .Property(e => e.Scopes)
             .HasPostgresArrayConversion(
                 v => v.ToString(),
-                v => (EditorScope)Enum.Parse(typeof(EditorScope), v)
-            );
+                v => (EditorScope)Enum.Parse(typeof(EditorScope), v));
+
+        modelBuilder.Entity<Editor>()
+            .HasOne(e => e.Doc)
+            .WithMany(d => d.Editors)
+            .HasForeignKey(e => e.DocId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LiterasWebAPI.Auth;
@@ -7,25 +8,16 @@ public static class AuthExtension
 {
     public static void AddAuth(this IServiceCollection services, IConfiguration config)
     {
-        var authority = config.Get<AuthConfig>().Authority;
+        var auth0Settings = config.GetSection(nameof(Auth0Settings)).Get<Auth0Settings>();
 
-        services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
-                options.Authority = authority;
-                options.SaveToken = true;
+                options.Authority = auth0Settings.Domain;
+                options.Audience = auth0Settings.Audience;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateLifetime = true,
-                    ValidateAudience = false,
-                    ValidIssuer = authority,
-                    ClockSkew = TimeSpan.Zero
+                    NameClaimType = ClaimTypes.NameIdentifier
                 };
             });
 
@@ -33,20 +25,17 @@ public static class AuthExtension
         {
             options.AddPolicy(Policies.LiterasRead, policy =>
             {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", LiterasScopes.Read);
+                policy.Requirements.Add(new HasScopeRequirement(Scopes.Read, auth0Settings.Domain));
             });
 
             options.AddPolicy(Policies.LiterasWrite, policy =>
             {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", LiterasScopes.Write);
+                policy.Requirements.Add(new HasScopeRequirement(Scopes.Write, auth0Settings.Domain));
             });
 
             options.AddPolicy(Policies.LiterasDelete, policy =>
             {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", LiterasScopes.Delete);
+                policy.Requirements.Add(new HasScopeRequirement(Scopes.Delete, auth0Settings.Domain));
             });
         });
     }

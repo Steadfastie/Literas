@@ -1,4 +1,4 @@
-using LiterasWebAPI.Config;
+﻿using LiterasWebAPI.Config;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -29,7 +29,7 @@ try
     var app = builder.Build();
 
     app.UseSerilogRequestLogging();
-    app.UseServices();
+    app.UseServices(builder.Configuration);
 
     app.Run();
 }

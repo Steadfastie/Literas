@@ -9,12 +9,10 @@ namespace LiterasCore.Services;
 public class EditorsService : IEditorsService
 {
     private readonly IIdentityService _identityService;
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public EditorsService(IMapper mapper, IMediator mediator, IIdentityService identityService)
+    public EditorsService(IMediator mediator, IIdentityService identityService)
     {
-        _mapper = mapper;
         _mediator = mediator;
         _identityService = identityService;
     }

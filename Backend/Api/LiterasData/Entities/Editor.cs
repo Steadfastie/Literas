@@ -9,9 +9,9 @@ public class Editor : IBaseEntity
     public Guid Id { get; init; }
 
     [ConcurrencyCheck] 
-    public int Version { get; }
+    public int Version { get; private set; }
 
-    public Guid UserId { get; init; }
+    public string UserId { get; init; }
 
     public DateTime LastContributed { get; private set; }
 
@@ -23,7 +23,7 @@ public class Editor : IBaseEntity
 
     public Doc? Doc { get; init; }
 
-    public Editor(Guid userId, Guid docId, EditorStatus status, List<EditorScope> scopes)
+    public Editor(string userId, Guid docId, EditorStatus status, List<EditorScope> scopes)
     {
         Id = Guid.NewGuid();
         UserId = userId;
@@ -31,5 +31,11 @@ public class Editor : IBaseEntity
         Status = status;
         Scopes = scopes;
         DocId = docId;
+    }
+
+    public void Contribute()
+    {
+        LastContributed = DateTime.UtcNow;
+        Version++;
     }
 }

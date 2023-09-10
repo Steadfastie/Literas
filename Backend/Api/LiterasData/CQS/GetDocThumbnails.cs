@@ -6,7 +6,7 @@ namespace LiterasData.CQS;
 
 public class GetDocThumbnails : IRequest<List<Doc>>
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 }
 
 public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Doc>>
@@ -22,10 +22,10 @@ public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Do
     {
         return await _dbContext.Docs
             .AsNoTracking()
-            .Where(doc => doc.Editors.SingleOrDefault(ed => ed.UserId == request.UserId) != null)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))
+            .Where(doc => doc.Editors.SingleOrDefault(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)) != null)
+            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
             .ThenInclude(editor => editor.Scopes)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId == request.UserId))
+            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
             .ThenInclude(editor => editor.Status)
             .ToListAsync(cancellationToken);
     }
