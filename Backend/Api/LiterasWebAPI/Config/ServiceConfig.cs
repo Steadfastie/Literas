@@ -1,14 +1,18 @@
-﻿using LiterasCore.Abstractions;
+﻿using IDT.Boss.AntifraudBlacklist.Api.Config.Swagger;
+using LiterasCore.Abstractions;
 using LiterasCore.Services;
 using LiterasData;
 using LiterasData.CQS;
 using LiterasData.DTO;
 using LiterasWebAPI.Auth;
 using LiterasWebAPI.Config.MappingProfiles;
+using LiterasWebAPI.Config.Swagger;
 using LiterasWebAPI.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace LiterasWebAPI.Config;
 
@@ -47,16 +51,12 @@ public static class ServiceConfig
             opt.Filters.Add<GlobalExceptionFilter>();
         });
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerFeatures(config);
     }
 
-    public static void UseServices(this WebApplication app)
+    public static void UseServices(this WebApplication app, IConfiguration config)
     {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwaggerFeatures(config);
 
         app.UseHttpsRedirection();
         app.UseCors();
@@ -70,10 +70,11 @@ public static class ServiceConfig
 
     private static void AddServices(this IServiceCollection services)
     {
-        services.AddTransient<IClaimsTransformation, ClaimsTransformator>();
+        services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
         services.AddScoped<IDocsService, DocsService>();
         services.AddScoped<IEditorsService, EditorsService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddSingleton<IEventBus, RabbitMQService>();
+        services.AddScoped<UserInfoExtractorMiddleware>();
     }
 }

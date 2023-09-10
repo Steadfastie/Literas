@@ -15,14 +15,14 @@ public class UserInfoExtractorMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var userIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        var userIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+        if (string.IsNullOrWhiteSpace(userIdClaim) || !userIdClaim.StartsWith("auth0|"))
         {
             throw new GeneralException("Service could not recognize user");
         }
 
-        _identityService.UserId = userId;
+        _identityService.UserId = userIdClaim;
         await next(context);
     }
 }

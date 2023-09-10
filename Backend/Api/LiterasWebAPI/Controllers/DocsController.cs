@@ -27,7 +27,7 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Get simplified doc representation
     /// </summary>
-    [HttpGet("thumbnails"), ActionName(nameof(GetDocThumbnails))]
+    [HttpGet("thumbnails", Name = nameof(GetDocThumbnails))]
     [Authorize(Policy = Policies.LiterasRead)]
     [ProducesResponseType(typeof(DocThumbnailResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetDocThumbnails(CancellationToken cancellationToken = default)
@@ -48,7 +48,7 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Get one exact doc
     /// </summary>
-    [HttpGet("{docId}"), ActionName(nameof(Details))]
+    [HttpGet("{docId}", Name = nameof(Details))]
     [Authorize(Policy = Policies.LiterasRead)]
     [ProducesResponseType(typeof(DocResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,7 +72,7 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Add new doc
     /// </summary>
-    [HttpPost, ActionName(nameof(Create))]
+    [HttpPost(Name = nameof(Create))]
     [Authorize(Policy = Policies.LiterasWrite)]
     [ProducesResponseType(typeof(DocResponse), StatusCodes.Status201Created)]
     public async Task<IActionResult> Create([FromBody] DocRequestModel docModel,
@@ -88,7 +88,7 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Update doc
     /// </summary>
-    [HttpPatch("{docId}"), ActionName(nameof(Patch))]
+    [HttpPatch("{docId}", Name = nameof(Patch))]
     [Authorize(Policy = Policies.LiterasWrite)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status304NotModified)]
@@ -110,7 +110,7 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Remove doc
     /// </summary>
-    [HttpDelete("{docId}"), ActionName(nameof(Delete))]
+    [HttpDelete("{docId}", Name = nameof(Delete))]
     [Authorize(Policy = Policies.LiterasDelete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(Guid docId, CancellationToken cancellationToken = default)
