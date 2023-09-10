@@ -28,20 +28,28 @@ public class GetAndPatchDocHandler : IRequestHandler<GetAndPatchDocCommand, Doc>
 
     public async Task<Doc> Handle(GetAndPatchDocCommand request, CancellationToken cancellationToken)
     {
-        var sourceDoc = await _context.Docs
-                            .SingleOrDefaultAsync(
+        var sourceDoc = await _context.Docs.SingleOrDefaultAsync(
                                 doc => doc.Id == request.Doc.Id,
                                 cancellationToken) ??
-                        throw new NotFoundException("Looks like doc is already here");
+                        throw new NotFoundException("Doc missing");
+
+        var editor = await _context.Editors.SingleOrDefaultAsync(
+                            ed => ed.DocId == request.Doc.Id &&
+                                ed.UserId.Equals(request.UserId, StringComparison.Ordinal),
+                            cancellationToken) ??
+                        throw new NotFoundException("No such editor for this doc");
 
         var (changedDoc, updates) = CalculateChanges(
             sourceDoc, request.Doc);
 
-        var dbEntityEntry = _context.Entry(changedDoc);
+        var docEntry = _context.Entry(changedDoc);
+        var editorEntry = _context.Entry(editor);
 
-        dbEntityEntry.Entity.UpdateVersion();
-        dbEntityEntry.CurrentValues.SetValues(updates);
-        dbEntityEntry.State = EntityState.Modified;
+        docEntry.Entity.UpdateVersion();
+        docEntry.CurrentValues.SetValues(updates);
+        docEntry.State = EntityState.Modified;
+
+        editorEntry.Entity.Contribute();
 
         var result = await _context.SaveChangesAsync(cancellationToken);
 

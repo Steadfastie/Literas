@@ -5,6 +5,7 @@ using System.Text.Json;
 using LiterasData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LiterasData.Migrations
 {
     [DbContext(typeof(NotesDbContext))]
-    partial class NotesDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230910183920_Auth0Integration")]
+    partial class Auth0Integration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

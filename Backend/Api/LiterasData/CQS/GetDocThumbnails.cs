@@ -22,7 +22,7 @@ public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Do
     {
         return await _dbContext.Docs
             .AsNoTracking()
-            .Where(doc => doc.Editors.SingleOrDefault(ed => ed.UserId == request.UserId) != null)
+            .Where(doc => doc.Editors.SingleOrDefault(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)) != null)
             .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
             .ThenInclude(editor => editor.Scopes)
             .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))

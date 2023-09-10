@@ -29,7 +29,7 @@ public class DocsService : IDocsService
         _notificationService = notificationService;
     }
 
-    public async Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocThumbnailsAsync(
+    public async Task<List<(DocDto doc, List<EditorScope> scopes, EditorStatus status)>> GetDocsAsync(
         CancellationToken cancellationToken = default)
     {
         var docsFound = await _mediator.Send(new GetDocThumbnails { UserId = _identityService.UserId },
@@ -38,16 +38,26 @@ public class DocsService : IDocsService
         return docsFound.Select(d =>
             {
                 var dto = _mapper.Map<DocDto>(d);
-                var scopes = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Scopes;
-                var status = d.Editors.Single(ed => ed.UserId == _identityService.UserId).Status;
+                var scopes = d.Editors
+                    .Single(ed => ed.UserId.Equals(_identityService.UserId, StringComparison.Ordinal)).Scopes;
+                var status = d.Editors
+                    .Single(ed => ed.UserId.Equals(_identityService.UserId, StringComparison.Ordinal)).Status;
                 return (dto, scopes, status);
             })
             .ToList();
     }
 
-    public async Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocByIdAsync(Guid docId,
+    public async Task<(DocDto doc, List<EditorScope> scopes, EditorStatus status)> GetDocAsync(Guid docId,
         CancellationToken cancellationToken = default)
     {
+        var canUserRead = await _editorsService.CanUserDo(docId,
+            new List<EditorScope> { EditorScope.CanRead });
+
+        if (!canUserRead)
+        {
+            throw new ForbiddenException("User don't have enough rights to do that");
+        }
+
         var docFound = await _mediator.Send(new GetDocById { DocId = docId, UserId = _identityService.UserId },
                            cancellationToken) ??
                        throw new NotFoundException("Could not find such document");
@@ -92,9 +102,11 @@ public class DocsService : IDocsService
             (changedDocDto.Title, changedDocDto.TitleDelta),
             (changedDocDto.Content, changedDocDto.ContentDelta));
 
-        var docAfter =
-            await _mediator.Send(new GetAndPatchDocCommand { Doc = changedDoc, UserId = _identityService.UserId },
-                cancellationToken);
+        var docAfter = await _mediator.Send(new GetAndPatchDocCommand
+            {
+                Doc = changedDoc, 
+                UserId = _identityService.UserId
+            }, cancellationToken);
 
         var docToTransfer = _mapper.Map<DocDto>(docAfter);
 
@@ -111,9 +123,10 @@ public class DocsService : IDocsService
             throw new ForbiddenException("User don't have enough rights to do that");
         }
 
-        var saveChangesResult =
-            await _mediator.Send(new GetAndDeleteDocCommand { DocId = docId },
-                cancellationToken);
+        var saveChangesResult = await _mediator.Send(new GetAndDeleteDocCommand
+            {
+                DocId = docId
+            }, cancellationToken);
 
         if (saveChangesResult != 1)
         {

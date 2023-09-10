@@ -27,14 +27,14 @@ public class DocsController : ControllerBase
     /// <summary>
     /// Get simplified doc representation
     /// </summary>
-    [HttpGet("thumbnails", Name = nameof(GetDocThumbnails))]
+    [HttpGet(Name = nameof(GetDocs))]
     [Authorize(Policy = Policies.LiterasRead)]
-    [ProducesResponseType(typeof(DocThumbnailResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetDocThumbnails(CancellationToken cancellationToken = default)
+    [ProducesResponseType(typeof(DocsResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDocs(CancellationToken cancellationToken = default)
     {
-        var docData = await _docsService.GetDocThumbnailsAsync(cancellationToken);
+        var docData = await _docsService.GetDocsAsync(cancellationToken);
 
-        var response = docData.ConvertAll(dataFound => new DocThumbnailResponse
+        var response = docData.ConvertAll(dataFound => new DocsResponse
         {
             Id = dataFound.doc.Id,
             Title = dataFound.doc.Title,
@@ -59,9 +59,9 @@ public class DocsController : ControllerBase
             return BadRequest();
         }
 
-        var (doc, scopes, status) = await _docsService.GetDocByIdAsync(docId, cancellationToken);
+        var (doc, scopes, status) = await _docsService.GetDocAsync(docId, cancellationToken);
 
-        var response = new DocThumbnailResponse
+        var response = new DocsResponse
         {
             Id = doc.Id, Title = doc.Title, Permissions = scopes, Status = status
         };
@@ -97,7 +97,7 @@ public class DocsController : ControllerBase
     {
         if (docId != docModel.Id)
         {
-            throw new GeneralException();
+            throw new GeneralException("Url ID does not correspond to model's one");
         }
 
         var docDto = _mapper.Map<DocDto>(docModel);

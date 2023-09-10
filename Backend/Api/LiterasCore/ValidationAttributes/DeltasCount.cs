@@ -11,23 +11,21 @@ public class DeltasCountAttribute : ValidationAttribute
         MinDeltasAmount = minDeltasAmount;
     }
 
-    public int MinDeltasAmount { get; }
+    private int MinDeltasAmount { get; }
     public int MaxDeltasAmount { get; set; } = int.MaxValue;
 
     public override bool IsValid(object? value)
     {
-        if (value == null)
+        switch (value)
         {
-            return true;
+            case null:
+                return false;
+            case JsonDocument deltas:
+                return CheckDeltasAmount(deltas.RootElement.Clone());
+            default:
+                ErrorMessage = "Quill deltas wrong type";
+                return false;
         }
-
-        if (value is not JsonDocument deltas)
-        {
-            ErrorMessage = "Quill deltas wrong type";
-            return false;
-        }
-
-        return CheckDeltasAmount(deltas.RootElement.Clone());
     }
 
     private bool CheckDeltasAmount(JsonElement element)
@@ -44,13 +42,14 @@ public class DeltasCountAttribute : ValidationAttribute
                     return false;
                 }
 
-                if (opsLength > MaxDeltasAmount)
+                if (opsLength <= MaxDeltasAmount)
                 {
-                    ErrorMessage = $"Deltas amount is more than {MaxDeltasAmount}";
-                    return false;
+                    return true;
                 }
 
-                return true;
+                ErrorMessage = $"Deltas amount is more than {MaxDeltasAmount}";
+                return false;
+
             }
             default:
                 ErrorMessage = "Quill deltas structure is corrupt";

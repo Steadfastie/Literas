@@ -9,7 +9,7 @@ public class Editor : IBaseEntity
     public Guid Id { get; init; }
 
     [ConcurrencyCheck] 
-    public int Version { get; }
+    public int Version { get; private set; }
 
     public string UserId { get; init; }
 
@@ -31,5 +31,11 @@ public class Editor : IBaseEntity
         Status = status;
         Scopes = scopes;
         DocId = docId;
+    }
+
+    public void Contribute()
+    {
+        LastContributed = DateTime.UtcNow;
+        Version++;
     }
 }
