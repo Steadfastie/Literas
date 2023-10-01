@@ -42,6 +42,7 @@ public static class ServiceConfig
         services.AddAutoMapper(typeof(DocsProfile).Assembly);
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IDocsService>());
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetDocByIdHandler>());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RetryPolicyBehavior<,>));
 
         services.AddServices();
@@ -71,10 +72,11 @@ public static class ServiceConfig
     private static void AddServices(this IServiceCollection services)
     {
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+        services.AddScoped<UserInfoExtractorMiddleware>();
+        services.AddScoped<LoggerEnricherMiddleware>();
         services.AddScoped<IDocsService, DocsService>();
         services.AddScoped<IEditorsService, EditorsService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddSingleton<IEventBus, RabbitMQService>();
-        services.AddScoped<UserInfoExtractorMiddleware>();
     }
 }
