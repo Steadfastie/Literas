@@ -7,6 +7,7 @@ using LiterasWebAPI.Models.Requests;
 using LiterasWebAPI.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace LiterasWebAPI.Controllers;
 

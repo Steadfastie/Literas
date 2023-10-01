@@ -1,14 +1,15 @@
 ﻿using System.Security.Claims;
 using LiterasCore.Abstractions;
 using LiterasData.Exceptions;
+using Serilog.Context;
 
 namespace LiterasWebAPI.Middleware;
 
-public class UserInfoExtractorMiddleware : IMiddleware
+public class UserInfoMiddleware : IMiddleware
 {
     private readonly IIdentityService _identityService;
 
-    public UserInfoExtractorMiddleware(IIdentityService identityService)
+    public UserInfoMiddleware(IIdentityService identityService)
     {
         _identityService = identityService;
     }
@@ -23,6 +24,12 @@ public class UserInfoExtractorMiddleware : IMiddleware
         }
 
         _identityService.UserId = userIdClaim;
-        await next(context);
+
+        var userId = $"**{userIdClaim[^4..]}";
+
+        using (LogContext.PushProperty("User", userId))
+        {
+            await next(context);
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using LiterasData.Entities;
-
 namespace LiterasWebAPI.Models.Responses;
 
 public class DocsResponse
@@ -9,7 +8,7 @@ public class DocsResponse
 
     public string Title { get; set; }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(ListEnumToStringConverter<EditorScope>))]
     public List<EditorScope> Permissions { get; set; } = new();
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

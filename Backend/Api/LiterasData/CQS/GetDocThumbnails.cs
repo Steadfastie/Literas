@@ -20,13 +20,20 @@ public class GetDocThumbnailsHandler : IRequestHandler<GetDocThumbnails, List<Do
 
     public async Task<List<Doc>> Handle(GetDocThumbnails request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Docs
+        var filteredDocs = await _dbContext.Docs
             .AsNoTracking()
-            .Where(doc => doc.Editors.SingleOrDefault(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)) != null)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
-            .ThenInclude(editor => editor.Scopes)
-            .Include(doc => doc.Editors.Single(ed => ed.UserId.Equals(request.UserId, StringComparison.Ordinal)))
-            .ThenInclude(editor => editor.Status)
+            .Where(doc => doc.Editors.Any(ed => ed.UserId == request.UserId))
             .ToListAsync(cancellationToken);
+
+        foreach (var doc in filteredDocs)
+        {
+            await _dbContext.Entry(doc)
+                .Collection(d => d.Editors)
+                .Query()
+                .Where(ed => ed.UserId == request.UserId)
+                .LoadAsync(cancellationToken);
+        }
+
+        return filteredDocs;
     }
 }
