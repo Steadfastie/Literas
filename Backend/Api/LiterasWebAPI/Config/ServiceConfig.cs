@@ -64,16 +64,14 @@ public static class ServiceConfig
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseMiddleware<UserInfoExtractorMiddleware>();
-        app.UseMiddleware<LoggerEnricherMiddleware>();
+        app.UseMiddleware<UserInfoMiddleware>();
         app.MapControllers();
     }
 
     private static void AddServices(this IServiceCollection services)
     {
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
-        services.AddScoped<UserInfoExtractorMiddleware>();
-        services.AddScoped<LoggerEnricherMiddleware>();
+        services.AddScoped<UserInfoMiddleware>();
         services.AddScoped<IDocsService, DocsService>();
         services.AddScoped<IEditorsService, EditorsService>();
         services.AddScoped<IIdentityService, IdentityService>();
