@@ -15,10 +15,7 @@ public class GlobalExceptionFilter : IExceptionFilter
                   $"{context.Exception.StackTrace} " +
                   $"{Environment.NewLine} {Environment.NewLine}");
         context.ExceptionHandled = true;
-        context.Result = new ContentResult
-        {
-            StatusCode = GetExceptionStatusCode(context.Exception), Content = context.Exception.Message
-        };
+        context.Result = new StatusCodeResult(GetExceptionStatusCode(context.Exception));
     }
 
     private static int GetExceptionStatusCode(Exception ex)

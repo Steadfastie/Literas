@@ -2,12 +2,13 @@
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.SystemConsole.Themes;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console(new RenderedCompactJsonFormatter())
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 try
 {
@@ -18,11 +19,19 @@ try
             .ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services)
             .Enrich.FromLogContext()
-            .WriteTo.File(
-                builder.Configuration["Serilog"],
-                LogEventLevel.Warning,
-                rollingInterval: RollingInterval.Hour,
-                retainedFileCountLimit: 10));
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .WriteTo.Async(async wt =>
+            {
+                wt.Console(
+                    theme: AnsiConsoleTheme.Sixteen
+                );
+                wt.File(
+                    builder.Configuration["Serilog"] ?? throw new InvalidOperationException("No config for Serilog was found"),
+                    LogEventLevel.Warning,
+                    rollingInterval: RollingInterval.Hour,
+                    retainedFileCountLimit: 10
+                );
+            }));
 
     builder.Services.ConfigureServices(builder.Configuration);
 
